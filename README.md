@@ -15,7 +15,7 @@ Teachers: Alexander Zizka, German Center for INtegrative Biodiversity research &
 
 ## Detailed schedule
 
-Day 1 "Big data in Biogeography"
+### Day 1 "Big data in Biogeography"
 
 -	9:30: Welcome & Introduction (Technicalities, Forming of buddy teams, presentation of participants)
 
@@ -32,7 +32,7 @@ Day 1 "Big data in Biogeography"
 - 16:00 Lecture & Hands on "Biodiversity databases"
 
 
-Day 2 "Recent biogeography"
+### Day 2 "Recent biogeography"
 
 - 9:30 Lecture “Common biases, caveats and errors in biodiversity databases”
 
@@ -40,21 +40,27 @@ Day 2 "Recent biogeography"
 
 - 13:00 Hands-on: Project work recent biogeography
 
-- 15:15 Lecture: Biogeography through time, combining distribution ranges and phylogenies
+- 15:15 Lecture: Biogeography through time, combining distribution ranges and phylogenies (`BioGeoBEARS`)
 
 - 16:00 Demos & exercise Bioogeography and Phylogenies
 
-Day 3 "Biogeography through time"
+### Day 3 "Historical Biogeography through time"
 
-Morning:	 Lecture historical biogeography – modeling the evolution of geographic ranges 
-Afternoon:	 Hands on historical biogeography/group work 
+- 9:30 Lecture historical biogeography – modeling the evolution of geographic ranges as a continuous trait (`JIVE`, `fossilBM`)
 
-Day 4 "Fossil Biogeography"
+- 11:30:	 Hands on historical biogeography/group work 
 
-Morning:	 Historical Biogeography continued – phylogenetic methods and the fossil record 
-Afternoon:	 Lecture and Hands on fossils in biogeography 
 
-Day 5, "Putting it all together"
+
+### Day 4 "Fossil Biogeography"
+
+- 9:30	Modeling geographic range evolution using the fossil record (`DES` model)
+
+- 11:30 Guest lecture by Sara Varela (Museum für Naturkunde) as Species distribution models to work in paleobiogeography
+
+Afternoon: Hands on fossils in biogeography 
+
+### Day 5, "Putting it all together"
 
 - 09:30 Demo & exercise "Visualization of the results in R"
 - 11:00 Project work
