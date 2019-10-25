@@ -77,6 +77,21 @@ Afternoon: Hands on fossils in biogeography
 
 ## Course literature
 
+1.	Meyer et al. (2016) Multidimensional biases, gaps and uncertainties in global plant occurrence information. Ecology Letters 19:992-1006.
+
+2.	Antonelli et al. (2018) Amazonia is the primary source of Neotropical biodiversity. PNAS 115(23): 6034–6039.
+
+3.	Kostikova A et al. (2016) Bridging Inter- and Intraspecific Trait Evolution with a Hierarchical Bayesian Approach. Systematic Biology 65(3):417-431.
+
+4.	One of the following suggestions (depending on your own interests):
+    a.	Edler et al. (2017) Infomap Bioregions: Interactive mapping of biogeographical regions from species distributions. Systematic Biology 66(2):197–204.
+    
+    b.	Zizka et al. (2019) CoordinateCleaner: Standardized cleaning of occurrence records from biological collection databases. Methods in Ecology and Evolution 10:744-751.
+    
+    c.	Silvestro et al.(2016) Fossil biogeography: a new model to infer dispersal, extinction and sampling from palaeontological data. Philosophical Transactions of the Royal Society B 371:20150225.
+    
+    d.	Price et al. (2019) Big data little help in megafauna mysteries. Nature 558(7):23-25
+
 
 ## Questions Daniele
 -	What will be the student project?

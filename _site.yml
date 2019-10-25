@@ -1,0 +1,12 @@
+name: Big Data Biogeography
+output_dir: docs
+navbar:
+  title: "My Website"
+  left:
+    - text: "Home"
+      href: index.html
+output:
+  html_document:
+    lib_dir: site_libs
+    self_contained: no
+
