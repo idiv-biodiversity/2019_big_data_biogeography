@@ -77,32 +77,17 @@ Afternoon: Hands on fossils in biogeography
 
 ## Course literature
 
-1. Meyer *et al.* (2016) Multidimensional biases, gaps and uncertainties in global plant occurrence information. *Ecology Letters* 19:992-1006.
+1.	Meyer et al. (2015)  Global priorities for an effective information basis of biodiversity distributions. Nature Communications, 8 pp.
 
-2. 
+2.	Antonelli et al. (2018) Amazonia is the primary source of Neotropical biodiversity. PNAS 115(23): 6034–6039.
 
-3. Antonelli *et al.* (2018) Amazonia is the primary source of Neotropical biodiversity. PNAS 6pp
+3.	Kostikova A et al. (2016) Bridging Inter- and Intraspecific Trait Evolution with a Hierarchical Bayesian Approach. Systematic Biology 65(3):417-431.
 
-4. One of the following suggestions (depending on your own interests):
-
-* Edler *et al.* (2017) Infomap Bioregions: Interactive mapping of biogeographical regions from species distributions. *Systematic Biology* 66(2):197–204
-
-* Antonelli (2017) Comparative biogeography, big data, and common myths. In: *Tropical Plant Collections: Legacies from the Past? Essential Tools for the future. Scientia Danica. Series B, Biologica. vol. 6*
-
-* Silvestro *et al.*(2016) Fossil biogeography: a new model to infer dispersal, extinction and sampling from palaeontological data. *Philosophical Transactions of the Royal Society B* 371:20150225
-
-* Price *et al.* (2019) Big data little help in megafauna mysteries. Nature 558(7):23-25
-
-
-## Questions Daniele
--	What will be the student project?
--	Literature for the students to read?
--	What do students need to prepare before the course
--	Get somebody involved for a lecture/lunch Sarah Varela? Renske?
--	How else can we benefit from this time? Bromeliads?
-
-## Questions to ask Carlo
--	Payment?
--	Certificate?
-- Course evaluation?
-- Examination?
+4.	One of the following suggestions (depending on your own interests):
+    a.	Edler et al. (2017) Infomap Bioregions: Interactive mapping of biogeographical regions from species distributions. Systematic Biology 66(2):197–204.
+    
+    b.	Zizka et al. (2019) CoordinateCleaner: Standardized cleaning of occurrence records from biological collection databases. Methods in Ecology and Evolution 10:744-751.
+    
+    c.	Silvestro et al.(2016) Fossil biogeography: a new model to infer dispersal, extinction and sampling from palaeontological data. Philosophical Transactions of the Royal Society B 371:20150225.
+    
+    d.	Price et al. (2019) Big data little help in megafauna mysteries. Nature 558(7):23-25
