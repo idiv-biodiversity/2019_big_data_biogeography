@@ -6,6 +6,13 @@ Location:
 
 Teachers: Alexander Zizka, German Center for INtegrative Biodiversity research & Daniele Silvestro, University of Gothenburg Sweden
 
+## Before the course
+
+- Install R and Rstudio on your computer
+
+- Read the c
+
+
 ## Detailed schedule
 
 Day 1 "Big data in Biogeography"
@@ -62,7 +69,7 @@ Day 5, "Putting it all together"
 
 ## Project assignment
 
-## Literature
+## Course literature
 
 
 ## Questions Daniele
