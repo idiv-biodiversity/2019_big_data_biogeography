@@ -1,29 +1,29 @@
-name: Big Data Biogeography
+name: big_data_biogeography
 output_dir: docs
 navbar:
   title: Big Data Biogeography
   type: inverse
   left:
-    - text: Home
-      icon: fa-home 
-      href: index.html
-    - text: Course schedule
-      href: schedule.html
-    - text: Monday
-      menu:
-      - text: 01 - Downloading data from GBIF
-        href: 01_download_GBIF_data_exercise.html
-      - text: 02 - Data cleaning
-        href: 02_data_cleaning_exercise.html 
-    - text: Tuesday
-      menu:
-      - text: 04 - Richness maps
-        href: 04_species_richness_maps_exercise.html
+  - text: Home
+    icon: fa-home 
+    href: index.html
+  - text: Course schedule
+    href: schedule.html
+  - text: Monday
+    menu:
+    - text: 01 - Downloading data from GBIF
+      href: 01_download_GBIF_data_exercise.html
+    - text: 02 - Data cleaning
+      href: 02_data_cleaning_exercise.html 
+  - text: Tuesday
+    menu:
+    - text: 04 - Richness maps
+      href: 04_species_richness_maps_exercise.html
   right:
   - text: GitHub
-    href: https://github.com/azizka/Biodiversity_Data_from_Field_to_Yield/
- output:
+    href: https://github.com/idiv-biodiversity/2019_big_data_biogeography
+  
+output:
   html_document:
     lib_dir: site_libs
     self_contained: no
-
