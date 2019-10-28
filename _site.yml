@@ -1,10 +1,23 @@
 name: Big Data Biogeography
 output_dir: docs
 navbar:
-  title: "My Website"
+  title: "Big Data Biogeography"
   left:
     - text: "Home"
       href: index.html
+    - text: "Course schedule"
+      href: schedule.html
+    - text: Monday
+      menu:
+      - text: 01 - Downloading data from GBIF
+        href: 01_download_GBIF_data_exercise.html
+      - text: 02 - Data cleaning
+        href: 02_data_cleaning_exercise.html 
+    - text: Tuesday
+      menu:
+      - text: 04 - Richness maps
+        href: 04_species_richness_maps_exercise.html
+    
 output:
   html_document:
     lib_dir: site_libs

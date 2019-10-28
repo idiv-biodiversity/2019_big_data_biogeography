@@ -1,0 +1,49 @@
+---
+title: "Data cleaning"
+output: 
+  html_document:
+    theme: readable
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, 
+                      echo=TRUE, warning=FALSE, message=FALSE,
+                      tidy = TRUE, collapse = TRUE,
+                      results = 'hold')
+```
+
+## Background
+Biases and issues with data quality are a central problem hampering the use of publicly available species occurrence data in ecology and biogeography. Biases are hard to address, but improving data quality by identifying erroneous records is possible. Major problems are: data entry errors leading to erroneous occurrence records, imprecise geo-referencing mostly of pre-GPS records and missing metadata specifying data entry and coordinate precision. Manual data cleaning based on expert knowledge can mostly detect these issues, but is only applicable for small taxonomic or geographic scales and is difficult to reproduce. Automated clean procedures are more scalable alternative.
+
+## Objectives
+After this exercise you will be able to:
+1. Visualize the data and identify potential problems 
+2. Use  *CoordinateCleaner* to automatically flag problematic records
+3. Use GBIF provided meta-data to improve coordinate quality, tailored to your downstream analyses
+4. Use automated flagging algorithms of *CoordinateCleaner* to identify problematic contributing datasets
+
+## Exercise
+Here we will use the data downloaded during the first exercise and look at common problems using automated flagging software and GBIF meta-data to identify some potential problems. For this tutorial we will exclude potentially problematic records, but in general we highly recommend to double check records to avoid losing data and introduce new biases. You can find a similar tutorial using illustrative data [here](https://azizka.github.io/CoordinateCleaner/articles/Tutorial_Cleaning_GBIF_data_with_CoordinateCleaner.html). AS in the first exercise necessary R functions for each question in the brackets. Get help for all functions with ?FUNCTIONNAME.
+
+1. Load your occurrence data downloaded from GBIF in the first exercise and limit the data to columns with potentially useful information (`read_csv`, `names`, `select`).
+2. Add the data we collected in the field and data from the other source. You will need to standardize column names (`read_csv`, `select`, `bind_rows`).
+3. Visualize the coordinates on a map (`borders`, `ggplot`, `geom_point`).
+4. Clean the coordinates based on available meta-data. A good starting point is to plot continuous variables as histogram and look at the values for discrete variables. Remove unsuitable records and plot again (`table`, `filter`).
+5. Apply automated flagging to identify potentially problematic records (`clean_coordinates`, `plot`).
+6. Visualize the difference between the unclean and cleaned dataset (`plot`)
+
+## Possible questions for your research project
+* How many records where potentially problematic?
+* What were the major issues? 
+* Were any of the records you collected in the field flagged as problematic? If so, what has happened?
+
+## Library setup
+You will need the following R libraries for this exercise, just copy the code chunk into you R console to load them. You might need to install some of them separately.
+
+```{r}
+library(tidyverse)
+library(rgbif)
+library(sp)
+library(countrycode)
+library(CoordinateCleaner)
+```
