@@ -2,21 +2,22 @@
 output: html_document
 ---
 
+  
 ### Day 1 "Big data in Biogeography"
+  
+-	9:30 Welcome & Introduction 
 
--	Welcome & Introduction 
+- 9:45 Presentation of participants, forming of teams
 
-- Presentation of participants, forming of teams
+-	10:30 Lecture: Big data in Biogeography
 
--	Lecture: Big data in Biogeography
+-	11:30 Questions, final computer set up when necessary
 
-- Questions, final computer set up when necessary
+- 13:00 Group work and literature discussion
 
-- Group work and literature discussion
+- 15:00 Project definition
 
-- Lecture & Hands on "Biodiversity databases"
-
-- Project definition
+- 15:30 Lecture & Hands on "Biodiversity databases"
 
 
 ### Day 2 "Recent biogeography"
