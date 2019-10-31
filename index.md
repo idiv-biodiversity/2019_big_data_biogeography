@@ -17,7 +17,8 @@ Teachers: Alexander Zizka, German Center for INtegrative Biodiversity research &
 - Please prepare 3-5 minutes (if you want including slides) to present yourself and your research. MAke sure to answer the following questions:
   a. Where are you from?
   b. What is your research about?
-  c. What are your expectations for this course
+  c. How are your R skills?
+  d. What are your expectations for this course?
 
 ## Contact
 Course content:  [Alexander Zizka](mailto:alexander.zizka@idiv.de)

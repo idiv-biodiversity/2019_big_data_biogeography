@@ -2,78 +2,48 @@
 
 Date & time: November 4^th - November 8^th, 9:30 -- 17:00 
 
-Location:
+Location: Profund Innovation, Freie Universität Berlin - Altensteinstraße 40, 14195 Berlin, Germany
 
 Teachers: Alexander Zizka, German Center for INtegrative Biodiversity research & Daniele Silvestro, University of Gothenburg Sweden
 
 ## Before the course
 
-- Install R and Rstudio on your computer
+- Please bring your own computer
 
-- Read the c
+- Install the current version of R and RStudio on your computer
 
+- Read the course literature listed below, we will have a literature discussion on the first day.
 
-## Detailed schedule
+- Please prepare 3-5 minutes (if you want including slides) to present yourself and your research. MAke sure to answer the following questions:
+  a. Where are you from?
+  b. What is your research about?
+  c. How are your R skills?
+  d. What are your expectations for this course?
 
-### Day 1 "Big data in Biogeography"
+## Contact
+Course content:  [Alexander Zizka](mailto:alexander.zizka@idiv.de)
+Organistorical: [Physalia courses](mailto:info@physalia-courses.org)
 
--	9:30: Welcome & Introduction (Technicalities, Forming of buddy teams, presentation of participants)
-
--	10:15 Lecture: Big data in Biogeography
-
--	11:30 Questions, final computer set up when necessary
-
-- 13:00 Group work and literature discussion
-
-- 15:00 Coffee break
-
-- 15:30 Project definition
-
-- 16:00 Lecture & Hands on "Biodiversity databases"
-
-
-### Day 2 "Recent biogeography"
-
-- 9:30 Lecture “Common biases, caveats and errors in biodiversity databases”
-
-- 10:00 Lecture and Hands on exercise “Novel tools in biogeography: bioregionalization, automated conservation assessment, species to area classification” 
-
-- 13:00 Hands-on: Project work recent biogeography
-
-- 15:15 Lecture: Biogeography through time, combining distribution ranges and phylogenies (`BioGeoBEARS`)
-
-- 16:00 Demos & exercise Bioogeography and Phylogenies
-
-### Day 3 "Historical Biogeography through time"
-
-- 9:30 Lecture historical biogeography – modeling the evolution of geographic ranges as a continuous trait (`JIVE`, `fossilBM`)
-
-- 11:30:	 Hands on historical biogeography/group work 
-
-
-
-### Day 4 "Fossil Biogeography"
-
-- 9:30	Modeling geographic range evolution using the fossil record (`DES` model)
-
-- 11:30 Guest lecture by Sara Varela (Museum für Naturkunde) as Species distribution models to work in paleobiogeography
-
-Afternoon: Hands on fossils in biogeography 
-
-### Day 5, "Putting it all together"
-
-- 09:30 Demo & exercise "Visualization of the results in R"
-- 11:00 Project work
-- 13:30 Student presentation and examination
-- 15:00 Course evaluation and wrap up
-
-## Before the course
+[Physalia courses webpage](https://www.physalia-courses.org/courses-workshops/course48/)
 
 ## Objectives
+After this course, students will be able to:
+
+1. Obtain and prepare large scale species occurrence records from public databases in R (including data mining, data cleaning and exploration)
+
+2. Apply novel methods for handling and processing ‘big data’ in biogeographic research, including area classification, bioregionalization and automated conservation assessments
+
+3. Reconstruct species ancestral ranges based on species occurrences and phylogenetic trees, using different evolutionary models
+
+4. Understand the potential and caveats of fossil based biogeography, and be familiar with novel methods to estimate ancestral ranges and evolutionary rates from ranges of extinct and extant taxa 
+
 
 ## Background
+The public availability of large-scale species distribution data has increased drastically over the last ten years. In particular, due to the aggregation of records from museums and herbaria, and citizen science in public databases such as the Global Biodiversity Information Facility (GBIF). This is leading to a ‘big data’ revolution in biogeography, which holds an enormous but still poorly explored potential for understanding large scale patterns and drivers of biodiversity in space and time.
 
 ## Project assignment
+During the course you will analyse a specific dataset. We strongly encourage you to bring your own data (Taxon of interst, phylogenetic tree, fossil data), which will give you the opportunity to chose questions and exercises most suitable for your work. If necessary we will provide example data during the course as well.
+
 
 ## Course literature
 

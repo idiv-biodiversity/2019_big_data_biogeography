@@ -11,11 +11,12 @@ navbar:
     href: schedule.html
   - text: Monday
     menu:
+      -
       - text: Explore GBIF
         href: explore_gbif.html
       - text: Explore the Paleobiology database
-        href: explore_paleoDB.html
-      - text: explore the IUCN
+        href: Explore_paleoDB.html
+      - text: explore the IUCN database
   - text: Tuesday
     menu:
     - text: 1 - Obtaining geographic occurrence records from GBIF
