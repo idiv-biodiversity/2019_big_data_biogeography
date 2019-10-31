@@ -11,10 +11,25 @@ navbar:
     href: schedule.html
   - text: Monday
     menu:
-    - text: 01 - Downloading data from GBIF
-      href: 01_download_GBIF_data_exercise.html
-    - text: 02 - Data cleaning
-      href: 02_data_cleaning_exercise.html 
+      - text: Explore GBIF
+        href: explore_gbif.html
+      - text: Explore the Paleobiology database
+        href: explore_paleoDB.html
+      - text: explore the IUCN
+  - text: Tuesday
+    menu:
+    - text: 1 - Obtaining geographic occurrence records from GBIF
+      href: download_GBIF_data_exercise.html
+    - text: 2 - Cleaning geographic data
+      href: data_cleaning_exercise.html
+    - text: 3 - Quantifying accesibility bias
+      href: XXX.html
+    - text: Exploring socio-economic biases in GBIF
+      href: socioeconomic_bias.html
+      
+    - text: 3 - Obtaining fossil data from PaleoDB
+      href: 0
+
   - text: Tuesday
     menu:
     - text: 04 - Richness maps

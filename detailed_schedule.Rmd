@@ -15,9 +15,9 @@ output: html_document
 
 - 13:00 Group work and literature discussion
 
-- 15:00 Project definition
+- 15:00 Lecture & Hands on "Biodiversity databases"
 
-- 15:30 Lecture & Hands on "Biodiversity databases"
+- 15:30 Project definition
 
 
 ### Day 2 "Recent biogeography"
@@ -30,10 +30,12 @@ output: html_document
 
 - 15:15 Lecture: Biogeography through time, combining distribution ranges and phylogenies 
 
-- 16:00 Demos & exercise Bioogeography and Phylogenies (`BioGeoBEARS`, `DEC`)
+
 
 
 ### Day 3 "Historical Biogeography"
+- 16:00 Demos & exercise Bioogeography and Phylogenies (`BioGeoBEARS`, `DEC`)
+raze
 
 - 9:30 Lecture historical biogeography – modeling the evolution of geographic ranges as a continuous trait (`JIVE`, `fossilBM`)
 

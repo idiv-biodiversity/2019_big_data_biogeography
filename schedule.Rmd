@@ -2,58 +2,60 @@
 output: html_document
 ---
 
-### Day 1 "Big data in Biogeography"
+## Day 1 "Big data in Biogeography"
 
 -	Welcome & Introduction 
 
-- Presentation of participants, forming of teams
+- Presentation of participants (3 - 5 minutes each, three slides)
 
--	Lecture: Big data in Biogeography
+-	Introductory lecture: Recent developments in big data biogeography
 
-- Questions, final computer set up when necessary
-
-- Group work and literature discussion
+- Literature group work and discussion 
 
 - Lecture & Hands on "Biodiversity databases"
 
-- Project definition
+- Definition of student projects
 
 
-### Day 2 "Recent biogeography"
+## Day 2 "Biogeography through space - Recent biodiversity patterns"
 
-- 9:30 Lecture “Common biases, caveats and errors in biodiversity databases”
+- Lecture “Common biases, caveats and errors in biodiversity databases and tools to dress them”
 
-- 10:00 Lecture and Hands on exercise “Novel tools in biogeography: bioregionalization, automated conservation assessment, species to area classification” 
+- Hands-on "Recent biodiversity patterns" in R (Obtaining occurrence records, data cleaning, exploring sampling bias)
 
-- 13:00 Hands-on: Project work recent biogeography
+- Lecture “Novel tools for big data biogeography: bioregionalization, automated conservation assessment, species to area classification” 
 
-- 15:15 Lecture: Biogeography through time, combining distribution ranges and phylogenies 
+- Hands-on: "Recent biogeography" (Species richness, endemism, taxon-specific bioregionalization, extracting environmental data)
 
-- 16:00 Demos & exercise Bioogeography and Phylogenies (`BioGeoBEARS`, `DEC`)
-
-
-### Day 3 "Historical Biogeography"
-
-- 9:30 Lecture historical biogeography – modeling the evolution of geographic ranges as a continuous trait (`JIVE`, `fossilBM`)
-
-- 11:30	 Hands on historical biogeography/group work 
+- Optional lecture on a topic chose by the participants (Bayesian methods or Diversification rate analyses)
 
 
-### Day 4 "Fossil Biogeography"
+## Day 3 "Temporal biogeography - reconstructing ancestral ranges"
 
-- 9:30	Modeling geographic range evolution using the fossil record (`DES` model)
+- Lecture "Historical biogeography – methods to model the evolution of geographic ranges through time"
 
-- 11:30 Guest lecture by Sara Varela (Museum für Naturkunde) as Species distribution models to work in paleobiogeography
+- Hands-on "Reconstructing ancestral ranges" (`DEC`, `BioGeoBEARS`, `Biogeographic stochastic mapping`)
 
-Afternoon: Hands on fossils in biogeography 
+- Hands on "Reconstructing ancestral ranges as continuous trait" (`BITE`, `rase`)
 
 
-### Day 5, "Putting it all together"
+## Day 4 "Fossil Biogeography"
 
-- 09:30 Demo & exercise "Visualization of the results in R"
+- Lecture "Fossil biogeography"
 
-- 11:00 Project work
+- Hands-on Fossil biogeography (`fossilBM`)
 
-- 13:30 Student presentation and examination
+- Guest lecture by [Sara Varela](https://scholar.google.de/citations?hl=de&user=8dckI70AAAAJ) on Species distribution in paleobiogeography
 
-- 15:00 Course evaluation and wrap up
+- Lecture "The DES model - A new approach to estimate area connectivity and diversification rates" (`DES`)
+
+
+## Day 5, "Putting it all together"
+
+- Hands-on "Visualizing biogeographic results in R"
+
+- Work on student project and presentation
+
+- Student presentations
+
+- Course evaluation and wrap up
