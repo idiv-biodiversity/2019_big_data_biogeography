@@ -51,6 +51,8 @@ output: html_document
 
 - Lecture "The DES model - A new approach to estimate area connectivity and diversification rates" (`DES`)
 
+- Time for project work
+
 
 ## Day 5, "Putting it all together"
 
