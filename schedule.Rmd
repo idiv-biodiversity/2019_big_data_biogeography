@@ -34,9 +34,11 @@ output: html_document
 
 - Lecture "Historical biogeography – methods to model the evolution of geographic ranges through time"
 
-- Hands-on "Reconstructing ancestral ranges" (`DEC`, `BioGeoBEARS`, `Biogeographic stochastic mapping`)
+- Hands-on "Reconstructing ancestral ranges" (`DEC`, `BioGeoBEARS`, `Biogeographic stochastic mapping`, `GeoSSE`)
 
-- Hands on "Reconstructing ancestral ranges as continuous trait" (`BITE`, `rase`)
+- Lecture "Trait evolution"
+
+- Hands on "Reconstructing ancestral ranges as continuous trait" (`BITE`)
 
 
 ## Day 4 "Fossil Biogeography"
