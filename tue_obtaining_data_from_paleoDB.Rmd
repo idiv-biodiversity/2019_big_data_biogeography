@@ -1,0 +1,46 @@
+---
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, eval = FALSE,
+                      echo=TRUE, warning=FALSE, message=FALSE,
+                      tidy = TRUE, collapse = TRUE,
+                      results = 'hold')
+```
+
+
+# Background
+Fossils provide essential information for historical biogeography and evolutionary biology, as they provide independent data on the evolution of species ranges through time. However, because the fossil record is very limited and biased, and collecting and identifying fossils is challenging only few fossils are available in many taxonomic groups. The Paleobiology database is a publicly available repository gather information on fossil occurrences from the literature.
+
+# Objective
+After this short exercise you will be able to download fossil occurrence from the [Paleobiology database](https://paleobiodb.org/#/) using the [paleobioDB package](https://github.com/ropensci/paleobioDB). THe fourth day of the course will be dedicated to how to use fossils for biogeography.
+
+# Exercise
+1. Download all fossil records available for your taxon of interest from the PaleobiologyDB. In the case, that there are no fossils available for your taxon, move up as many taxonomic ranks as necessary. (`pdb_occurrence`)
+
+# Tutorial
+Note that we set the limit to 5000 here, you might want to change this, if you have a group with many fossils
+
+```{r}
+library(paleobioDB)
+library(readr)
+
+# Check out the  pbdb_occurrences function to download the data
+?pbdb_occurrences
+
+# get the data from the Paleobiology DB, use the arguments to narrow your search
+dat <- paleobioDB::pbdb_occurrences(base_name = "Magnoliopsida", 
+                                    vocab = "pbdb", 
+                                    limit = 500,
+                                    show = c("coords", "phylo", "attr", "loc", "time", "rem"))
+rownames(dat) <- NULL
+
+# Visualize
+pbdb_map(dat)
+
+# write to disk
+write_csv(dat, "example_data/input/fossil_records.csv")
+```
+
+Beware of synonyms and errors, they could twist your estimations about species richness, evolutionary and extinction rates, etc. paleobioDB users should be critical about the raw data downloaded from the database and filter the data before analysing it.

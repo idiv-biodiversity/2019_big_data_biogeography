@@ -16,44 +16,57 @@ navbar:
       - text: Explore GBIF
         href: mo_explore_gbif.html
       - text: Explore the Paleobiology database
-        href: mo_explore_paleoDB.html
+        href: mo_explore_paleobioDB.html
       - text: explore the IUCN database
         href: mo_explore_iucn.html
   - text: Tuesday
     menu:
     - text: Obtaining geographic occurrence records from GBIF
-      href: tue_download_GBIF_data_exercise.html
+      href: tue_download_GBIF_data.html
     - text: Cleaning geographic data
-      href: tue_data_cleaning_exercise.html
-    - text: Quantifying accesibility bias
+      href: tue_cleaning_geographic_data.html
+    - text: Exploring sampling bias
       href: tue_accesibility_bias.html
-    - text: Exploring socio-economic biases in GBIF
-      href: tue_socioeconomic_bias.html
-    - text: Obtaining fossil data from PaleoDB
-      href: tue_obtaining_data_from_paleoDB.html
-    - text: Species richness and range weighted endemism
-      href: tue_species_richness_endemsim.html
+    - text: Species richness maps
+      href: tue_species_richness.html
     - text: Taxon-specific bioregionalization
       href: tue_taxon_specific_bioregionalization.html
     - text: Species to biome classification
-      href: tue_species_to_biome_classification.html
+      href: tue_biome_classification.html
     - text: Obtaining environmental data
       href: tue_obtaining_environmental_data.html
     - text: Automated conservation assessment and IUCN assessments
       href: tue_automated_conservation_assessment.html
+    - text: Obtaining fossil data from PaleoDB
+      href: tue_obtaining_data_from_paleoDB.html
+    - text: Cleaning fossil data
+      href: tue_fossil_cleaning.html
   - text: Wednesday
     menu:
     - text: Reconstructing ancestral areas (DEC)
       href: wed_ancestral_areas_DEC.html
     - text: Reconstructing ancestral biomes (time-stratified DEC)
       href: wed_time_stratified_DEC.html
-    -text
+    - text: Estimating the number of shifts (DEC BSM)
+      href: wed_DEC_bsm.html
+    - text: Record-based biome classification
+      href: wed_record_based_biome_classification.html
+    - text: Diversification rate estimation (GeoSSE)
+      href: wed_diversification_rates_geosse.html
+    - text: Ancestral ranges as continuous traits
+      href: wed_bite.html
   - text: Thursday
+    menu:
+    - text: Bayesian inference of trait evolution under a “fossilized” Brownian motion (FBM)
+      href: thu_fossilBM.html
   - text: Friday
     menu:
     - text: Species richness maps
-     href: fr_species_richness_maps.html
-    - text
+      href: fr_species_richness_maps.html
+    - text: Ancestral area reconstruction from DEC
+      href: fr_plotting_DEC.html
+    - text: Visualizing diversification rate estimates
+      href: fr_diversification_rates.html
   right:
   - text: GitHub
     href: https://github.com/idiv-biodiversity/2019_big_data_biogeography

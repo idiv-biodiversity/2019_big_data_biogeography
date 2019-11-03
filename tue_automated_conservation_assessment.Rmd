@@ -1,0 +1,167 @@
+---
+title: "Range size and conservation assessment"
+output: 
+  html_document:
+    theme: readable
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, eval = FALSE,
+                      echo=TRUE, warning=FALSE, message=FALSE,
+                      tidy = TRUE, collapse = TRUE,
+                      results = 'hold')
+```
+# Background
+Species occurrence records can be used to approximate species ranges and generate preliminary conservation assessments. While comprehensive Red list assessments need a through case-by-case evaluation, preliminary assessments can help to speed up this process, by focussing on potentially threatened species.
+
+# Objectives
+After this exercise you will be abler to 
+* Approximate species range sizes based on occurrence records
+* Conduct an automated preliminary conservation assessment for multiple species based on occurrence records and Criterion B of the International Union for the conservation of Nature.
+
+# Exercises
+1. Calculate the area of the EOO for all species in your group (`CalcRangeSize`)
+2. Do a preliminary conservation assessment of your group based on Criterion B using the ConR package. You can find a detailed tutorial [here](https://cran.r-project.org/web/packages/ConR/vignettes/my-vignette.html). (`IUCN.eval`)
+3. Look at the conservation assessments available for your group from the IUCN. How well does the automated assessment reflect the full IUCN assessments
+4. Of those species that have been classifed as threatened by IUCN, how many have been done so based on criterion B?
+5. Explore the [Bio-Dem app](http://bio-dem.surge.sh/) to explore the effect of political factos on data collections in your group. 
+
+
+# Possible questions for your project
+* What is the maximum range size for a species in your group
+* What does the distribution of range sizes look like? Is it normally distributed?
+* What is the conservation status of your species following Criterion B?
+* What does the regional assessment mean?
+* What caveats could there be with the range based conservation assessment?
+
+# Library setup
+```{r}
+library(speciesgeocodeR)
+library(ConR)
+library(readr)
+library(dplyr)
+library(rredlist)
+library(jsonlite)
+```
+
+# Tutorial
+
+## 1. Approximate species ranges
+
+```{r}
+dat <- read_csv("inst/occurrence_records_clean.csv")%>%
+  dplyr::select(species, 
+                decimallongitude = decimalLongitude,
+                decimallatitude = decimalLatitude)
+
+# Based on EOO
+rs <- CalcRangeSize(dat)
+```
+
+A geospheric convex hull is a first approximation for a species range. However, some simple refinement might be desirable, for instance to limit the range only to biome where a given species ahs been recorded.
+
+```{r}
+# Limited to biomes with records
+## Load Olson et al 2001 biomes
+biom <- WWFload(x = "inst")
+names(biom)
+
+rs_biome <- CalcRangeSize(dat, biome = biom)
+
+range <- data.frame(rs, rs_biome)
+```
+
+## 2. Automated conservation assessment 
+You can use the ConR package for a preliminary conservation assessment orientated on the IUCN Red list Criterion B. THis is based on the EOO we have encountered above and additionally the Area of OCcupancy and the number of subpopulations.
+
+```{r, eval=FALSE}
+# Format input data
+inp <- dat%>%
+  dplyr::select(ddlat = decimallatitude,
+                ddlon = decimallongitude, 
+                tax = species)
+
+
+# Preliminary assessment
+ev <- IUCN.eval(inp)
+ev
+```
+
+
+## 3. Obtaining IUCN conservation status
+To obtain the the IUCN status of species using the r package [rredlist](https://cran.r-project.org/web/packages/rredlist/index.html), you need a token for the Relist API.
+
+```{r, echo = FALSE}
+iucn.key <- "01524b67f4972521acd1ded2d8b3858e7fedc7da5fd75b8bb2c5456ea18b01ba"
+```
+
+```{r}
+#iucn.key <- "Your token"
+
+sp.list <- ev$taxa %>% 
+  as.character()
+
+iucn <- data.frame()
+#get conservation status from IUCN
+for(i in 1:length(sp.list)){
+  print(i)
+  pick <- jsonlite::fromJSON(rl_search_(sp.list[i], key = iucn.key))$result
+
+  # write.table(pick, "inst/secondary_woodyness_iucn_criteria.txt", 
+  #             append = T, col.names = F, row.names = F)
+  
+  iucn <-  bind_rows(iucn, pick)
+  Sys.sleep(1)
+}
+
+```
+
+
+## 4. Comparing automated assessment and IUCN staus
+Now we can combine the automated assessment with the existing IUCN assessments, to compare them.
+
+```{r}
+out <- ev %>% 
+  left_join(iucn,  by = c("taxa" = "scientific_name"))
+
+# compare the important indices
+test <- out %>% 
+  select(taxa, 
+         automated_eoo = EOO, 
+         automated_AOO = AOO, 
+         automated_Category_CriteriaB = Category_CriteriaB,
+         iucn_eoo = eoo_km2,
+         iucn_aoo = aoo_km2,
+         iucn_year = published_year,
+         iucn_category = category, 
+         iucn_criteria = criteria)
+
+# plot for easy evaluation
+plo <- test %>% 
+  filter(!is.na(iucn_category)) %>% 
+  mutate(iucn_eoo = parse_numeric(iucn_eoo))
+
+ggplot(data = plo)+
+  geom_abline(slope = 1, intercept = 0)+
+  geom_point(aes(x = automated_eoo, y = iucn_eoo))+
+  theme_bw()
+
+ggplot(data = plo)+
+  geom_abline(slope = 1, intercept = 0)+
+  geom_point(aes(x = automated_AOO, y = iucn_aoo))+
+  theme_bw()
+
+```
+
+## Write to disk
+
+```{r}
+write_csv(test, "inst?conservation_assessment.csv")
+```
+
+
+## 5. Explore the Bio-Dem app to explore the effect of political factos on data collections in your group. 
+http://bio-dem.surge.sh/
+
+
+

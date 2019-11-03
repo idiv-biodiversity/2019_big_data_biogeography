@@ -1,0 +1,19 @@
+---
+title: "Exploring IUCN"
+output: html_document
+---
+# Background
+The International Union for the conservation of nature, provides data on species spatial distributions in the form of range maps (for mammals, birds, and amphibians) as well as data on the conservation status and extinction threats for each species, that has bee assessed for it.
+
+
+# Objectives
+After this exercise students will have a idea of the data that is available via IUCN and the metadata describing it.
+
+# Exercise
+Use the IUCN webpage to explore the IUCN data and answer the following questions.
+
+- How many threatened species are there in Germany?
+
+- How many threatened species are there in your group of interest?
+
+- What are the major threats to the Iberian lynx (Lynx pardinus) range is covered by protected area?

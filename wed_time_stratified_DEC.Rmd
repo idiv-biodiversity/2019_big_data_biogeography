@@ -1,0 +1,15 @@
+---
+output: html_document
+---
+
+# Background
+
+# Objective
+After this exercise, you will be able to set up a time-stratified DEC analysis with an areas-allowed matrix using BioGeoBEARS in R.
+
+# Exercise
+1. Set up an timeslice file and and areas-allowed matrix for your analyses. You can looka t the example files to check the format of these file
+
+# Library setup
+
+# Tutorial

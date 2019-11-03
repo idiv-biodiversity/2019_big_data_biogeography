@@ -1,0 +1,44 @@
+---
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, eval = FALSE,
+                      echo=TRUE, warning=FALSE, message=FALSE,
+                      tidy = TRUE, collapse = TRUE,
+                      results = 'hold')
+```
+
+
+# Background
+
+# Objective
+
+# Exercise
+
+# Library setup
+
+```{r}
+library(tidyverse)
+library(ape)
+library(geiger)
+library(optimx)         # You need to have some version of optimx available
+library(FD)       # for FD::maxent() (make sure this is up-to-date)
+library(snow)     # (if you want to use multicore functionality; some systems/R versions prefer library(parallel), try either)
+library(parallel)
+library(devtools)
+library(rexpokit)
+library(cladoRcpp)
+library(BioGeoBEARS)
+library(ggtree)
+library(stringr)
+library(RColorBrewer)
+library(colorspace)
+library(jpeg)
+library(viridis)
+```
+
+# Tutorial
+This script is mostly absed on the example script by the developer of BioGeoBEARS, available at http://phylo.wikidot.com/biogeobears.
+
+## Load and identify the geography and the tree fiel

@@ -1,0 +1,4 @@
+"species"	"decimallongitude"	"decimallatitude"	"homepolygon"
+"Eriotheca gracilipes"	-39.016667	-16.266667	"not_classified"
+"Eriotheca macrophylla"	-39.016667	-16.266667	"not_classified"
+"Eriotheca macrophylla"	-39.016667	-16.266667	"not_classified"

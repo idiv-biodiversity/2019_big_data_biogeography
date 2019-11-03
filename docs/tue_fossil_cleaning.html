@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+<title>tue_fossil_cleaning.utf8.md</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+
+
+
+<div id="background" class="section level1">
+<h1><span class="header-section-number">1</span> Background</h1>
+<p>The public availability of fossils for large-scale analyses is rapidly increasing, mainly due to increased databasing efforts and data aggregators such as the paleobiology database (www.paleobiodb.org) or Neotoma (www.neotomadb.org), among others. However, data quality is an issue, in particular, for old collections or collections with uncertain taxonomy and/or bad preservation. Similar problems as known from biological collection databases are relevant for fossils, but in addition fossils might be dated wrongly or with very low precision.</p>
+</div>
+<div id="objectives" class="section level1">
+<h1><span class="header-section-number">2</span> Objectives</h1>
+<p>This tutorial presents a pipeline to clean fossil data from the paleobiology database (or any other) before using it in biogeographic or evolutionary analyses. We focus on identifying overly imprecisely geo-referenced and/or dated records by combining automated cleaning using <em>CoordinateCleaner</em> with cleaning based on meta-data. The proposed steps are by no means exhaustive, and keep in mind that what is “good data” depends entirely on your downstream analyses!</p>
+</div>
+<div id="exercise" class="section level1">
+<h1><span class="header-section-number">3</span> Exercise</h1>
+<ol style="list-style-type: decimal">
+<li>Follow the tutorial below to identify spatial and temporal errors in your fossil dataset. You can either use the fossils of your study group of interest. If there are only few fossils for this group, you may want re-download fossils using a higher level taxon.</li>
+</ol>
+</div>
+<div id="tutorial" class="section level1">
+<h1><span class="header-section-number">4</span> Tutorial</h1>
+<div id="load-required-libraries" class="section level2">
+<h2><span class="header-section-number">4.1</span> Load required libraries</h2>
+<p>As a first step we will load the R libraries required for the tutorial. You might need to install some of them using <code>install.packages</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(dplyr)</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">library</span>(ggplot2)</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="kw">library</span>(CoordinateCleaner)</a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="kw">library</span>(countrycode)</a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="kw">library</span>(paleobioDB)</a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="kw">library</span>(readr)</a></code></pre></div>
+</div>
+<div id="load-test-dataset" class="section level2">
+<h2><span class="header-section-number">4.2</span> Load test dataset</h2>
+<p>For this tutorial we will use a dataset of vascular plant fossils from the last 65 million years, downloaded from the paleobiology database using the plaeobioDB package. For the tutorial we’ll limit the data to maximum 5,000 records, to keep the downloading time reasonable. If you obtained your data from the web mask of the paleobiology database, or use an entirely different database, you will have to adapt the column names in the script.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">dat &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;example_data/fossil_records.csv&quot;</span>)</a></code></pre></div>
+</div>
+<div id="visualize-the-records-on-a-map" class="section level2">
+<h2><span class="header-section-number">4.3</span> Visualize the records on a map</h2>
+<p>As a first step we will visualize the records on a map, to get a general overview.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># plot data to get an overview</span></a>
+<a class="sourceLine" id="cb3-2" title="2">wm &lt;-<span class="st"> </span><span class="kw">borders</span>(<span class="st">&quot;world&quot;</span>, <span class="dt">colour =</span> <span class="st">&quot;gray50&quot;</span>, <span class="dt">fill =</span> <span class="st">&quot;gray50&quot;</span>)</a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="kw">ggplot</span>() <span class="op">+</span><span class="st"> </span><span class="kw">coord_fixed</span>() <span class="op">+</span><span class="st"> </span>wm <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">data =</span> dat, <span class="kw">aes</span>(<span class="dt">x =</span> lng, <span class="dt">y =</span> lat), </a>
+<a class="sourceLine" id="cb3-4" title="4">    <span class="dt">colour =</span> <span class="st">&quot;darkred&quot;</span>, <span class="dt">size =</span> <span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span><span class="kw">theme_bw</span>()</a></code></pre></div>
+<div id="spatial-issues" class="section level3">
+<h3><span class="header-section-number">4.3.1</span> Spatial issues</h3>
+<p>We’ll first check coordinate validity to check if all coordinates are numeric and part of a lat/lon coordinate reference system using <code>cc_val</code>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">cl &lt;-<span class="st"> </span><span class="kw">cc_val</span>(dat, <span class="dt">lat =</span> <span class="st">&quot;lat&quot;</span>, <span class="dt">lon =</span> <span class="st">&quot;lng&quot;</span>)</a></code></pre></div>
+<p>Looks good, then we will test for coordinates with equal longitude and latitude. You can use the <code>test</code> argument to specify if coordinates should be flagged if their absolute values are identical (e.g. 56,-56).</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1">cl &lt;-<span class="st"> </span><span class="kw">cc_equ</span>(cl, <span class="dt">lat =</span> <span class="st">&quot;lat&quot;</span>, <span class="dt">lon =</span> <span class="st">&quot;lng&quot;</span>)</a></code></pre></div>
+<p>For the purpose of the tutorial, we will always exclude flagged records. If you want to further explore them, and you should if by any means possible, use the <code>value = &quot;flagged&quot;</code> argument, valid for all functions. In that case the output value will be a vector of logical values with the same length as <code>dat</code>, where TRUE = valid record, FALSE = flagged record. It is generally advisable to check flagged records whenever possible, to avoid data-loss and false flags.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">fl &lt;-<span class="st"> </span><span class="kw">cc_equ</span>(dat, <span class="dt">value =</span> <span class="st">&quot;flagged&quot;</span>, <span class="dt">lat =</span> <span class="st">&quot;lat&quot;</span>, <span class="dt">lon =</span> <span class="st">&quot;lng&quot;</span>)</a>
+<a class="sourceLine" id="cb6-2" title="2"></a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="co"># extract and check the flagged records</span></a>
+<a class="sourceLine" id="cb6-4" title="4">fl_rec &lt;-<span class="st"> </span>dat[<span class="op">!</span>fl, ]</a>
+<a class="sourceLine" id="cb6-5" title="5"><span class="kw">head</span>(fl_rec)</a></code></pre></div>
+<p>We’ll also test if the records are identical, or in close vicinity to the centroids of political units. You can modify the buffer around each centroid using the <code>buffer</code> argument and the level of testing (country centroids, province centroids, or both) using the <code>test argument</code>. In case you have a list of geographic coordinates you consider problematic, for instance a list of cities you can provide them as custom gazetteer using the <code>ref</code> argument.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1">fl &lt;-<span class="st"> </span><span class="kw">cc_cen</span>(cl, <span class="dt">lat =</span> <span class="st">&quot;lat&quot;</span>, <span class="dt">lon =</span> <span class="st">&quot;lng&quot;</span>, <span class="dt">value =</span> <span class="st">&quot;flagged&quot;</span>)</a>
+<a class="sourceLine" id="cb7-2" title="2">fl_rec &lt;-<span class="st"> </span>cl[<span class="op">!</span>fl, ]</a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="kw">unique</span>(fl_rec<span class="op">$</span>cc)</a>
+<a class="sourceLine" id="cb7-4" title="4">cl &lt;-<span class="st"> </span>cl[fl, ]</a></code></pre></div>
+<p>Next we will test if the coordinates are within the country they are assigned to. This test is a bit more tricky, as it will also flag records, if the country name in the country column is not following ISO3 or if the records have been assigned during a different political landscape. For instance records from former Western and Eastern Germany. Here we need to convert the country annotation in column cc from ISO2 to ISO3; it is advisable to double check which records have be flagged, to avoid unnecessary data loss (see above).</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="co"># adapt country code to ISO3, for country test</span></a>
+<a class="sourceLine" id="cb8-2" title="2">cs_ma &lt;-<span class="st"> &quot;GBR&quot;</span></a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="kw">names</span>(cs_ma) &lt;-<span class="st"> &quot;UK&quot;</span></a>
+<a class="sourceLine" id="cb8-4" title="4">cl<span class="op">$</span>cc_iso3 &lt;-<span class="st"> </span><span class="kw">countrycode</span>(cl<span class="op">$</span>cc, <span class="dt">origin =</span> <span class="st">&quot;iso2c&quot;</span>, <span class="dt">destination =</span> <span class="st">&quot;iso3c&quot;</span>, <span class="dt">custom_match =</span> cs_ma)</a>
+<a class="sourceLine" id="cb8-5" title="5"></a>
+<a class="sourceLine" id="cb8-6" title="6">cl &lt;-<span class="st"> </span><span class="kw">cc_coun</span>(cl, <span class="dt">lat =</span> <span class="st">&quot;lat&quot;</span>, <span class="dt">lon =</span> <span class="st">&quot;lng&quot;</span>, <span class="dt">iso3 =</span> <span class="st">&quot;cc_iso3&quot;</span>)</a></code></pre></div>
+<p>Next we will test if any of the records bear the coordinates of a hosting biodiversity institution or the GBIF headquarters, using the <code>institutions</code> database of <em>CoordinateCleaner</em>. As for the country centroid test you can change the buffer around the institutions with the <code>buffer</code> argument.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1">cl &lt;-<span class="st"> </span><span class="kw">cc_inst</span>(cl, <span class="dt">lat =</span> <span class="st">&quot;lat&quot;</span>, <span class="dt">lon =</span> <span class="st">&quot;lng&quot;</span>)</a>
+<a class="sourceLine" id="cb9-2" title="2">cl &lt;-<span class="st"> </span><span class="kw">cc_gbif</span>(cl, <span class="dt">lat =</span> <span class="st">&quot;lat&quot;</span>, <span class="dt">lon =</span> <span class="st">&quot;lng&quot;</span>)</a></code></pre></div>
+<p>Finally, we will test for plain zero coordinates (e.g. 0/0).</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">cl &lt;-<span class="st"> </span><span class="kw">cc_zero</span>(cl, <span class="dt">lat =</span> <span class="st">&quot;lat&quot;</span>, <span class="dt">lon =</span> <span class="st">&quot;lng&quot;</span>)</a></code></pre></div>
+</div>
+<div id="temporal-issues" class="section level3">
+<h3><span class="header-section-number">4.3.2</span> Temporal issues</h3>
+<p>The spatial cleaning above is mostly identical with steps from recent geographic records. Additionally  includes three functions to test the temporal dimension of fossils. Fossil ages are usually defined with a maximum and a minimum range, based on geological strata. First we will exclude records without dating information (NA) and then test for records with equal minimum and maximum range. Unless your data includes absolutely dated fossils, this will most likely be an data entry error.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">cl &lt;-<span class="st"> </span>cl[<span class="op">!</span><span class="kw">is.na</span>(cl<span class="op">$</span>late_age), ]</a>
+<a class="sourceLine" id="cb11-2" title="2">cl &lt;-<span class="st"> </span>cl[<span class="op">!</span><span class="kw">is.na</span>(cl<span class="op">$</span>early_age), ]</a>
+<a class="sourceLine" id="cb11-3" title="3">cl &lt;-<span class="st"> </span><span class="kw">cf_equal</span>(cl, <span class="dt">min_age =</span> <span class="st">&quot;late_age&quot;</span>, <span class="dt">max_age =</span> <span class="st">&quot;early_age&quot;</span>)</a></code></pre></div>
+<p>Next we will look at the age range (= max age - min age) of each record. The age range is the dating precision and can vary considerably, depending on the data available for dating. For many analyses, for instance in PyRate, very imprecisely dated records are not suitable. Lets first have a look at the age ranges in our test dataset.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1">rang &lt;-<span class="st"> </span>cl<span class="op">$</span>early_age <span class="op">-</span><span class="st"> </span>cl<span class="op">$</span>late_age</a>
+<a class="sourceLine" id="cb12-2" title="2"><span class="kw">hist</span>(rang, <span class="dt">breaks =</span> <span class="dv">40</span>, <span class="dt">xlab =</span> <span class="st">&quot;Date range [max age - min age]&quot;</span>, <span class="dt">main =</span> <span class="st">&quot;&quot;</span>)</a></code></pre></div>
+<p>Some individual records are dated with a precision of more than 60 million years!  offers two ways to flag records based on their age range (1) based on absolute age, e.g. age range &gt; 35 million years or (2) based on age range outlier detection in the entire dataset (e.g. if few records are much less precisely dated than the rest of all records) and (3) based on age range outlier detection on taxon level (e.g. all  records that are much less precisely dated than the other  records. The second and third approach can be combined and offer some more flexibility over the absolute age limit, but need some consideration on the desired sensitivity. Here, we will run all three variants for illustration, if you use your own data you should decide which one is more suitable depending on your downstream analyses. In the case of (2) and (3) you can tweak the test sensitivity using the <code>mltpl</code> argument.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="co"># Outlier dataset</span></a>
+<a class="sourceLine" id="cb13-2" title="2">cl &lt;-<span class="st"> </span><span class="kw">cf_range</span>(cl, <span class="dt">taxon =</span> <span class="st">&quot;&quot;</span>, <span class="dt">min_age =</span> <span class="st">&quot;late_age&quot;</span>, <span class="dt">max_age =</span> <span class="st">&quot;early_age&quot;</span>)</a>
+<a class="sourceLine" id="cb13-3" title="3"></a>
+<a class="sourceLine" id="cb13-4" title="4"><span class="co"># Outlier per taxon</span></a>
+<a class="sourceLine" id="cb13-5" title="5">cl &lt;-<span class="st"> </span><span class="kw">cf_range</span>(cl, <span class="dt">taxon =</span> <span class="st">&quot;taxon_name&quot;</span>, <span class="dt">min_age =</span> <span class="st">&quot;late_age&quot;</span>, <span class="dt">max_age =</span> <span class="st">&quot;early_age&quot;</span>)</a>
+<a class="sourceLine" id="cb13-6" title="6"></a>
+<a class="sourceLine" id="cb13-7" title="7"><span class="co"># Absolute age limit</span></a>
+<a class="sourceLine" id="cb13-8" title="8">cl &lt;-<span class="st"> </span><span class="kw">cf_range</span>(cl, <span class="dt">taxon =</span> <span class="st">&quot;taxon_name&quot;</span>, <span class="dt">min_age =</span> <span class="st">&quot;late_age&quot;</span>, <span class="dt">max_age =</span> <span class="st">&quot;early_age&quot;</span>, </a>
+<a class="sourceLine" id="cb13-9" title="9">    <span class="dt">method =</span> <span class="st">&quot;time&quot;</span>, <span class="dt">max_range =</span> <span class="dv">35</span>)</a>
+<a class="sourceLine" id="cb13-10" title="10"></a>
+<a class="sourceLine" id="cb13-11" title="11">rang &lt;-<span class="st"> </span>cl<span class="op">$</span>early_age <span class="op">-</span><span class="st"> </span>cl<span class="op">$</span>late_age</a>
+<a class="sourceLine" id="cb13-12" title="12"><span class="kw">hist</span>(rang, <span class="dt">breaks =</span> <span class="dv">40</span>, <span class="dt">xlab =</span> <span class="st">&quot;Date range [max age - min age]&quot;</span>, <span class="dt">main =</span> <span class="st">&quot;&quot;</span>)</a></code></pre></div>
+<p>Finally we will test for outliers in space-time, that is records that are either very distant in space or in time from all other records (1) in the dataset (2) per taxon. The test is again based on quantile outlier detection and can be modified using various arguments. Here it is important to carefully consider the desired test sensitivity. See <code>?cf_outl</code> for help.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" title="1"><span class="co"># Outlier dataset</span></a>
+<a class="sourceLine" id="cb14-2" title="2">cl &lt;-<span class="st"> </span><span class="kw">cf_outl</span>(cl, <span class="dt">taxon =</span> <span class="st">&quot;&quot;</span>, <span class="dt">lat =</span> <span class="st">&quot;lat&quot;</span>, <span class="dt">lon =</span> <span class="st">&quot;lng&quot;</span>, <span class="dt">min_age =</span> <span class="st">&quot;late_age&quot;</span>, </a>
+<a class="sourceLine" id="cb14-3" title="3">    <span class="dt">max_age =</span> <span class="st">&quot;early_age&quot;</span>)</a>
+<a class="sourceLine" id="cb14-4" title="4"></a>
+<a class="sourceLine" id="cb14-5" title="5"><span class="co"># Outlier taxon</span></a>
+<a class="sourceLine" id="cb14-6" title="6">cl &lt;-<span class="st"> </span><span class="kw">cf_outl</span>(cl, <span class="dt">taxon =</span> <span class="st">&quot;taxon_name&quot;</span>, <span class="dt">lat =</span> <span class="st">&quot;lat&quot;</span>, <span class="dt">lon =</span> <span class="st">&quot;lng&quot;</span>, <span class="dt">min_age =</span> <span class="st">&quot;late_age&quot;</span>, </a>
+<a class="sourceLine" id="cb14-7" title="7">    <span class="dt">max_age =</span> <span class="st">&quot;early_age&quot;</span>)</a></code></pre></div>
+<p>Done! To check how many records have been flagged in total, you can compare the two datasets.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1"><span class="kw">nrow</span>(dat) <span class="op">-</span><span class="st"> </span><span class="kw">nrow</span>(cl)</a></code></pre></div>
+<p>So far so good, we have significantly refined the data for our needs. In section 6 we will have a look at the meta-data for further refinement, but before, note that there are two different ways to run <em>CoordinateCleaner</em>. You can connect all functions directly in a row using the magrittr pipe (%&gt;%) operator.</p>
+</div>
+</div>
+<div id="improving-data-quality-using-meta-data" class="section level2">
+<h2><span class="header-section-number">4.4</span> Improving data quality using meta-data</h2>
+<p>Usually, at least some type of meta-data are provided with fossil occurrences, as is the case in the paleobiology database. We’ll now explore these and see if we can identify further problems.</p>
+<div id="basic-taxonomy" class="section level3">
+<h3><span class="header-section-number">4.4.1</span> Basic taxonomy</h3>
+<p>First we’ll take a short look at taxonomy. Fossil taxonomy is very complex and composite databases often have taxonomic issues that are extremely difficult to resolve. Here we will only do some very basic checks to test if: 1. all taxa in our dataset are plants, 2. they are at least identified to genus level.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1"><span class="co"># 1. This looks OK</span></a>
+<a class="sourceLine" id="cb16-2" title="2"><span class="kw">table</span>(cl<span class="op">$</span>phylum)</a>
+<a class="sourceLine" id="cb16-3" title="3"></a>
+<a class="sourceLine" id="cb16-4" title="4"><span class="co"># 2. Taxonomic level of identification</span></a>
+<a class="sourceLine" id="cb16-5" title="5"><span class="kw">table</span>(cl<span class="op">$</span>taxon_rank)</a></code></pre></div>
+<p>The required taxonomic level of course depends on the downstream analyses, but here we will exclude everything other than genus or species, which is a reasonable approach for most PyRate analyses.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1">cl &lt;-<span class="st"> </span>cl <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(taxon_rank <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;species&quot;</span>, <span class="st">&quot;genus&quot;</span>))</a></code></pre></div>
+</div>
+<div id="spatial-coordinates" class="section level3">
+<h3><span class="header-section-number">4.4.2</span> Spatial coordinates</h3>
+<p>The Paleobiology database includes some information on the basis of the geographic data for many records.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" title="1"><span class="kw">table</span>(cl<span class="op">$</span>geogscale)</a></code></pre></div>
+<p>As expected most records are only roughly geo-referenced, but the precision is still relatively high for many records.</p>
+</div>
+<div id="time" class="section level3">
+<h3><span class="header-section-number">4.4.3</span> Time</h3>
+<p>We have checked for potentially problematic records in time and space above, but it is definitively advisable to check again.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1"><span class="co"># minimum ages</span></a>
+<a class="sourceLine" id="cb19-2" title="2"><span class="kw">tail</span>(<span class="kw">table</span>(cl<span class="op">$</span>late_age))</a>
+<a class="sourceLine" id="cb19-3" title="3"></a>
+<a class="sourceLine" id="cb19-4" title="4"><span class="kw">ggplot</span>(cl) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="kw">aes</span>(<span class="dt">x =</span> late_age))</a>
+<a class="sourceLine" id="cb19-5" title="5"></a>
+<a class="sourceLine" id="cb19-6" title="6"><span class="co"># maximum ages</span></a>
+<a class="sourceLine" id="cb19-7" title="7"><span class="kw">tail</span>(<span class="kw">table</span>(cl<span class="op">$</span>early_age))</a>
+<a class="sourceLine" id="cb19-8" title="8"></a>
+<a class="sourceLine" id="cb19-9" title="9"><span class="kw">ggplot</span>(cl) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="kw">aes</span>(<span class="dt">x =</span> early_age))</a></code></pre></div>
+<p>The minimum and maximum ages look unproblematic, but there are still some records with very large temporal uncertainties, and at least one case where the minimum and maximum age seem reversed. This might be informative in some cases, but for most analysis this might be problematic, so here we exclude all records with temporal uncertainty which will retain 95% of the data. This is an arbitrary choice, and you’ll have to choose a more suitable value based on your planned analyses.</p>
+</div>
+<div id="additional-meta-data" class="section level3">
+<h3><span class="header-section-number">4.4.4</span> Additional meta-data</h3>
+<p>If you download data using the paleobiology database web portal, there are some additional fields you can check to generally gauge data precision, namely basis and precision of the geo-reference, the year of publications (old publications are more likely to be imprecise), preservation quality (bad preservation increases taxonomic uncertainty) and plant organ (also taxonomic uncertainty) and collection type. You might need to adapt the column names, and not all columns will be relevant for all taxa (e.g. “plant organ”).</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" title="1"></a>
+<a class="sourceLine" id="cb20-2" title="2"><span class="kw">table</span>(cl<span class="op">$</span>latlng_basis)</a>
+<a class="sourceLine" id="cb20-3" title="3"><span class="kw">table</span>(cl<span class="op">$</span>latlng_precision)</a>
+<a class="sourceLine" id="cb20-4" title="4"></a>
+<a class="sourceLine" id="cb20-5" title="5"></a>
+<a class="sourceLine" id="cb20-6" title="6"><span class="kw">table</span>(cl<span class="op">$</span>ref_pubyr)</a>
+<a class="sourceLine" id="cb20-7" title="7"><span class="kw">table</span>(cl<span class="op">$</span>collection_type)</a>
+<a class="sourceLine" id="cb20-8" title="8"><span class="kw">table</span>(cl<span class="op">$</span>preservation_quality)</a>
+<a class="sourceLine" id="cb20-9" title="9"><span class="kw">table</span>(cl<span class="op">$</span>plant_organ)</a>
+<a class="sourceLine" id="cb20-10" title="10"></a>
+<a class="sourceLine" id="cb20-11" title="11">cl &lt;-<span class="st"> </span><span class="kw">filter</span>(cl, preservation_quality <span class="op">!=</span><span class="st"> &quot;very poor&quot;</span>)</a></code></pre></div>
+</div>
+</div>
+<div id="conclusions" class="section level2">
+<h2><span class="header-section-number">4.5</span> Conclusions</h2>
+<p>Through the various cleaning steps outline above, we have identified some potential major caveats and hopefully increased the quality of the dataset. We have excluded a significant fraction of all records . Data quality is a delicate issue, especially for fossils from compound data bases and the usefulness of individual records will depend on your downstream analyses. We hope that you find this tutorial useful in exploring data downloaded from the Paleobiology database and to explore the quality of any fossil dataset.</p>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

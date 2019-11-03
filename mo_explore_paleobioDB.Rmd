@@ -1,0 +1,29 @@
+---
+title: "Exploring the paleobiology DB"
+output: html_document
+---
+
+# Background
+The Paleobiology database is a data aggregator, compiling global fossil records across the tree of life.
+
+
+# Objectives
+After this exercise, the students will have an impression of the data available via the Paleobiology database and the meta-data associated with it.
+
+
+# Exercise
+Use the paleobiology webpage to explore the data available and to answer the following questions.
+
+- How many records are there in PBDB?
+
+- Which is the most common taxon?
+
+- Where are most records from globally?
+
+- How many records are there from the Paleogene?
+
+- From which period is the oldest German fossil?
+
+- What is the closest (reasonably identified) fossil to Berlin
+
+- How old is it?

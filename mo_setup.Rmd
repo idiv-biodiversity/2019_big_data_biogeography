@@ -1,0 +1,47 @@
+---
+title: "Setup"
+output: html_document
+---
+
+#R dependencies
+
+During the course, we will used R and Rstudio to run analyses. Please install the following packages already now, to be as efficient as possible during the exercises. Please open Rstudio and run the following command to install the necessary dependencies. You can just copy the code from the following chunk.
+
+```{r, eval = FALSE}
+install.packages(
+  "ape",
+  "devtools",
+  "scales",
+  "phytools",
+  "geiger",
+  "TreeSim",
+  "raster",
+  "tidyverse",
+  "countrycode",
+  "paleobioDB",
+  "rgdal",
+  "ConR",
+  "rredlist",
+  "jsonlite",
+  "rgeos",
+  "optimx",
+  "FD",
+  "snow",
+  "parallel",
+  "rexpokit",
+  "cladoRcpp",
+  "ggtree",
+  "stringr",
+  "RColorBrewer",
+  "colorspace",
+  "viridis",
+  "jpeg"
+)
+
+library(devtools)
+
+install_github("ropensci/CoordinateCleaner")
+install_github("azizka/speciesgeocodeR")
+install_github("azizka/sampbias")
+install_github('nmatzke/BioGeoBEARS')
+```

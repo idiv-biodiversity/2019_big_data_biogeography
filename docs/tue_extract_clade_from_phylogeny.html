@@ -12,7 +12,7 @@
 
 
 
-<title>Readme.utf8.md</title>
+<title>tue_extract_clade_from_phylogeny.utf8.md</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,6 +23,8 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -416,63 +418,69 @@ $(document).ready(function () {
 </div>
 
 
-<div id="physalia-courses-big-data-biogeography" class="section level1">
-<h1>Physalia courses: Big Data Biogeography</h1>
-<p>Date &amp; time: November 4^th - November 8^th, 9:30 – 17:00</p>
-<p>Location: Profund Innovation, Freie Universität Berlin - Altensteinstraße 40, 14195 Berlin, Germany</p>
-<p>Teachers: Alexander Zizka, German Center for Integrative Biodiversity research &amp; Daniele Silvestro, University of Gothenburg Sweden</p>
-<div id="before-the-course" class="section level2">
-<h2>Before the course</h2>
-<ul>
-<li><p>Please bring your own computer</p></li>
-<li><p>Install the current version of R and RStudio on your computer</p></li>
-<li><p>Read the course literature listed below, we will have a literature discussion on the first day.</p></li>
-<li>Please prepare 3-5 minutes (if you want including slides) to present yourself and your research. Please make sure to answer the following questions:
-<ol style="list-style-type: lower-alpha">
-<li>Where are you from?</li>
-<li>What is your research about?</li>
-<li>How are your R skills?</li>
-<li>What are your expectations for this course?</li>
-</ol></li>
-</ul>
+<div id="background" class="section level1">
+<h1>Background</h1>
+<p>In the last years large scale phylogenies for certain taxonomic groups have become available, for instance for amphibians, birds, mammals, squamates, and flowering plants. These phylogenies have challenges, but can provide helpful information for many research questions.</p>
 </div>
-<div id="contact" class="section level2">
-<h2>Contact</h2>
-<p>Course content: <a href="mailto:alexander.zizka@idiv.de">Alexander Zizka</a> Organisational: <a href="mailto:info@physalia-courses.org">Physalia courses</a></p>
-<p><a href="https://www.physalia-courses.org/courses-workshops/course48/">Physalia courses webpage</a></p>
+<div id="objective" class="section level1">
+<h1>Objective</h1>
+<p>For the course we will not use the entire phylogenies, for the exercises on Wednesday and Thursday, since this make computation time infeasible for the course. Instead, you will extract a small clade of interest and run the analyses using this exampled data. All scripts will be scalable for larger phylogenies, so you can use them in your research alter on.</p>
 </div>
-<div id="objectives" class="section level2">
-<h2>Objectives</h2>
-<p>After this course, students will be able to:</p>
+<div id="exercise" class="section level1">
+<h1>Exercise</h1>
 <ol style="list-style-type: decimal">
-<li><p>Obtain and prepare large scale species occurrence records from public databases in R (including data mining, data cleaning and exploration)</p></li>
-<li><p>Apply novel methods for handling and processing ‘big data’ in biogeographic research, including area classification, bioregionalization and automated conservation assessments</p></li>
-<li><p>Reconstruct species ancestral ranges based on species occurrences and phylogenetic trees, using different evolutionary models</p></li>
-<li><p>Understand the potential and caveats of fossil based biogeography, and be familiar with novel methods to estimate ancestral ranges and evolutionary rates from ranges of extinct and extant taxa</p></li>
+<li>Load your own phylogeny or one of the example phylogenies from the example_Data folder in the github repository into R. (<code>read.tree</code>)</li>
 </ol>
+<p>2 Generate a lineage through time plot from this phylogeny. (<code>ltt.plot</code>)</p>
+<p>3 Select a clade your are particularly interested in to work on and extract it from the phylogeny, by identifying two species whose most recent common ancestor corresponds to the MRCA of your clade of interest. (<a href="http://www.onezoom.org/life/" class="uri">http://www.onezoom.org/life/</a>, <code>getMRCA</code>, <code>extract.clade</code>)</p>
 </div>
-<div id="background" class="section level2">
-<h2>Background</h2>
-<p>The public availability of large-scale species distribution data has increased drastically over the last ten years. In particular, due to the aggregation of records from museums and herbaria, and citizen science in public databases such as the Global Biodiversity Information Facility (GBIF). This is leading to a ‘big data’ revolution in biogeography, which holds an enormous but still poorly explored potential for understanding large scale patterns and drivers of biodiversity in space and time.</p>
+<div id="library-setup" class="section level1">
+<h1>Library setup</h1>
+<pre class="r"><code>library(ape)</code></pre>
 </div>
-<div id="project-assignment" class="section level2">
-<h2>Project assignment</h2>
-<p>During the course you will analyse a specific dataset. We strongly encourage you to bring your own data (Taxon of interest, phylogenetic tree, fossil data), which will give you the opportunity to chose questions and exercises most suitable for your work. If necessary we will provide example data during the course as well.</p>
+<div id="tutorial" class="section level1">
+<h1>Tutorial</h1>
+<div id="load-a-phylogeny-into-r" class="section level2">
+<h2>1. Load a phylogeny into R</h2>
+<pre class="r"><code>mammals_tree &lt;- read.tree(&quot;example_data/mammals.tre&quot;)
+
+# Check properties (attributes) of the tree object
+str(mammals_tree)</code></pre>
 </div>
-<div id="course-literature" class="section level2">
-<h2>Course literature</h2>
-<ol style="list-style-type: decimal">
-<li><p>Meyer et al. (2015) Global priorities for an effective information basis of biodiversity distributions. Nature Communications, 8 pp.</p></li>
-<li><p>Antonelli et al. (2018) Amazonia is the primary source of Neotropical biodiversity. PNAS 115(23): 6034–6039.</p></li>
-<li><p>Kostikova A et al. (2016) Bridging Inter- and Intraspecific Trait Evolution with a Hierarchical Bayesian Approach. Systematic Biology 65(3):417-431.</p></li>
-<li>One of the following suggestions (depending on your own interests):
-<ol style="list-style-type: lower-alpha">
-<li><p>Edler et al. (2017) Infomap Bioregions: Interactive mapping of biogeographical regions from species distributions. Systematic Biology 66(2):197–204.</p></li>
-<li><p>Zizka et al. (2019) CoordinateCleaner: Standardized cleaning of occurrence records from biological collection databases. Methods in Ecology and Evolution 10:744-751.</p></li>
-<li><p>Silvestro et al.(2016) Fossil biogeography: a new model to infer dispersal, extinction and sampling from palaeontological data. Philosophical Transactions of the Royal Society B 371:20150225.</p></li>
-<li><p>Price et al. (2019) Big data little help in megafauna mysteries. Nature 558(7):23-25</p></li>
-</ol></li>
-</ol>
+<div id="lineages-through-time-plot" class="section level2">
+<h2>2. Lineages through time plot</h2>
+<pre class="r"><code># plot lineages-through-time
+ltt.plot(mammals_tree, lwd = 2, tol = 0.001)
+# lwd=2 defines the width of the line tol=0.001 is used to ignore small
+# rounding errors in the branch length
+
+# log-transform the number of lineages
+ltt.plot(mammals_tree, log = &quot;y&quot;, lwd = 2, tol = 0.001)</code></pre>
+</div>
+<div id="extract-clade-of-interest" class="section level2">
+<h2>3. Extract clade of interest</h2>
+<p>As an example, we will extract a clade containing all dog-like carnivores (the animal family Canidae). First we will need to find the MRCA of the group. To do so, you need to identify two genera, whose MRCA coincides with the MRCA of all Canidae, for instance <em>Vulpes</em> (foxes) and <em>Lupus</em> (wolves). You can use <a href="http://www.onezoom.org/life/" class="uri">http://www.onezoom.org/life/</a> to identify suitable genera to extract your clade of interest. Alternatively you can also provide a list of all species to keep in the tree.</p>
+<pre class="r"><code># Create an object containing at tip labels
+species_list &lt;- mammals_tree$tip.label
+
+# find where Canis and Vulpes are in the species list
+dogs &lt;- grep(&quot;Canis&quot;, species_list)
+foxes &lt;- grep(&quot;Vulpes&quot;, species_list)
+
+# find the node corresponding to the MRCA of all canids
+MRCA_Canidae &lt;- getMRCA(mammals_tree, c(dogs, foxes))
+
+# extract Canidae clade
+canidae_tree &lt;- extract.clade(mammals_tree, MRCA_Canidae)
+
+plot(canidae_tree)
+
+# add time axis
+axisPhylo()
+
+# plot with smaller font size
+plot(canidae_tree, cex = 0.5)
+axisPhylo()</code></pre>
 </div>
 </div>
 

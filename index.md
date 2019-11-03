@@ -4,7 +4,7 @@ Date & time: November 4^th - November 8^th, 9:30 -- 17:00
 
 Location: Profund Innovation, Freie Universität Berlin - Altensteinstraße 40, 14195 Berlin, Germany
 
-Teachers: Alexander Zizka, German Center for INtegrative Biodiversity research & Daniele Silvestro, University of Gothenburg Sweden
+Teachers: Alexander Zizka, German Center for Integrative Biodiversity research & Daniele Silvestro, University of Gothenburg Sweden
 
 ## Before the course
 
@@ -14,7 +14,7 @@ Teachers: Alexander Zizka, German Center for INtegrative Biodiversity research &
 
 - Read the course literature listed below, we will have a literature discussion on the first day.
 
-- Please prepare 3-5 minutes (if you want including slides) to present yourself and your research. MAke sure to answer the following questions:
+- Please prepare 3-5 minutes (if you want including slides) to present yourself and your research. Make sure to answer the following questions:
   a. Where are you from?
   b. What is your research about?
   c. How are your R skills?
@@ -22,7 +22,7 @@ Teachers: Alexander Zizka, German Center for INtegrative Biodiversity research &
 
 ## Contact
 Course content:  [Alexander Zizka](mailto:alexander.zizka@idiv.de)
-Organistorical: [Physalia courses](mailto:info@physalia-courses.org)
+Organisational: [Physalia courses](mailto:info@physalia-courses.org)
 
 [Physalia courses webpage](https://www.physalia-courses.org/courses-workshops/course48/)
 
@@ -42,7 +42,7 @@ After this course, students will be able to:
 The public availability of large-scale species distribution data has increased drastically over the last ten years. In particular, due to the aggregation of records from museums and herbaria, and citizen science in public databases such as the Global Biodiversity Information Facility (GBIF). This is leading to a ‘big data’ revolution in biogeography, which holds an enormous but still poorly explored potential for understanding large scale patterns and drivers of biodiversity in space and time.
 
 ## Project assignment
-During the course you will analyse a specific dataset. We strongly encourage you to bring your own data (Taxon of interst, phylogenetic tree, fossil data), which will give you the opportunity to chose questions and exercises most suitable for your work. If necessary we will provide example data during the course as well.
+During the course you will analyse a specific dataset. We strongly encourage you to bring your own data (Taxon of interest, phylogenetic tree, fossil data), which will give you the opportunity to chose questions and exercises most suitable for your work. If necessary we will provide example data during the course as well.
 
 
 ## Course literature

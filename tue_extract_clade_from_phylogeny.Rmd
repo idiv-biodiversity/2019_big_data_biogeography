@@ -1,0 +1,82 @@
+---
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, eval = FALSE,
+                      echo=TRUE, warning=FALSE, message=FALSE,
+                      tidy = TRUE, collapse = TRUE,
+                      results = 'hold')
+```
+
+
+# Background
+In the last years large scale phylogenies for certain taxonomic groups have become available, for instance for amphibians, birds, mammals, squamates, and flowering plants. These phylogenies have challenges, but can provide helpful information for many research questions. 
+
+# Objective
+For the course we will not use the entire phylogenies, for the exercises on Wednesday and Thursday, since this make computation time infeasible for the course. Instead, you will extract a small clade of interest and run the analyses using this exampled data. All scripts will be scalable for larger phylogenies, so you can use them in your research alter on.
+
+# Exercise
+1. Load your own phylogeny or one of the example phylogenies from the example_Data folder in the github repository into R. (`read.tree`)
+
+2 Generate a lineage through time plot from this phylogeny. (`ltt.plot`)
+
+3 Select a clade your are particularly interested in to work on and extract it from the phylogeny, by identifying two species whose most recent common ancestor corresponds to the MRCA of your clade of interest. (http://www.onezoom.org/life/, `getMRCA`, `extract.clade`)
+
+# Library setup
+```{r}
+library(ape)
+```
+
+# Tutorial
+
+## 1. Load a phylogeny into R
+
+```{r}
+mammals_tree <- read.tree("example_data/mammals.tre")
+
+# Check properties (attributes) of the tree object
+str(mammals_tree)
+```
+
+
+## 2. Lineages through time plot
+
+```{r}
+# plot lineages-through-time
+ltt.plot(mammals_tree, lwd=2,tol=0.001)
+# lwd=2 defines the width of the line
+# tol=0.001 is used to ignore small rounding errors in the branch length
+
+# log-transform the number of lineages
+ltt.plot(mammals_tree, log = "y", lwd = 2, tol = 0.001)
+```
+
+
+
+## 3. Extract clade of interest
+As an example, we will extract a clade containing all dog-like carnivores (the animal family Canidae). First we will need to find the MRCA of the group. To do so, you need to identify two genera, whose MRCA coincides with the MRCA of all Canidae, for instance *Vulpes* (foxes) and *Lupus* (wolves). You can use http://www.onezoom.org/life/ to identify suitable genera to extract your clade of interest. Alternatively you can also provide a list of all species to keep in the tree.
+
+```{r}
+# Create an object containing at tip labels
+species_list <- mammals_tree$tip.label
+
+# find where Canis and Vulpes are in the species list
+dogs  <-  grep("Canis",species_list)
+foxes <-  grep("Vulpes",species_list)
+
+# find the node corresponding to the MRCA of all canids
+MRCA_Canidae <- getMRCA(mammals_tree, c(dogs, foxes))
+
+# extract Canidae clade
+canidae_tree <- extract.clade(mammals_tree,MRCA_Canidae)
+
+plot(canidae_tree)
+
+# add time axis
+axisPhylo()
+
+# plot with smaller font size
+plot(canidae_tree,cex=0.5)
+axisPhylo()
+```

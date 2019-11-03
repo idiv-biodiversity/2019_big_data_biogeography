@@ -1,0 +1,171 @@
+---
+title: "Downloading occurrences from GBIF"
+output:  html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, eval = FALSE,
+                      echo=TRUE, warning=FALSE, message=FALSE,
+                      tidy = TRUE, collapse = TRUE,
+                      results = 'hold')
+```
+
+## Background
+The public availability of species distribution data has increased substantially in the last 10 years: occurrence information, mostly in the form of geographic coordinate records for species across the tree of life, representing hundreds of years of biological collection effort are now available. The global Biodiversity Information Facility (www.gbif.org) is one of the largest data providers, hosting more than one billion records (Sept 2018) from a large variety of sources.
+
+## Outcomes
+After this exercise you will be able to retrieve species occurrence information from GBIF from within R. You will be equipt with example data from your group of interest for the follow upcoming exercises. See https://ropensci.org/tutorials/rgbif_tutorial.html for a more exhaustive tutorial on the rgbif package.
+
+## Exercise
+We will use the rgbif package to obtain occurrence records from GBIF. You can find the relevant functions for each task in the parentheses. You can get help on each function by typing `?FUNCTIONNAME`. 
+
+
+1. Familiarize yourself with the `rgbif` package and download the occurrence data for one of the species of your choice. (`name_suggest`, `occ_Search`)
+2. Look at the data and a quick plot (`head`, `plot`).
+3. Now find out how many occurrences for flowering plants are availble from Brazil.  (`name_suggest`, `occ_count`)
+4. Download all records for flowering plants from Rio Grande do Norte (more or less). Make sure to keep an eye on the `limit` argument. (`occ_search`)
+5. Save the downloaded data as .txt or .csv to the working directory. (`write_csv`, `write_delim`)
+
+## Setup
+In this exercise we will use the rgbif library for communication with GBIF and the tidyverse library for data management.
+
+```{r setup, include=FALSE}
+library(rgbif)
+library(tidyverse)
+library(rgdal)
+library(rgeos)
+```
+
+# Tutorial
+In the following tutorial, we will go through the questions one-by-one. The suggested answers are by no means the only correct ones.
+
+## 1. Download data for a single species we saw in the filedand save them in a data.frame
+GBIF hosts a large number of records and downloading all records might take some time (also the download limit using `occ_search` is 250,000), so it is worth checking first how many records are available. We do this using the `return` argument of the `occ_search` function, which will only return meta-data on the record. Chose a species from your project taxon, for demonstration will download records for the Malvaceae family. We'll first download data for a single, wide-spread species, _Ceiba pentandra_:
+
+```{r occ_count}
+#Search occurrence records
+dat <- occ_search(scientificName = "Wittmackia patentissima", 
+                   return =  "data", limit = 10000)
+```
+
+## 2. Explore the downloaded data
+```{r}
+nrow(dat) # Check the number of records
+head(dat) # Check the data
+plot(dat$decimalLatitude ~ dat$decimalLongitude) # Look at the georeferenced records
+```
+
+So luckily there are a good number of records available. An as the quick visualization shows, a lot of the have geographic coordinates. See exercise eight for more detailed plotting. In the next exercise we will see how to reduce the amount of information and quality check the data. But let’s first download more relevant data for the project.
+
+## 3. How many records are available for your group of interest?
+For your project, we are interested not only in one species, but a larger taxonomic group. You can search for higher rank taxa using GBIF's taxonKey. The taxonKey is a unique identifier for each taxon; we can obtain it from the taxon name via the `name _suggest` function. Since higher taxa might have a lot of records and downloading might take a lot of time, we will first check how many records are available. Here we will look at the entire genus *Ceiba*.
+
+```{r}
+#Use the name_suggest function to get the gbif taxon key
+tax_key <- name_suggest(q = "Magnoliopsida", rank = "Class")
+
+#Sometimes groups have multiple taxon keys, in this case three, so we will check how many records are available for them
+lapply(tax_key$key, "occ_count")
+
+#Here the firsrt one is relevant, check for your group!
+tax_key <- tax_key$key[1]
+```
+
+```{r}
+occ_count(tax_key, country = "BR")
+```
+
+There are more than five million records available from Brazil. This is too much for this exercise and also `occ_Search` is limited to 200000 records. Hence we will further limit the geographic extent. To do this you can use the Well-known-text format (WKT) to specify an area. Here we use a very simple rectangle, feel free to experiment. The download may take some minutes.
+
+
+<!-- 4. Download all data for your group from Brazil, or if the group is very large from part of that area. -->
+<!-- You can now download the records for Brazil. Since we want to work with coordinates, we will only download those records that do have coordinates. -->
+<!-- ```{r} -->
+<!-- dat  <- occ_search(taxonKey = tax_key, return = "data",  -->
+<!--                    country = "BR", hasCoordinate = T, limit = 10000)  -->
+<!-- ``` -->
+
+<!-- That leaves us with `r nrow(dat)` records. If you are satisfied for your group you can go to the next step and save the data to the working directory. The limit for record searching using rgbif is 250,000 records, if your group has more records you may limit the geographic area to the north east of Brazil. To do this you can use the Well-known-text format (WKT) to specify an area. Here we use a very simple rectangle, feel free to experiment -->
+
+```{r, eval=FALSE}
+study_a <- "POLYGON((-35 -4.5, -38.5 -4.5, -38.5 -7, -35 -7, -35 -4.5))"
+
+dat_ne  <- occ_search(taxonKey = tax_key, return = "data", hasCoordinate = T,
+                   geometry = study_a, limit = 50000) 
+
+```
+
+If you have a .kml or.shp file for which you want to download records you can import this into R using the `readOGR` function of the `rgdal` library and convert it into WKT format using `writeWKT` from the `rgeos` package.
+
+```{r, eval=FALSE}
+amz <- readOGR("inst/Amazonia.kml")
+#or for shape files:
+#amz <- readOGR("inst", layer = "Amazonia")
+rgeos::writeWKT(amz)
+# Or, best use the extent of the shape, since it is simple:
+ex <- raster::extent(amz)
+ex <- as(ex, 'SpatialPolygons') 
+ex <- rgeos::writeWKT(ex)
+```
+
+Alternatively, you can download data for a list of taxa.
+
+```{r, eval=TRUE}
+gen_list <- c("Ceiba", "Eriotheca")
+
+tax_key <- lapply(gen_list, function(k){name_suggest(q = k, rank = "Genus")})
+tax_key <- unlist(lapply(tax_key, "[[", "key"))
+
+unlist(lapply(tax_key, "occ_count"))
+
+dat_ne  <- occ_search(taxonKey = tax_key, return = "data", hasCoordinate = T,
+                   limit = 50000, country = "BR") 
+dat_ne <- lapply(dat_ne, "as.data.frame")
+
+dat_ne <- bind_rows(dat_ne)
+```
+
+
+5. Save the downloaded data as .csv to the working directory.
+You can save the results as text file to the working directory. To identify your working directory use `getwd()`.
+
+```{r}
+write_csv(dat_ne, path = "inst/gbif_occurrences.csv")
+```
+
+If you want to use records from GBIF for publication, please make sure you cite them properly, using a DOI, you can get a DOI by using `occ_download`.
+
+
+<!-- ## 3. Download Bombacoideae records on subfamily rank -->
+<!-- Unfortunately, downloading by subfamily is not recommendable due to taxonomic issues and because not all records are classified accordingly. Using the species keys from `name_lookup(q = Bombacoideae)` does not yield any records.  We'll therefor use a list of species, to download the records. We'll first get the GBIF taxonKey for all species in the list using the `name _suggest` function. You can either define the list directly in R, or if you want search for many species, you load a list from a text file. As an example, you can use the 'bombacoids_specs_list.txt' file. We are only interested in the actual data (no the meta-data), therefore `return = 'data'` and only those records that have coordinates (`hasCoordinate = T`). -->
+
+<!-- ```{r} -->
+<!-- #You can either create the species list in R, or if it is long list, download it from -->
+
+<!-- # splist <- c("Adansonia digitata", "Ceiba pentandra") #for few speceis define in R like this -->
+
+<!-- splist <- read_delim("Example_data/bombacoids_specs_list.txt", delim = "\t")%>% -->
+<!-- unlist(use.names = F) -->
+
+<!-- #get taxon keys -->
+<!-- keys <- lapply(as.list(splist), function(x) name_suggest(x, rank = "species"))%>% -->
+<!--   bind_rows()%>% -->
+<!--   filter(canonicalName %in% splist)%>% -->
+<!--   dplyr::select(key)%>% -->
+<!--   unlist(use.names = F) -->
+
+<!-- #obtain records -->
+<!-- bomb.occ <- occ_search(taxonKey = keys, limit=50000, return = 'data', hasCoordinate = T) # remember to change the limit -->
+<!-- ``` -->
+
+<!-- 4. Save the downloaded data to the working directory. -->
+<!-- The code above gives a list of the same length as the number of keys supplied (three in this case, as _Ceiba pentandra_ has two keys) consisting of data.frames with the occurrence records and large number of additional columns. WE will get rid of unnecessary information in the next exercise. For now we only want to get the data in a single data.frame and write it to the working directory -->
+
+<!-- ```{r} -->
+<!-- #sort out species without records -->
+<!-- bomb.out <- bomb.occ[sapply(bomb.occ, "length", USE.NAMES = F) != 1]%>% -->
+<!--   bind_rows() -->
+
+<!-- write_csv(x = bomb.out, path = "bombacoideae_occurrences_gbif.csv") -->
+<!-- ``` -->
+

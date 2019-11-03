@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Downloading occurrences from GBIF</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Big Data Biogeography</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">Course schedule</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Monday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="mo_setup.html">Setup</a>
+    </li>
+    <li>
+      <a href="mo_explore_gbif.html">Explore GBIF</a>
+    </li>
+    <li>
+      <a href="mo_explore_paleobioDB.html">Explore the Paleobiology database</a>
+    </li>
+    <li>
+      <a href="mo_explore_iucn.html">explore the IUCN database</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Tuesday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="tue_download_GBIF_data.html">Obtaining geographic occurrence records from GBIF</a>
+    </li>
+    <li>
+      <a href="tue_cleaning_geographic_data.html">Cleaning geographic data</a>
+    </li>
+    <li>
+      <a href="tue_accesibility_bias.html">Exploring sampling bias</a>
+    </li>
+    <li>
+      <a href="tue_species_richness.html">Species richness maps</a>
+    </li>
+    <li>
+      <a href="tue_taxon_specific_bioregionalization.html">Taxon-specific bioregionalization</a>
+    </li>
+    <li>
+      <a href="tue_biome_classification.html">Species to biome classification</a>
+    </li>
+    <li>
+      <a href="tue_obtaining_environmental_data.html">Obtaining environmental data</a>
+    </li>
+    <li>
+      <a href="tue_automated_conservation_assessment.html">Automated conservation assessment and IUCN assessments</a>
+    </li>
+    <li>
+      <a href="tue_obtaining_data_from_paleoDB.html">Obtaining fossil data from PaleoDB</a>
+    </li>
+    <li>
+      <a href="tue_fossil_cleaning.html">Cleaning fossil data</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Wednesday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="wed_ancestral_areas_DEC.html">Reconstructing ancestral areas (DEC)</a>
+    </li>
+    <li>
+      <a href="wed_time_stratified_DEC.html">Reconstructing ancestral biomes (time-stratified DEC)</a>
+    </li>
+    <li>
+      <a href="wed_DEC_bsm.html">Estimating the number of shifts (DEC BSM)</a>
+    </li>
+    <li>
+      <a href="wed_record_based_biome_classification.html">Record-based biome classification</a>
+    </li>
+    <li>
+      <a href="wed_diversification_rates_geosse.html">Diversification rate estimation (GeoSSE)</a>
+    </li>
+    <li>
+      <a href="wed_bite.html">Ancestral ranges as continuous traits</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Thursday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="thu_fossilBM.html">Bayesian inference of trait evolution under a “fossilized” Brownian motion (FBM)</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Friday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="fr_species_richness_maps.html">Species richness maps</a>
+    </li>
+    <li>
+      <a href="fr_plotting_DEC.html">Ancestral area reconstruction from DEC</a>
+    </li>
+    <li>
+      <a href="fr_diversification_rates.html">Visualizing diversification rate estimates</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/idiv-biodiversity/2019_big_data_biogeography">GitHub</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Downloading occurrences from GBIF</h1>
+
+</div>
+
+
+<div id="background" class="section level2">
+<h2>Background</h2>
+<p>The public availability of species distribution data has increased substantially in the last 10 years: occurrence information, mostly in the form of geographic coordinate records for species across the tree of life, representing hundreds of years of biological collection effort are now available. The global Biodiversity Information Facility (www.gbif.org) is one of the largest data providers, hosting more than one billion records (Sept 2018) from a large variety of sources.</p>
+</div>
+<div id="outcomes" class="section level2">
+<h2>Outcomes</h2>
+<p>After this exercise you will be able to retrieve species occurrence information from GBIF from within R. You will be equipt with example data from your group of interest for the follow upcoming exercises. See <a href="https://ropensci.org/tutorials/rgbif_tutorial.html" class="uri">https://ropensci.org/tutorials/rgbif_tutorial.html</a> for a more exhaustive tutorial on the rgbif package.</p>
+</div>
+<div id="exercise" class="section level2">
+<h2>Exercise</h2>
+<p>We will use the rgbif package to obtain occurrence records from GBIF. You can find the relevant functions for each task in the parentheses. You can get help on each function by typing <code>?FUNCTIONNAME</code>.</p>
+<ol style="list-style-type: decimal">
+<li>Familiarize yourself with the <code>rgbif</code> package and download the occurrence data for one of the species of your choice. (<code>name_suggest</code>, <code>occ_Search</code>)</li>
+<li>Look at the data and a quick plot (<code>head</code>, <code>plot</code>).</li>
+<li>Now find out how many occurrences for flowering plants are availble from Brazil. (<code>name_suggest</code>, <code>occ_count</code>)</li>
+<li>Download all records for flowering plants from Rio Grande do Norte (more or less). Make sure to keep an eye on the <code>limit</code> argument. (<code>occ_search</code>)</li>
+<li>Save the downloaded data as .txt or .csv to the working directory. (<code>write_csv</code>, <code>write_delim</code>)</li>
+</ol>
+</div>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>In this exercise we will use the rgbif library for communication with GBIF and the tidyverse library for data management.</p>
+</div>
+<div id="tutorial" class="section level1">
+<h1>Tutorial</h1>
+<p>In the following tutorial, we will go through the questions one-by-one. The suggested answers are by no means the only correct ones.</p>
+<div id="download-data-for-a-single-species-we-saw-in-the-filedand-save-them-in-a-data.frame" class="section level2">
+<h2>1. Download data for a single species we saw in the filedand save them in a data.frame</h2>
+<p>GBIF hosts a large number of records and downloading all records might take some time (also the download limit using <code>occ_search</code> is 250,000), so it is worth checking first how many records are available. We do this using the <code>return</code> argument of the <code>occ_search</code> function, which will only return meta-data on the record. Chose a species from your project taxon, for demonstration will download records for the Malvaceae family. We’ll first download data for a single, wide-spread species, <em>Ceiba pentandra</em>:</p>
+<pre class="r"><code># Search occurrence records
+dat &lt;- occ_search(scientificName = &quot;Wittmackia patentissima&quot;, return = &quot;data&quot;, 
+    limit = 10000)</code></pre>
+</div>
+<div id="explore-the-downloaded-data" class="section level2">
+<h2>2. Explore the downloaded data</h2>
+<pre class="r"><code>nrow(dat)  # Check the number of records
+head(dat)  # Check the data
+plot(dat$decimalLatitude ~ dat$decimalLongitude)  # Look at the georeferenced records</code></pre>
+<p>So luckily there are a good number of records available. An as the quick visualization shows, a lot of the have geographic coordinates. See exercise eight for more detailed plotting. In the next exercise we will see how to reduce the amount of information and quality check the data. But let’s first download more relevant data for the project.</p>
+</div>
+<div id="how-many-records-are-available-for-your-group-of-interest" class="section level2">
+<h2>3. How many records are available for your group of interest?</h2>
+<p>For your project, we are interested not only in one species, but a larger taxonomic group. You can search for higher rank taxa using GBIF’s taxonKey. The taxonKey is a unique identifier for each taxon; we can obtain it from the taxon name via the <code>name _suggest</code> function. Since higher taxa might have a lot of records and downloading might take a lot of time, we will first check how many records are available. Here we will look at the entire genus <em>Ceiba</em>.</p>
+<pre class="r"><code># Use the name_suggest function to get the gbif taxon key
+tax_key &lt;- name_suggest(q = &quot;Magnoliopsida&quot;, rank = &quot;Class&quot;)
+
+# Sometimes groups have multiple taxon keys, in this case three, so we will
+# check how many records are available for them
+lapply(tax_key$key, &quot;occ_count&quot;)
+
+# Here the firsrt one is relevant, check for your group!
+tax_key &lt;- tax_key$key[1]</code></pre>
+<pre class="r"><code>occ_count(tax_key, country = &quot;BR&quot;)</code></pre>
+<p>There are more than five million records available from Brazil. This is too much for this exercise and also <code>occ_Search</code> is limited to 200000 records. Hence we will further limit the geographic extent. To do this you can use the Well-known-text format (WKT) to specify an area. Here we use a very simple rectangle, feel free to experiment. The download may take some minutes.</p>
+<!-- 4. Download all data for your group from Brazil, or if the group is very large from part of that area. -->
+<!-- You can now download the records for Brazil. Since we want to work with coordinates, we will only download those records that do have coordinates. -->
+<!-- ```{r} -->
+<!-- dat  <- occ_search(taxonKey = tax_key, return = "data",  -->
+<!--                    country = "BR", hasCoordinate = T, limit = 10000)  -->
+<!-- ``` -->
+<!-- That leaves us with 2493 records. If you are satisfied for your group you can go to the next step and save the data to the working directory. The limit for record searching using rgbif is 250,000 records, if your group has more records you may limit the geographic area to the north east of Brazil. To do this you can use the Well-known-text format (WKT) to specify an area. Here we use a very simple rectangle, feel free to experiment -->
+<pre class="r"><code>study_a &lt;- &quot;POLYGON((-35 -4.5, -38.5 -4.5, -38.5 -7, -35 -7, -35 -4.5))&quot;
+
+dat_ne &lt;- occ_search(taxonKey = tax_key, return = &quot;data&quot;, hasCoordinate = T, 
+    geometry = study_a, limit = 50000)
+</code></pre>
+<p>If you have a .kml or.shp file for which you want to download records you can import this into R using the <code>readOGR</code> function of the <code>rgdal</code> library and convert it into WKT format using <code>writeWKT</code> from the <code>rgeos</code> package.</p>
+<pre class="r"><code>amz &lt;- readOGR(&quot;inst/Amazonia.kml&quot;)
+# or for shape files: amz &lt;- readOGR(&#39;inst&#39;, layer = &#39;Amazonia&#39;)
+rgeos::writeWKT(amz)
+# Or, best use the extent of the shape, since it is simple:
+ex &lt;- raster::extent(amz)
+ex &lt;- as(ex, &quot;SpatialPolygons&quot;)
+ex &lt;- rgeos::writeWKT(ex)</code></pre>
+<p>Alternatively, you can download data for a list of taxa.</p>
+<pre class="r"><code>gen_list &lt;- c(&quot;Ceiba&quot;, &quot;Eriotheca&quot;)
+
+tax_key &lt;- lapply(gen_list, function(k) {
+    name_suggest(q = k, rank = &quot;Genus&quot;)
+})
+tax_key &lt;- unlist(lapply(tax_key, &quot;[[&quot;, &quot;key&quot;))
+
+unlist(lapply(tax_key, &quot;occ_count&quot;))
+
+dat_ne &lt;- occ_search(taxonKey = tax_key, return = &quot;data&quot;, hasCoordinate = T, 
+    limit = 50000, country = &quot;BR&quot;)
+dat_ne &lt;- lapply(dat_ne, &quot;as.data.frame&quot;)
+
+dat_ne &lt;- bind_rows(dat_ne)
+## [1] 14636     0    11  4218</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Save the downloaded data as .csv to the working directory. You can save the results as text file to the working directory. To identify your working directory use <code>getwd()</code>.</li>
+</ol>
+<pre class="r"><code>write_csv(dat_ne, path = &quot;inst/gbif_occurrences.csv&quot;)</code></pre>
+<p>If you want to use records from GBIF for publication, please make sure you cite them properly, using a DOI, you can get a DOI by using <code>occ_download</code>.</p>
+<!-- ## 3. Download Bombacoideae records on subfamily rank -->
+<!-- Unfortunately, downloading by subfamily is not recommendable due to taxonomic issues and because not all records are classified accordingly. Using the species keys from `name_lookup(q = Bombacoideae)` does not yield any records.  We'll therefor use a list of species, to download the records. We'll first get the GBIF taxonKey for all species in the list using the `name _suggest` function. You can either define the list directly in R, or if you want search for many species, you load a list from a text file. As an example, you can use the 'bombacoids_specs_list.txt' file. We are only interested in the actual data (no the meta-data), therefore `return = 'data'` and only those records that have coordinates (`hasCoordinate = T`). -->
+<!-- ```{r} -->
+<!-- #You can either create the species list in R, or if it is long list, download it from -->
+<!-- # splist <- c("Adansonia digitata", "Ceiba pentandra") #for few speceis define in R like this -->
+<!-- splist <- read_delim("Example_data/bombacoids_specs_list.txt", delim = "\t")%>% -->
+<!-- unlist(use.names = F) -->
+<!-- #get taxon keys -->
+<!-- keys <- lapply(as.list(splist), function(x) name_suggest(x, rank = "species"))%>% -->
+<!--   bind_rows()%>% -->
+<!--   filter(canonicalName %in% splist)%>% -->
+<!--   dplyr::select(key)%>% -->
+<!--   unlist(use.names = F) -->
+<!-- #obtain records -->
+<!-- bomb.occ <- occ_search(taxonKey = keys, limit=50000, return = 'data', hasCoordinate = T) # remember to change the limit -->
+<!-- ``` -->
+<!-- 4. Save the downloaded data to the working directory. -->
+<!-- The code above gives a list of the same length as the number of keys supplied (three in this case, as _Ceiba pentandra_ has two keys) consisting of data.frames with the occurrence records and large number of additional columns. WE will get rid of unnecessary information in the next exercise. For now we only want to get the data in a single data.frame and write it to the working directory -->
+<!-- ```{r} -->
+<!-- #sort out species without records -->
+<!-- bomb.out <- bomb.occ[sapply(bomb.occ, "length", USE.NAMES = F) != 1]%>% -->
+<!--   bind_rows() -->
+<!-- write_csv(x = bomb.out, path = "bombacoideae_occurrences_gbif.csv") -->
+<!-- ``` -->
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

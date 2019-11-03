@@ -1,0 +1,138 @@
+---
+title: "Bioregionalization"
+output: 
+  html_document:
+    theme: readable
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, eval = FALSE,
+                      echo=TRUE, warning=FALSE, message=FALSE,
+                      tidy = TRUE, collapse = TRUE,
+                      results = 'hold')
+```
+
+
+## Background
+Bioregions are an important tool for biogeography, evolutionary biology and ecology. There are a set of tools for identifying bioregions, but especially in biogeography, regions are mostly either based on very broad taxonomy ("all plants") or, if taxon-specific on expert knowledge. Taxon-specific bioregions are of high interest, as barriers might be of different strength for different groups based on their dispersal capacity Infomap bioregions is a user-friendly tool delineate bioregions based on species distributions using networks and information theory. The concept behind the methods is described [here](https://www.nature.com/articles/ncomms7848) and the software tool itself is described [here](https://academic.oup.com/sysbio/article/66/2/197/2670349/Infomap-Bioregions-Interactive-Mapping-of).
+
+
+## Objectives
+After this exercise you will be able to:
+1. Use Infomap Bioregions to delineate taxon-specific biogeographic regions based on distribution data using
+  a. Point occurrences in txt format
+  b. Species ranges in shape format
+2. We will use the area classification from Infomaps for the ancestral range estimation tomorrow, so please make sure you have the range classification file.
+
+## Exercise
+In this exercise you will use Infomap bioregions, available at http://bioregions.mapequation.org/. Here we are going to use the cleaned point occurrence data from your group from exercise 2) and the calculated ranges from exercise 4) (if you have it). There is a tutorial for the use of the software and explaining its functionality available on this webpage. **For the ancestral area reconstruction exercise tomorrow, you want to have around 5-8 areas.**
+
+1. Locate the clean point occurrence .txt file and the .shp range file on your computer and navigate your browser to http://bioregions.mapequation.org/.
+2. Use Infomap bioregions to create bioregions for the cleaned point occurrences following the tutorial on the website
+3. Use Infomap bioregions to create bioregions for range shape file following the tutorial on the website. What is the difference between the two bioregionalizations, and which one is more useful?
+4. Upload a phylogenetic tree for your group and use the phylogenetic reconstruction implemented in Infomap bioregions to reconstruct the evolutionary history of your clade.
+5. Generate a area range file for the ancestral range reconstruction
+
+
+## Possible questions for your project
+* How many bioregions are there for your group?
+* Do the reconstructed bioregions correspond to classification from the literature, e.g. the Olson 2001 biomes the Morrone (2014) ecoregions for the Neotropics?
+* How does the size of the bioregions vary through space, and where are regions of small bioregions? What does that mean?
+* Does the bioregionalization differ between different subsets of your group, e.g. different subfamilies, or large genera?
+
+# Library setup
+
+```{r}
+library(rgdal)
+library(ggplot2)
+```
+
+# Tutorial
+
+## Adapting bioregionalization
+After you obtained a reaonable regionalization from Infomaps bioregions, you may need to modify it in some cases, for example to merge very small bioregions with their neighbours or to reduce the total number of bioregions. If you think that your bioregionalization is sufficient as is, you can skip this step.
+
+```{r}
+#load results from infomap and visualize
+bior <- readOGR("inst", layer = "bombacoids_ranges_ingroup_0712")
+bior.plo <- raster::aggregate(bior, by = "bioregio")
+bior.plo <- fortify(bior.plo)
+idif <- data.frame(coordinates(bior), id = rownames(bior@data))
+
+ggplot()+
+  #mapWorld+
+  geom_polygon(data = bior.plo, aes(x = long, y = lat, group = group, fill = id))+
+  geom_text(data = idif, aes(x = X1, y = X2, label = id), size = 2)
+
+#Merge marginal bioregions with next larger bioregion
+#+1 because th ids start with 0, instead of one
+bior.mod <- bior
+bior.mod@data$bioregio[c(244,246,250, 251) + 1] <- 5 
+bior.mod@data$bioregio[190+ 1] <- 1
+bior.mod@data$bioregio[192+ 1] <- 4 
+#bior.mod@data$bioregio[c(323, 324, 325, 326) +1 ] <- 6
+bior.mod@data$bioregio[c(320, 321, 322) +1 ] <- 10
+
+# plot again to see if the changes worked
+bior.plo <- raster::aggregate(bior.mod, by = "bioregio")
+bior.plo <- fortify(bior.plo)
+idif <- data.frame(coordinates(bior), id = rownames(bior@data))
+
+ggplot()+
+  #mapWorld+
+  geom_polygon(data = bior.plo, aes(x = long, y = lat, group = group, fill = id))+
+  geom_text(data = idif, aes(x = X1, y = X2, label = id), size = 2)
+
+writeOGR(bior.mod, dsn = "inst", layer = "modified_bioregions", driver = "ESRI Shapefile")
+
+```
+
+## Classifying species to bioregion absed on occurrences
+If you adapted the bioregions you will need to reclassify the species. You can use the following code to do so, you will, however, have to adapt it to your bioregions.
+
+```{r}
+bior <- readOGR("inst", layer = "modified_bioregions")
+bior.class <- aggregate(bior, by = "bioregio")
+
+# load the occurrence points
+occs <- read_csv("inst/occurrence_records_clean.csv")
+
+#overlay
+overl <- over(SpatialPoints(occs[,c("decimalLongitude", "decimalLatitude")], proj4string = CRS(proj4string(bior.mod))), bior.class)
+overl <- data.frame(occs, overl$bioregio)%>%
+  dplyr::select(species, bioregion = overl.bioregio)%>%
+  group_by(species, bioregion)%>%
+  summarize(record.number = n())
+
+out2 <- occs%>%
+  group_by(species)%>%
+  summarize(num = n())
+
+plot(bior.class)
+text(x = coordinates(bior.class)[,1], 
+     y = coordinates(bior.class)[,2],
+     labels = bior.class@data$bioregio)
+
+out <- inner_join(overl, out2, by = "species")%>%
+  mutate(rec.frac = record.number / num)%>%
+  filter(!is.na(bioregion))%>% # retain only entries with at least 5% of the records
+  mutate(bioid = bioregion)%>%
+  dplyr::select(species, bioregion, rec.frac)%>%
+  spread(bioregion, rec.frac)%>% # here you need to change the bioregion names according to your data
+  dplyr::select_(species = "1", NSA = "2",
+          CAR = "3", CSA = "4", AFR = "5", 
+          ESA = "6", ASI = "7", NAM = "8", MAD = "9")
+
+write_csv(out, "inst/occurrence_fraction_per_bioregion")
+```
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,31 @@
+---
+output: html_document
+---
+
+# Background
+FossilBM uses phylogenies of extant and extinct species (typically obtained through tip-dating) and quantitative traits to infer the mode of evolution and ancestral states at all nodes in the tree. The FBM model includes rate parameters describing how fast a trait evolves and trend parameters determining whether evolution is directional. When the trend parameter equals 0, the model reduces to a standard Brownian model of neutral evolution. Both the rate and trend parameters can very across the branches in the tree.
+
+The algorithm simultaneously estimates:
+
+1. the rates of phenotypic evolution and their variation across clades
+
+2. the trends of phenotypic evolution and their variation across clades
+
+3. the ancestral states at all internal nodes
+
+The methods implemented here are described in: Early arrival and climatically-linked geographic expansion of New World monkeys from tiny African ancestors by D. Silvestro, M. F. Tejedor, et al. (Systematic Biology, 2018).
+
+# Objectives
+After this exercise the students will be able to execute an analysis of trait evolution, using the fossilized Birth Death model.
+
+# Exercise
+
+# Tutorial
+
+## Load the data
+
+## Set the analyses operators
+
+## Start the analysis
+
+## Interpret the results

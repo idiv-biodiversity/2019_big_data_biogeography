@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Data cleaning</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/readable.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.section h2 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.section h3 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.section h4 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.section h5 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.section h6 {
+  padding-top: 71px;
+  margin-top: -71px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Big Data Biogeography</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">Course schedule</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Monday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="mo_setup.html">Setup</a>
+    </li>
+    <li>
+      <a href="mo_explore_gbif.html">Explore GBIF</a>
+    </li>
+    <li>
+      <a href="mo_explore_paleobioDB.html">Explore the Paleobiology database</a>
+    </li>
+    <li>
+      <a href="mo_explore_iucn.html">explore the IUCN database</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Tuesday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="tue_download_GBIF_data.html">Obtaining geographic occurrence records from GBIF</a>
+    </li>
+    <li>
+      <a href="tue_cleaning_geographic_data.html">Cleaning geographic data</a>
+    </li>
+    <li>
+      <a href="tue_accesibility_bias.html">Exploring sampling bias</a>
+    </li>
+    <li>
+      <a href="tue_species_richness.html">Species richness maps</a>
+    </li>
+    <li>
+      <a href="tue_taxon_specific_bioregionalization.html">Taxon-specific bioregionalization</a>
+    </li>
+    <li>
+      <a href="tue_biome_classification.html">Species to biome classification</a>
+    </li>
+    <li>
+      <a href="tue_obtaining_environmental_data.html">Obtaining environmental data</a>
+    </li>
+    <li>
+      <a href="tue_automated_conservation_assessment.html">Automated conservation assessment and IUCN assessments</a>
+    </li>
+    <li>
+      <a href="tue_obtaining_data_from_paleoDB.html">Obtaining fossil data from PaleoDB</a>
+    </li>
+    <li>
+      <a href="tue_fossil_cleaning.html">Cleaning fossil data</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Wednesday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="wed_ancestral_areas_DEC.html">Reconstructing ancestral areas (DEC)</a>
+    </li>
+    <li>
+      <a href="wed_time_stratified_DEC.html">Reconstructing ancestral biomes (time-stratified DEC)</a>
+    </li>
+    <li>
+      <a href="wed_DEC_bsm.html">Estimating the number of shifts (DEC BSM)</a>
+    </li>
+    <li>
+      <a href="wed_record_based_biome_classification.html">Record-based biome classification</a>
+    </li>
+    <li>
+      <a href="wed_diversification_rates_geosse.html">Diversification rate estimation (GeoSSE)</a>
+    </li>
+    <li>
+      <a href="wed_bite.html">Ancestral ranges as continuous traits</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Thursday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="thu_fossilBM.html">Bayesian inference of trait evolution under a “fossilized” Brownian motion (FBM)</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Friday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="fr_species_richness_maps.html">Species richness maps</a>
+    </li>
+    <li>
+      <a href="fr_plotting_DEC.html">Ancestral area reconstruction from DEC</a>
+    </li>
+    <li>
+      <a href="fr_diversification_rates.html">Visualizing diversification rate estimates</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/idiv-biodiversity/2019_big_data_biogeography">GitHub</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Data cleaning</h1>
+
+</div>
+
+
+<div id="background" class="section level2">
+<h2>Background</h2>
+<p>Biases and issues with data quality are a central problem hampering the use of publicly available species occurrence data in ecology and biogeography. Biases are hard to address, but improving data quality by identifying erroneous records is possible. Major problems are: data entry errors leading to erroneous occurrence records, imprecise geo-referencing mostly of pre-GPS records and missing metadata specifying data entry and coordinate precision. Manual data cleaning based on expert knowledge can mostly detect these issues, but is only applicable for small taxonomic or geographic scales and is difficult to reproduce. Automated clean procedures are more scalable alternative.</p>
+</div>
+<div id="objectives" class="section level2">
+<h2>Objectives</h2>
+<p>After this exercise you will be able to: 1. Visualize the data and identify potential problems 2. Use <em>CoordinateCleaner</em> to automatically flag problematic records 3. Use GBIF provided meta-data to improve coordinate quality, tailored to your downstream analyses 4. Use automated flagging algorithms of <em>CoordinateCleaner</em> to identify problematic contributing datasets</p>
+</div>
+<div id="exercise" class="section level2">
+<h2>Exercise</h2>
+<p>Here we will use the data downloaded during the first exercise and look at common problems using automated flagging software and GBIF meta-data to identify some potential problems. For this tutorial we will exclude potentially problematic records, but in general we highly recommend to double check records to avoid losing data and introduce new biases. You can find a similar tutorial using illustrative data <a href="https://azizka.github.io/CoordinateCleaner/articles/Tutorial_Cleaning_GBIF_data_with_CoordinateCleaner.html">here</a>. AS in the first exercise necessary R functions for each question in the brackets. Get help for all functions with ?FUNCTIONNAME.</p>
+<ol style="list-style-type: decimal">
+<li>Load your occurrence data downloaded from GBIF in the first exercise and limit the data to columns with potentially useful information (<code>read_csv</code>, <code>names</code>, <code>select</code>).</li>
+<li>Add the data we collected in the field and data from the other source. You will need to standardize column names (<code>read_csv</code>, <code>select</code>, <code>bind_rows</code>).</li>
+<li>Visualize the coordinates on a map (<code>borders</code>, <code>ggplot</code>, <code>geom_point</code>).</li>
+<li>Clean the coordinates based on available meta-data. A good starting point is to plot continuous variables as histogram and look at the values for discrete variables. Remove unsuitable records and plot again (<code>table</code>, <code>filter</code>).</li>
+<li>Apply automated flagging to identify potentially problematic records (<code>clean_coordinates</code>, <code>plot</code>).</li>
+<li>Visualize the difference between the unclean and cleaned dataset (<code>plot</code>)</li>
+</ol>
+</div>
+<div id="possible-questions-for-your-research-project" class="section level2">
+<h2>Possible questions for your research project</h2>
+<ul>
+<li>How many records where potentially problematic?</li>
+<li>What were the major issues?</li>
+<li>Were any of the records you collected in the field flagged as problematic? If so, what has happened?</li>
+</ul>
+</div>
+<div id="library-setup" class="section level2">
+<h2>Library setup</h2>
+<p>You will need the following R libraries for this exercise, just copy the code chunk into you R console to load them. You might need to install some of them separately.</p>
+<pre class="r"><code>library(tidyverse)
+library(rgbif)
+library(sp)
+library(countrycode)
+library(CoordinateCleaner)</code></pre>
+</div>
+<div id="solutions" class="section level1">
+<h1>Solutions</h1>
+<p>The following suggestion for data cleaning and are not comprehensive or a one-size-fits it all solution. You might want to change, omit, or add steps depending on your research question and scale. <em>Remember:</em> What is ‘good data’ depends completely on the type of downstream analyses and their spatial scale. The cleaning here might be a good starting point for continental scale biogeographic analyses.</p>
+<div id="load-your-occurrence-data-downloaded-from-gbif" class="section level2">
+<h2>1. Load your occurrence data downloaded from GBIF</h2>
+<p>GBIF provides a large amount of information for each record, leading to a huge data.frame with many columns. However some of this information is only available for few records, and thus for most analyses most of the columns can be dropped. Here, we will only retain information to identify the record and information that is important for cleaning up the data.</p>
+<pre class="r"><code>dat &lt;- read_csv(&quot;inst/gbif_occurrences.csv&quot;, guess_max = 25000)%&gt;%
+  mutate(dataset = &quot;GBIF&quot;)
+
+names(dat) #a lot of columns
+
+dat &lt;- dat %&gt;%
+  select(species, decimalLongitude, decimalLatitude, countryCode, individualCount,
+         gbifID, family, taxonRank, coordinateUncertaintyInMeters, year,
+         basisOfRecord, institutionCode, datasetName, dataset)%&gt;% # you might find other ones useful depending on your downstream analyses
+  mutate(countryCode = countrycode(dat$countryCode, origin =  &#39;iso2c&#39;, destination = &#39;iso3c&#39;))</code></pre>
+</div>
+<div id="combine-with-field-and-additional-data" class="section level2">
+<h2>2. Combine with field and additional data</h2>
+<p>It is easy to add data, for instance if you ahve records from field collections etc. Remeber to adapt the column names in the select fucntion.</p>
+<pre class="r"><code># read the field data
+field &lt;- read_csv(&quot;PAth to your data&quot;) %&gt;% filter(lat &gt; -7)
+
+field &lt;- field %&gt;% dplyr::select(species, decimalLongitude = long, decimalLatitude = lat, 
+    countryCode = country) %&gt;% mutate(dataset = &quot;field&quot;) %&gt;% mutate(year = 2018) %&gt;% 
+    mutate(countryCode = countrycode(countryCode, origin = &quot;country.name&quot;, destination = &quot;iso3c&quot;))
+
+dat &lt;- bind_rows(dat, field)</code></pre>
+</div>
+<div id="visualize-the-coordinates-on-a-map" class="section level2">
+<h2>3. Visualize the coordinates on a map</h2>
+<p>Visualizing the data on a map can be extremely helpful to understand potential problems and to identify problematic records.</p>
+<pre class="r"><code>world.inp &lt;- map_data(&quot;world&quot;)
+
+ggplot() + geom_map(data = world.inp, map = world.inp, aes(x = long, y = lat, 
+    map_id = region), fill = &quot;grey80&quot;) + xlim(min(dat$decimalLongitude, na.rm = T), 
+    max(dat$decimalLongitude, na.rm = T)) + ylim(min(dat$decimalLatitude, na.rm = T), 
+    max(dat$decimalLatitude, na.rm = T)) + geom_point(data = dat, aes(x = decimalLongitude, 
+    y = decimalLatitude, color = dataset), size = 1) + coord_fixed() + theme_bw() + 
+    theme(axis.title = element_blank())</code></pre>
+</div>
+<div id="clean-the-coordinates-based-on-available-meta-data" class="section level2">
+<h2>4. Clean the coordinates based on available meta-data</h2>
+<p>As you cans see there are a some unexpected occurrence locations, outside the current distribution range. We will find out the reasons for this in a minute. In this specific case we could relatively easily get rid of a large number of problematic records based on prior knowledge (we are only interested in records in South America) but we usually do not have this kind of knowledge when dealing with larger datasets, so we will try to get rid of those records in different ways. GBIF data often contain a good number of meta-data that can help to locate problems. First we’ll remove data without coordinates, coordinates with very low precision and the unsuitable data sources. We will remove all records with a precision below 100km as this represent the grain size of many macro-ecological analyses, but the number is somewhat arbitrary and you best chose it based on your downstream analyses. We also exclude fossils as we are interested in recent distributions and records of unknown source, as we might deem them not reliable enough.</p>
+<pre class="r"><code># remove records without coordinates
+dat_cl &lt;- dat %&gt;% filter(!is.na(decimalLongitude)) %&gt;% filter(!is.na(decimalLatitude))
+
+# remove records with low coordinate precision
+hist(dat_cl$coordinateUncertaintyInMeters/1000, breaks = 30)
+
+dat_cl &lt;- dat_cl %&gt;% filter(coordinateUncertaintyInMeters/1000 &lt;= 100 | is.na(coordinateUncertaintyInMeters))
+
+# remove unsuitable data sources, especially fossils
+table(dat$basisOfRecord)
+
+dat_cl &lt;- filter(dat_cl, basisOfRecord == &quot;HUMAN_OBSERVATION&quot; | basisOfRecord == 
+    &quot;OBSERVATION&quot; | basisOfRecord == &quot;PRESERVED_SPECIMEN&quot; | is.na(basisOfRecord))</code></pre>
+<p>In the next step we will remove records with suspicious individual counts. GBIF includes few records of absence (individual count = 0) and suspiciously high occurrence counts, which might indicate inappropriate data or data entry problems.</p>
+<pre class="r"><code># Individual count
+table(dat_cl$individualCount)
+
+dat_cl &lt;- dat_cl %&gt;% filter(individualCount &gt; 0 | is.na(individualCount)) %&gt;% 
+    filter(individualCount &lt; 99 | is.na(individualCount))  # high counts are not a problem</code></pre>
+<p>We might also want to exclude very old records, as they are more likely to be unreliable. For instance, records from before the second world war are often very imprecise, especially if they were geo-referenced based on political entities. Additionally old records might be likely from areas where species went extinct (for example due to land-use change).</p>
+<pre class="r"><code># Age of records
+table(dat_cl$year)
+
+dat_cl &lt;- dat_cl %&gt;% filter(year &gt; 1945)  # remove records from before second world war</code></pre>
+<p>On top of the geographic cleaning, we also want to make sure to only include species level records and records from the right taxon. Taxonomic problems such as spelling mistakes in the names or synonyms can be a severe problem. We’ll not treat taxonomic cleaning here, but check out the <a href="https://ropensci.org/tutorials/taxize_tutorial.html">taxize R package</a> or the <a href="http://tnrs.iplantcollaborative.org/">taxonomic name resolution service</a> for that.</p>
+<pre class="r"><code>table(dat_cl$family)  #that looks good
+
+
+table(dat_cl$taxonRank)  # We will only include records identified to species level
+dat_cl &lt;- dat_cl %&gt;% filter(taxonRank == &quot;SPECIES&quot; | is.na(taxonRank))</code></pre>
+<p>We excluded almost <code>round((nrow(dat) - nrow(dat_cl)) / nrow(dat) * 100, 0)</code> of the initial data points based on metadata! Most of them due to incomplete identification.</p>
+<ol start="5" style="list-style-type: decimal">
+<li>Apply automated flagging to identify potentially problematic records To identify additional problems we will run the automatic flagging algorithm of the CoordinateCleaner package. The <code>clean_coordinates</code> function is a wrapper around a large set of automated cleaning steps to flag errors that are common to biological collections, including: sea coordinates, zero coordinates, coordinate - country mismatches, coordinates assigned to country and province centroids, coordinates within city areas, outlier coordinates and coordinates assigned to biodiversity institutions. You can switch on each test individually using logical flags, modify the sensitivity of most individual tests using the “.rad” arguments, and provide custom gazetteers using the “.ref” arguments. See <code>?clean_coordinates</code> for help. To use the country - coordinate mismatch test we need to convert the country from ISO2 to ISO3 format. Since we work in a coastal area, we use a buffered reference, to avoid flagging records close to the sea.</li>
+</ol>
+<pre class="r"><code># flag problems
+dat_cl &lt;- data.frame(dat_cl)
+flags &lt;- clean_coordinates(x = dat_cl, lon = &quot;decimalLongitude&quot;, lat = &quot;decimalLatitude&quot;, 
+    countries = &quot;countryCode&quot;, species = &quot;species&quot;, tests = c(&quot;capitals&quot;, &quot;centroids&quot;, 
+        &quot;equal&quot;, &quot;gbif&quot;, &quot;zeros&quot;, &quot;countries&quot;, &quot;seas&quot;), seas_ref = buffland)  # most test are on by default</code></pre>
+<p>Here an additional <code>sum(flags$.summary)</code> records were flagged! A look at the test summary and plot reveal the major issues.</p>
+<pre class="r"><code>plot(flags, lon = &quot;decimalLongitude&quot;, lat = &quot;decimalLatitude&quot;)</code></pre>
+<p>After this inspection we can safely remove the flagged records for this tutorial</p>
+<pre class="r"><code>dat_cl &lt;- dat_cl[flags$.summary, ]</code></pre>
+<!-- ## 6. Check for problems with coordinate precision -->
+<!-- Some problems, in particular certain kinds of imprecisions, cannot be identified on the record level. For instance, many records are based on gridded sampling schemes or atlas projects, but are not easily identifiable as such. To identify these kind of problems CoordinateCleaner includes dataset level tests, which search for periodicity in the decimals of occurrence records, and can indicate, if a substantial portion of the coordinates in a dataset have been subject to rounding or are nodes of a raster scheme. You can run this test either on the entire dataset, or on individual contributing dataset, e.g. all records from GBIF, using the `clean_dataset` function. See [here](https://azizka.github.io/CoordinateCleaner/articles/Background_dataset_level_cleaning.html) for more details. -->
+<!-- ```{r} -->
+<!-- #For the total dataset -->
+<!-- dat_cl$datasettotal <- "TOTAL" -->
+<!-- ##Run dataset level test -->
+<!-- clean_dataset(dat_cl,  -->
+<!--               ds = "datasettotal", -->
+<!--               lon = "decimalLongitude", -->
+<!--               lat = "decimalLatitude") -->
+<!-- ``` -->
+<!-- There is no evidence for periodicity in the entire dataset or its three biggest contributing datasets. Great! -->
+</div>
+<div id="visualize-the-difference-between-the-uncleaned-and-cleaned-dataset-plot" class="section level2">
+<h2>6. Visualize the difference between the uncleaned and cleaned dataset (<code>plot</code>)</h2>
+<pre class="r"><code>world.inp &lt;- map_data(&quot;world&quot;)
+
+ggplot() + geom_map(data = world.inp, map = world.inp, aes(x = long, y = lat, 
+    map_id = region), fill = &quot;grey80&quot;) + xlim(min(dat$decimalLongitude, na.rm = T), 
+    max(dat$decimalLongitude, na.rm = T)) + ylim(min(dat$decimalLatitude, na.rm = T), 
+    max(dat$decimalLatitude, na.rm = T)) + geom_point(data = dat, aes(x = decimalLongitude, 
+    y = decimalLatitude), colour = &quot;darkred&quot;, size = 1) + geom_point(data = dat_cl, 
+    aes(x = decimalLongitude, y = decimalLatitude), colour = &quot;darkgreen&quot;, size = 1) + 
+    coord_fixed() + theme_bw() + theme(axis.title = element_blank())
+
+
+ggplot() + geom_map(data = world.inp, map = world.inp, aes(x = long, y = lat, 
+    map_id = region), fill = &quot;grey80&quot;) + xlim(min(dat$decimalLongitude, na.rm = T), 
+    max(dat$decimalLongitude, na.rm = T)) + ylim(min(dat$decimalLatitude, na.rm = T), 
+    max(dat$decimalLatitude, na.rm = T)) + geom_point(data = dat_cl, aes(x = decimalLongitude, 
+    y = decimalLatitude, colour = dataset), size = 1) + coord_fixed() + theme_bw() + 
+    theme(axis.title = element_blank())
+</code></pre>
+</div>
+<div id="write-to-disk" class="section level2">
+<h2>8. Write to disk</h2>
+<pre class="r"><code>write_csv(dat_cl, &quot;inst/occurrence_records_clean.csv&quot;)</code></pre>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

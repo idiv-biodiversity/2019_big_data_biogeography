@@ -14,23 +14,25 @@ output: html_document
 
 - Lecture & Hands on "Biodiversity databases"
 
-- Definition of student projects
+- Design of the course projects
+
+- Help with software setup if necessary
 
 
 ## Day 2 "Biogeography through space - Recent biodiversity patterns"
 
-- Lecture “Common biases, caveats and errors in biodiversity databases and tools to dress them”
+- Lecture “Common biases, caveats and errors in biodiversity databases and tools to address them”
 
 - Hands-on "Recent biodiversity patterns" in R (Obtaining occurrence records, data cleaning, exploring sampling bias)
 
-- Lecture “Novel tools for big data biogeography: bioregionalization, automated conservation assessment, species to area classification” 
+- Lecture “Novel tools for big data biogeography: bioregionalization, species to area classification, automated conservation assessment” 
 
-- Hands-on: "Recent biogeography" (Species richness, endemism, taxon-specific bioregionalization, extracting environmental data)
+- Hands-on: "Recent biogeography" (Species richness, taxon-specific bioregionalization, extracting environmental data)
 
 - Optional lecture on a topic chose by the participants (Bayesian methods or Diversification rate analyses)
 
 
-## Day 3 "Temporal biogeography - reconstructing ancestral ranges"
+## Day 3 "Historical biogeography - reconstructing ancestral ranges"
 
 - Lecture "Historical biogeography – methods to model the evolution of geographic ranges through time"
 
@@ -54,7 +56,7 @@ output: html_document
 - Time for project work
 
 
-## Day 5, "Putting it all together"
+## Day 5 "Putting it all together"
 
 - Hands-on "Visualizing biogeographic results in R"
 

@@ -1,0 +1,166 @@
+---
+title: "Species richness maps and species ranges"
+output: 
+  html_document:
+    theme: readable
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, eval = FALSE,
+                      echo=TRUE, warning=FALSE, message=FALSE,
+                      tidy = TRUE, collapse = TRUE,
+                      results = 'hold')
+```
+
+# Background
+Patterns of species richness and occurrence density are relevant information for study design, to communicate study results or to check data quality in any multi-species occurrence dataset. Species distributions can be estimated with a large array of methods, but in some cases a rough and quick estimation of species ranges is more suitable. The extent of occurrence based on convex hulls is used in conservation and macroecology to approximate species' ranges.and range weighted endemism
+
+# Objectives
+After this exercise you will be able to:
+1. Visualize species richness patterns and occurrence record density in a quick and efficient way.
+2. Estimate species distribution ranges based, and create polygons of species distributions.
+
+# Exercise
+1. Load the example data, and visualize the coordinates on a map.
+2. Visualize the number of occurrence records and the number of species in a regular-sized grid (`RichnessGrid`).
+3. Estimate the range for each species using a convex hull. Write the range maps to the working directory as ESRI-shape files (`writeOGR`, `plot`, `CalcRange`).
+4. Visualize species richness per grid cell based on the range polygons (`RangeRichness`).
+5. Visulaize species richenss in an equal area raster (`raster`, `spTransform`, `coordinates`).
+6. Write the result rasters to a file on your disk
+
+# Possible questions for your project
+* Where is the diversity centre of the group?
+* Where are centres of record collection?
+
+# Library setup
+You will need the following R libraries for this exercise, just copy the code chunk into you R console to load them. You might need to install some of them separately.
+
+```{r}
+library(tidyverse)
+library(speciesgeocodeR)
+library(raster)
+library(rgdal)
+```
+
+# Tutorial
+
+## 1. Load occurrence data and visualize
+```{r}
+dat <- read_csv("inst/occurrence_records_clean.csv")
+
+# Visualize
+world.inp  <- map_data("world")
+
+ggplot()+
+  geom_map(data=world.inp, map=world.inp, aes(x=long, y=lat, map_id=region), fill = "grey80")+
+  xlim(min(dat$decimalLongitude, na.rm = T), max(dat$decimalLongitude, na.rm = T))+
+  ylim(min(dat$decimalLatitude, na.rm = T), max(dat$decimalLatitude, na.rm = T))+
+  geom_point(data = dat, aes(x = decimalLongitude, y = decimalLatitude),
+             colour = "darkblue", size = 1)+
+  coord_fixed()+
+  theme_bw()+
+  theme(axis.title = element_blank())
+```
+
+## 2. Visualize the number of occurrence records and the number of species in a regular-sized grid (`RichnessGrid`)
+For a quick overview you can first visualize pattern in a lat/long grid.
+
+```{r}
+# The number of occurrences per grid cell
+gocc <- RichnessGrid(dat, type = "abu")
+
+plot(gocc)
+
+# Or more sofisticated plotting
+# Prepare for plotting
+plo_gocc <- data.frame(rasterToPoints(gocc))
+
+# Visualize
+ggplot()+
+  geom_map(data = world.inp, map = world.inp, aes(x = long, y = lat, map_id = region), fill = "grey80")+
+  xlim(min(dat$decimalLongitude, na.rm = T), max(dat$decimalLongitude, na.rm = T))+
+  ylim(min(dat$decimalLatitude, na.rm = T), max(dat$decimalLatitude, na.rm = T))+
+  geom_raster(data = plo_gocc, aes(x = x, y = y, fill = layer))+
+  #scale_fill_viridis(name = "Species", direction = -1)+
+  coord_fixed()+
+  theme_bw()+
+  ggtitle("Number of occurrences")+
+  theme(axis.title = element_blank())
+
+# The number of species per grid cell
+gri <- RichnessGrid(dat)
+
+plot(gri)
+```
+
+
+#3. Convex hull ranges per species
+As the simplest model of species distribution we can use convex hull to fill the gaps. This will only work for species which range is smaller than 180 degrees longitude.
+
+```{r}
+# Calculate ranges
+ranges <- CalcRange(dat)
+
+# Visualize
+plot(ranges)
+
+# Write to working directory
+writeOGR(ranges, dsn = "inst", layer = "range_polygons", 
+         driver = "ESRI Shapefile", overwrite_layer = TRUE)
+
+```
+
+## 4. Visualize species richness per grid cell based on the range polygons.
+
+```{r}
+# Create richness raster
+r_ri <- RangeRichness(ranges, res = 0.5)
+
+plot(r_ri)
+```
+
+## 5. Visualise species richenss in an equal area raster
+
+So far we have displayed species richness in a lat/lon projected raster. This is OK to get a feeling for the data, but strictly speeaking wrong, since the actuala rea of a 1x1 degree cell varies with latitude. So, it is better to use an eaqual area pojection, such as the Lamberts projection.
+```{r}
+# Define projections
+wgs1984 <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+behr <- CRS('+proj=cea +lon_0=0 +lat_ts=30 +x_0=0 +y_0=0 +datum=WGS84 +ellps=WGS84 +units=m +no_defs')
+
+# reproject the occurrence records
+pts <- dat[, c("decimalLongitude", "decimalLatitude")]%>%
+  SpatialPoints(proj4string = wgs1984)%>%
+  spTransform(behr)
+
+# create a aqual area template in behrman projection
+be <- raster(ncol = 360, nrow = 142, 
+             xmn = -17367529, xmx = 17367529, 
+             ymn = -6356742, ymx = 7348382,
+             crs = behr)
+be <- crop(be, extent(pts))
+
+pts <- data.frame(dat$species, coordinates(pts))
+
+# Equal area Occurrence number
+eq_occgri <- RichnessGrid(x= pts, ras = be, type = "abu")
+plot(eq_occgri)
+
+# Equal area speces richness
+eq_rigri <- RichnessGrid(x = pts, ras = be)
+plot(eq_rigri)
+
+# Range based species richness
+ranges <- spTransform(ranges, behr)
+
+eq_rri <- RangeRichness(x = ranges, ras = be)
+
+plot(eq_rri)
+```
+
+
+6. Write to disk
+```{r}
+writeRaster(eq_rri, filename = "inst/equal_area_range_richness", 
+            format = "ascii", overwrite = TRUE)
+```
+

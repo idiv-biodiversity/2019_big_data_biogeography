@@ -1,0 +1,244 @@
+---
+title: "Data cleaning"
+output: 
+  html_document:
+    theme: readable
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, eval = FALSE,
+                      echo=TRUE, warning=FALSE, message=FALSE,
+                      tidy = TRUE, collapse = TRUE,
+                      results = 'hold')
+```
+
+## Background
+Biases and issues with data quality are a central problem hampering the use of publicly available species occurrence data in ecology and biogeography. Biases are hard to address, but improving data quality by identifying erroneous records is possible. Major problems are: data entry errors leading to erroneous occurrence records, imprecise geo-referencing mostly of pre-GPS records and missing metadata specifying data entry and coordinate precision. Manual data cleaning based on expert knowledge can mostly detect these issues, but is only applicable for small taxonomic or geographic scales and is difficult to reproduce. Automated clean procedures are more scalable alternative.
+
+## Objectives
+After this exercise you will be able to:
+1. Visualize the data and identify potential problems 
+2. Use  *CoordinateCleaner* to automatically flag problematic records
+3. Use GBIF provided meta-data to improve coordinate quality, tailored to your downstream analyses
+4. Use automated flagging algorithms of *CoordinateCleaner* to identify problematic contributing datasets
+
+## Exercise
+Here we will use the data downloaded during the first exercise and look at common problems using automated flagging software and GBIF meta-data to identify some potential problems. For this tutorial we will exclude potentially problematic records, but in general we highly recommend to double check records to avoid losing data and introduce new biases. You can find a similar tutorial using illustrative data [here](https://azizka.github.io/CoordinateCleaner/articles/Tutorial_Cleaning_GBIF_data_with_CoordinateCleaner.html). AS in the first exercise necessary R functions for each question in the brackets. Get help for all functions with ?FUNCTIONNAME.
+
+1. Load your occurrence data downloaded from GBIF in the first exercise and limit the data to columns with potentially useful information (`read_csv`, `names`, `select`).
+2. Add the data we collected in the field and data from the other source. You will need to standardize column names (`read_csv`, `select`, `bind_rows`).
+3. Visualize the coordinates on a map (`borders`, `ggplot`, `geom_point`).
+4. Clean the coordinates based on available meta-data. A good starting point is to plot continuous variables as histogram and look at the values for discrete variables. Remove unsuitable records and plot again (`table`, `filter`).
+5. Apply automated flagging to identify potentially problematic records (`clean_coordinates`, `plot`).
+6. Visualize the difference between the unclean and cleaned dataset (`plot`)
+
+## Possible questions for your research project
+* How many records where potentially problematic?
+* What were the major issues? 
+* Were any of the records you collected in the field flagged as problematic? If so, what has happened?
+
+
+## Library setup
+You will need the following R libraries for this exercise, just copy the code chunk into you R console to load them. You might need to install some of them separately.
+
+```{r}
+library(tidyverse)
+library(rgbif)
+library(sp)
+library(countrycode)
+library(CoordinateCleaner)
+```
+
+# Solutions
+The following suggestion for data cleaning and are not comprehensive or a one-size-fits it all solution. You might want to change, omit, or add steps depending on your research question and scale. *Remember:* What  is 'good data' depends completely on the type of downstream analyses and their spatial scale. The cleaning here might be a good starting point for continental scale biogeographic analyses.
+
+## 1. Load your occurrence data downloaded from GBIF
+GBIF provides a large amount of information for each record, leading to a huge data.frame with many columns. However some of this information is only available for few records, and thus for most analyses most of the columns can be dropped. Here, we will only retain information to identify the record and information that is important for cleaning up the data.
+
+```{r}
+dat <- read_csv("inst/gbif_occurrences.csv", guess_max = 25000)%>%
+  mutate(dataset = "GBIF")
+
+names(dat) #a lot of columns
+
+dat <- dat %>%
+  select(species, decimalLongitude, decimalLatitude, countryCode, individualCount,
+         gbifID, family, taxonRank, coordinateUncertaintyInMeters, year,
+         basisOfRecord, institutionCode, datasetName, dataset)%>% # you might find other ones useful depending on your downstream analyses
+  mutate(countryCode = countrycode(dat$countryCode, origin =  'iso2c', destination = 'iso3c'))
+```
+
+
+## 2. Combine with field and additional data
+It is easy to add data, for instance if you ahve records from field collections etc. Remeber to adapt the column names in the select fucntion.
+
+```{r, eval = FALSE}
+#read the field data
+field <- read_csv("PAth to your data")%>%
+  filter(lat > -7)
+
+field <- field%>%
+  dplyr::select(species, 
+                decimalLongitude = long, 
+                decimalLatitude = lat, 
+                countryCode = country)%>%
+  mutate(dataset = "field")%>%
+  mutate(year = 2018)%>%
+  mutate(countryCode = countrycode(countryCode, origin = "country.name", destination = "iso3c"))
+
+dat <- bind_rows(dat, field)
+```
+
+
+## 3. Visualize the coordinates on a map
+Visualizing the data on a map can be extremely helpful to understand potential problems and to identify problematic records.
+
+```{r}
+world.inp  <- map_data("world")
+
+ggplot()+
+  geom_map(data=world.inp, map=world.inp, aes(x=long, y=lat, map_id=region), fill = "grey80")+
+  xlim(min(dat$decimalLongitude, na.rm = T), max(dat$decimalLongitude, na.rm = T))+
+  ylim(min(dat$decimalLatitude, na.rm = T), max(dat$decimalLatitude, na.rm = T))+
+  geom_point(data = dat, aes(x = decimalLongitude, y = decimalLatitude, color = dataset),
+             size = 1)+
+  coord_fixed()+
+  theme_bw()+
+  theme(axis.title = element_blank())
+```
+
+
+## 4. Clean the coordinates based on available meta-data
+As you cans see there are a some unexpected occurrence locations, outside the current distribution range. We will find out the reasons for this in a minute. In this specific case we could relatively easily get rid of a large number of problematic records based on prior knowledge (we are only interested in records in South America) but we usually do not have this kind of knowledge when dealing with larger datasets, so we will try to get rid of those records in different ways. GBIF data often contain a good number of meta-data that can help to locate problems. First we'll remove data without coordinates, coordinates with very low precision and the unsuitable data sources. We will remove all records with a precision below 100km as this represent the grain size of many macro-ecological analyses, but the number is somewhat arbitrary and you best chose it based on your downstream analyses. We also exclude fossils as we are interested in recent distributions and records of unknown source, as we might deem them not reliable enough.
+
+```{r}
+# remove records without coordinates
+dat_cl <- dat%>%
+  filter(!is.na(decimalLongitude))%>%
+  filter(!is.na(decimalLatitude))
+
+#remove records with low coordinate precision
+hist(dat_cl$coordinateUncertaintyInMeters/1000, breaks = 30)
+
+dat_cl <- dat_cl %>%
+  filter(coordinateUncertaintyInMeters/1000 <= 100 | is.na(coordinateUncertaintyInMeters))
+
+#remove unsuitable data sources, especially fossils
+table(dat$basisOfRecord)
+
+dat_cl <- filter(dat_cl, basisOfRecord == "HUMAN_OBSERVATION" | basisOfRecord == "OBSERVATION" |
+                         basisOfRecord == "PRESERVED_SPECIMEN" | is.na(basisOfRecord))
+```
+
+
+In the next step we will remove records with suspicious individual counts. GBIF includes few records of absence (individual count = 0) and suspiciously high occurrence counts, which might indicate inappropriate data or data entry problems. 
+
+```{r}
+#Individual count
+table(dat_cl$individualCount)
+
+dat_cl <- dat_cl%>%
+  filter(individualCount > 0 | is.na(individualCount))%>%
+  filter(individualCount < 99 | is.na(individualCount)) # high counts are not a problem
+```
+
+We might also want to exclude very old records, as they are more likely to be unreliable. For instance, records from before the second world war are often very imprecise, especially if they were geo-referenced based on political entities. Additionally old records might be likely from areas where species went extinct (for example due to land-use change).
+
+```{r}
+#Age of records
+table(dat_cl$year)
+
+dat_cl <- dat_cl%>%
+  filter(year > 1945) # remove records from before second world war
+```
+
+
+On top of the geographic cleaning, we also want to make sure to only include species level records and records from the right taxon.  Taxonomic problems such as spelling mistakes in the names or synonyms can be a severe problem. We'll not treat taxonomic cleaning here, but check out the [taxize R package](https://ropensci.org/tutorials/taxize_tutorial.html) or the [taxonomic name resolution service](http://tnrs.iplantcollaborative.org/) for that.
+
+```{r}
+table(dat_cl$family) #that looks good
+
+
+table(dat_cl$taxonRank) # We will only include records identified to species level
+dat_cl <- dat_cl%>%
+  filter(taxonRank == "SPECIES" | is.na(taxonRank))
+```
+
+We excluded almost `round((nrow(dat) - nrow(dat_cl)) / nrow(dat) * 100, 0)` of the initial data points based on metadata! Most of them due to incomplete identification. 
+
+5. Apply automated flagging to identify potentially problematic records
+To identify additional problems we will run the automatic flagging algorithm of the CoordinateCleaner package. The `clean_coordinates` function is a wrapper around a large set of automated cleaning steps to flag errors that are common to biological collections, including: sea coordinates, zero coordinates, coordinate - country mismatches, coordinates assigned to country and province centroids, coordinates within city areas, outlier coordinates and coordinates assigned to biodiversity institutions. You can switch on each test individually using logical flags, modify the sensitivity of most individual tests using the ".rad" arguments, and provide custom gazetteers using the ".ref" arguments. See `?clean_coordinates` for help. To use the country - coordinate mismatch test we need to convert the country from ISO2 to ISO3 format. Since we work in a coastal area, we use a buffered reference, to avoid flagging records close to the sea.
+
+
+```{r, warning = F, results = 'hold', collapse = T, fig.cap = "\\label{fig:automated}Records flagged by the automated cleaning."}
+#flag problems
+dat_cl <- data.frame(dat_cl)
+flags <- clean_coordinates(x = dat_cl, lon = "decimalLongitude", lat = "decimalLatitude",
+                          countries = "countryCode", 
+                          species = "species",
+                          tests = c("capitals", "centroids", "equal","gbif", 
+                                    "zeros", "countries", "seas"),
+                          seas_ref = buffland) # most test are on by default
+```
+
+Here an additional `sum(flags$.summary)` records were flagged! A look at the test summary and plot reveal the major issues.
+
+```{r}
+plot(flags, lon = "decimalLongitude", lat = "decimalLatitude")
+```
+
+After this inspection we can safely remove the flagged records for this tutorial
+
+```{r}
+dat_cl <- dat_cl[flags$.summary, ]
+```
+
+<!-- ## 6. Check for problems with coordinate precision -->
+<!-- Some problems, in particular certain kinds of imprecisions, cannot be identified on the record level. For instance, many records are based on gridded sampling schemes or atlas projects, but are not easily identifiable as such. To identify these kind of problems CoordinateCleaner includes dataset level tests, which search for periodicity in the decimals of occurrence records, and can indicate, if a substantial portion of the coordinates in a dataset have been subject to rounding or are nodes of a raster scheme. You can run this test either on the entire dataset, or on individual contributing dataset, e.g. all records from GBIF, using the `clean_dataset` function. See [here](https://azizka.github.io/CoordinateCleaner/articles/Background_dataset_level_cleaning.html) for more details. -->
+<!-- ```{r} -->
+<!-- #For the total dataset -->
+<!-- dat_cl$datasettotal <- "TOTAL" -->
+
+<!-- ##Run dataset level test -->
+<!-- clean_dataset(dat_cl,  -->
+<!--               ds = "datasettotal", -->
+<!--               lon = "decimalLongitude", -->
+<!--               lat = "decimalLatitude") -->
+<!-- ``` -->
+
+<!-- There is no evidence for periodicity in the entire dataset or its three biggest contributing datasets. Great! -->
+
+## 6. Visualize the difference between the uncleaned and cleaned dataset (`plot`)
+```{r}
+world.inp  <- map_data("world")
+
+ggplot()+
+  geom_map(data=world.inp, map=world.inp, aes(x=long, y=lat, map_id=region), fill = "grey80")+
+  xlim(min(dat$decimalLongitude, na.rm = T), max(dat$decimalLongitude, na.rm = T))+
+  ylim(min(dat$decimalLatitude, na.rm = T), max(dat$decimalLatitude, na.rm = T))+
+  geom_point(data = dat, aes(x = decimalLongitude, y = decimalLatitude),
+             colour = "darkred", size = 1)+
+  geom_point(data = dat_cl, aes(x = decimalLongitude, y = decimalLatitude),
+             colour = "darkgreen", size = 1)+
+  coord_fixed()+
+  theme_bw()+
+  theme(axis.title = element_blank())
+
+
+ggplot()+
+  geom_map(data=world.inp, map=world.inp, aes(x=long, y=lat, map_id=region), fill = "grey80")+
+  xlim(min(dat$decimalLongitude, na.rm = T), max(dat$decimalLongitude, na.rm = T))+
+  ylim(min(dat$decimalLatitude, na.rm = T), max(dat$decimalLatitude, na.rm = T))+
+  geom_point(data = dat_cl, aes(x = decimalLongitude, y = decimalLatitude, colour = dataset),
+             size = 1)+
+  coord_fixed()+
+  theme_bw()+
+  theme(axis.title = element_blank())
+
+```
+
+## 8. Write to disk
+```{r}
+write_csv(dat_cl, "inst/occurrence_records_clean.csv")
+````
+
