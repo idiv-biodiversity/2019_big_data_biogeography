@@ -12,7 +12,7 @@
 
 
 
-<title>tue_extract_clade_from_phylogeny.utf8.md</title>
+<title>Extracting clade from a phylogeny</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -312,34 +312,37 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="tue_download_GBIF_data.html">Obtaining geographic occurrence records from GBIF</a>
+      <a href="tue_download_GBIF_data.html">1. Obtaining geographic occurrence records from GBIF</a>
     </li>
     <li>
-      <a href="tue_cleaning_geographic_data.html">Cleaning geographic data</a>
+      <a href="tue_cleaning_geographic_data.html">2. Cleaning geographic data</a>
     </li>
     <li>
-      <a href="tue_accesibility_bias.html">Exploring sampling bias</a>
+      <a href="tue_accesibility_bias.html">3. Exploring sampling bias</a>
     </li>
     <li>
-      <a href="tue_species_richness.html">Species richness maps</a>
+      <a href="tue_species_richness.html">4. Species ranges &amp; richness maps</a>
     </li>
     <li>
-      <a href="tue_taxon_specific_bioregionalization.html">Taxon-specific bioregionalization</a>
+      <a href="tue_taxon_specific_bioregionalization.html">5. Taxon-specific bioregionalization</a>
     </li>
     <li>
-      <a href="tue_biome_classification.html">Species to biome classification</a>
+      <a href="tue_biome_classification.html">6. Species to biome classification</a>
     </li>
     <li>
-      <a href="tue_obtaining_environmental_data.html">Obtaining environmental data</a>
+      <a href="tue_obtaining_environmental_data.html">7. Obtaining environmental data</a>
     </li>
     <li>
-      <a href="tue_automated_conservation_assessment.html">Automated conservation assessment and IUCN assessments</a>
+      <a href="tue_extracting_clades.html">8. Extracting clades from a phylogeny</a>
     </li>
     <li>
-      <a href="tue_obtaining_data_from_paleoDB.html">Obtaining fossil data from PaleoDB</a>
+      <a href="tue_automated_conservation_assessment.html">Optional - Automated conservation assessment and IUCN assessments</a>
     </li>
     <li>
-      <a href="tue_fossil_cleaning.html">Cleaning fossil data</a>
+      <a href="tue_obtaining_data_from_paleoDB.html">Optional - Obtaining fossil data from PaleoDB</a>
+    </li>
+    <li>
+      <a href="tue_fossil_cleaning.html">Optional - Cleaning fossil data</a>
     </li>
   </ul>
 </li>
@@ -414,6 +417,7 @@ $(document).ready(function () {
 
 
 
+<h1 class="title toc-ignore">Extracting clade from a phylogeny</h1>
 
 </div>
 
@@ -429,10 +433,10 @@ $(document).ready(function () {
 <div id="exercise" class="section level1">
 <h1>Exercise</h1>
 <ol style="list-style-type: decimal">
-<li>Load your own phylogeny or one of the example phylogenies from the example_Data folder in the github repository into R. (<code>read.tree</code>)</li>
+<li><p>Load your own phylogeny or one of the example phylogenies from the example_Data folder in the github repository into R. (<code>read.tree</code>)</p></li>
+<li><p>Generate a lineage through time plot from this phylogeny. (<code>ltt.plot</code>)</p></li>
+<li><p>Select a clade your are particularly interested in to work on and extract it from the phylogeny, by identifying two species whose most recent common ancestor corresponds to the MRCA of your clade of interest. (<a href="http://www.onezoom.org/life/" class="uri">http://www.onezoom.org/life/</a>, <code>getMRCA</code>, <code>extract.clade</code>)</p></li>
 </ol>
-<p>2 Generate a lineage through time plot from this phylogeny. (<code>ltt.plot</code>)</p>
-<p>3 Select a clade your are particularly interested in to work on and extract it from the phylogeny, by identifying two species whose most recent common ancestor corresponds to the MRCA of your clade of interest. (<a href="http://www.onezoom.org/life/" class="uri">http://www.onezoom.org/life/</a>, <code>getMRCA</code>, <code>extract.clade</code>)</p>
 </div>
 <div id="library-setup" class="section level1">
 <h1>Library setup</h1>

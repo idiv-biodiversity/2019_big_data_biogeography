@@ -312,34 +312,37 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="tue_download_GBIF_data.html">Obtaining geographic occurrence records from GBIF</a>
+      <a href="tue_download_GBIF_data.html">1. Obtaining geographic occurrence records from GBIF</a>
     </li>
     <li>
-      <a href="tue_cleaning_geographic_data.html">Cleaning geographic data</a>
+      <a href="tue_cleaning_geographic_data.html">2. Cleaning geographic data</a>
     </li>
     <li>
-      <a href="tue_accesibility_bias.html">Exploring sampling bias</a>
+      <a href="tue_accesibility_bias.html">3. Exploring sampling bias</a>
     </li>
     <li>
-      <a href="tue_species_richness.html">Species richness maps</a>
+      <a href="tue_species_richness.html">4. Species ranges &amp; richness maps</a>
     </li>
     <li>
-      <a href="tue_taxon_specific_bioregionalization.html">Taxon-specific bioregionalization</a>
+      <a href="tue_taxon_specific_bioregionalization.html">5. Taxon-specific bioregionalization</a>
     </li>
     <li>
-      <a href="tue_biome_classification.html">Species to biome classification</a>
+      <a href="tue_biome_classification.html">6. Species to biome classification</a>
     </li>
     <li>
-      <a href="tue_obtaining_environmental_data.html">Obtaining environmental data</a>
+      <a href="tue_obtaining_environmental_data.html">7. Obtaining environmental data</a>
     </li>
     <li>
-      <a href="tue_automated_conservation_assessment.html">Automated conservation assessment and IUCN assessments</a>
+      <a href="tue_extracting_clades.html">8. Extracting clades from a phylogeny</a>
     </li>
     <li>
-      <a href="tue_obtaining_data_from_paleoDB.html">Obtaining fossil data from PaleoDB</a>
+      <a href="tue_automated_conservation_assessment.html">Optional - Automated conservation assessment and IUCN assessments</a>
     </li>
     <li>
-      <a href="tue_fossil_cleaning.html">Cleaning fossil data</a>
+      <a href="tue_obtaining_data_from_paleoDB.html">Optional - Obtaining fossil data from PaleoDB</a>
+    </li>
+    <li>
+      <a href="tue_fossil_cleaning.html">Optional - Cleaning fossil data</a>
     </li>
   </ul>
 </li>
@@ -434,7 +437,7 @@ $(document).ready(function () {
 <li>Visualize the number of occurrence records and the number of species in a regular-sized grid (<code>RichnessGrid</code>).</li>
 <li>Estimate the range for each species using a convex hull. Write the range maps to the working directory as ESRI-shape files (<code>writeOGR</code>, <code>plot</code>, <code>CalcRange</code>).</li>
 <li>Visualize species richness per grid cell based on the range polygons (<code>RangeRichness</code>).</li>
-<li>Visulaize species richenss in an equal area raster (<code>raster</code>, <code>spTransform</code>, <code>coordinates</code>).</li>
+<li>Visualize species richness in an equal area raster (<code>raster</code>, <code>spTransform</code>, <code>coordinates</code>).</li>
 <li>Write the result rasters to a file on your disk</li>
 </ol>
 </div>
@@ -492,7 +495,10 @@ coord_fixed() + theme_bw() + ggtitle(&quot;Number of occurrences&quot;) + theme(
 gri &lt;- RichnessGrid(dat)
 
 plot(gri)</code></pre>
-<p>#3. Convex hull ranges per species As the simplest model of species distribution we can use convex hull to fill the gaps. This will only work for species which range is smaller than 180 degrees longitude.</p>
+</div>
+<div id="convex-hull-ranges-per-species" class="section level2">
+<h2>3. Convex hull ranges per species</h2>
+<p>Species occurrence records can be sparse for many groups, which is a problem to estimate species richness and for the bioregionalization. As the simplest model of species distribution we can use convex hull to fill the gaps. This will only work for species which range is smaller than 180 degrees longitude.</p>
 <pre class="r"><code># Calculate ranges
 ranges &lt;- CalcRange(dat)
 
@@ -511,9 +517,9 @@ r_ri &lt;- RangeRichness(ranges, res = 0.5)
 
 plot(r_ri)</code></pre>
 </div>
-<div id="visualise-species-richenss-in-an-equal-area-raster" class="section level2">
-<h2>5. Visualise species richenss in an equal area raster</h2>
-<p>So far we have displayed species richness in a lat/lon projected raster. This is OK to get a feeling for the data, but strictly speeaking wrong, since the actuala rea of a 1x1 degree cell varies with latitude. So, it is better to use an eaqual area pojection, such as the Lamberts projection.</p>
+<div id="visualise-species-richness-in-an-equal-area-raster" class="section level2">
+<h2>5. Visualise species richness in an equal area raster</h2>
+<p>So far we have displayed species richness in a lat/lon projected raster. This is OK to get a feeling for the data, but strictly speaking wrong, since the actuals area of a 1x1 degree cell varies with latitude. So, it is better to use an equal area projection, such as the Lamberts projection.</p>
 <pre class="r"><code># Define projections
 wgs1984 &lt;- CRS(&quot;+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs&quot;)
 behr &lt;- CRS(&quot;+proj=cea +lon_0=0 +lat_ts=30 +x_0=0 +y_0=0 +datum=WGS84 +ellps=WGS84 +units=m +no_defs&quot;)
@@ -543,9 +549,9 @@ ranges &lt;- spTransform(ranges, behr)
 eq_rri &lt;- RangeRichness(x = ranges, ras = be)
 
 plot(eq_rri)</code></pre>
-<ol start="6" style="list-style-type: decimal">
-<li>Write to disk</li>
-</ol>
+</div>
+<div id="write-to-disk" class="section level2">
+<h2>6. Write to disk</h2>
 <pre class="r"><code>writeRaster(eq_rri, filename = &quot;inst/equal_area_range_richness&quot;, format = &quot;ascii&quot;, 
     overwrite = TRUE)</code></pre>
 </div>

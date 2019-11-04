@@ -21,25 +21,27 @@ navbar:
         href: mo_explore_iucn.html
   - text: Tuesday
     menu:
-    - text: Obtaining geographic occurrence records from GBIF
+    - text: 1. Obtaining geographic occurrence records from GBIF
       href: tue_download_GBIF_data.html
-    - text: Cleaning geographic data
+    - text: 2. Cleaning geographic data
       href: tue_cleaning_geographic_data.html
-    - text: Exploring sampling bias
+    - text: 3. Exploring sampling bias
       href: tue_accesibility_bias.html
-    - text: Species richness maps
+    - text: 4. Species ranges & richness maps
       href: tue_species_richness.html
-    - text: Taxon-specific bioregionalization
+    - text: 5. Taxon-specific bioregionalization
       href: tue_taxon_specific_bioregionalization.html
-    - text: Species to biome classification
+    - text: 6. Species to biome classification
       href: tue_biome_classification.html
-    - text: Obtaining environmental data
+    - text: 7. Obtaining environmental data
       href: tue_obtaining_environmental_data.html
-    - text: Automated conservation assessment and IUCN assessments
+    - text: 8. Extracting clades from a phylogeny
+      href: tue_extracting_clades.html
+    - text: Optional - Automated conservation assessment and IUCN assessments
       href: tue_automated_conservation_assessment.html
-    - text: Obtaining fossil data from PaleoDB
+    - text: Optional - Obtaining fossil data from PaleoDB
       href: tue_obtaining_data_from_paleoDB.html
-    - text: Cleaning fossil data
+    - text: Optional - Cleaning fossil data
       href: tue_fossil_cleaning.html
   - text: Wednesday
     menu:

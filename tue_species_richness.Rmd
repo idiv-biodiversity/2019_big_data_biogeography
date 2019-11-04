@@ -25,7 +25,7 @@ After this exercise you will be able to:
 2. Visualize the number of occurrence records and the number of species in a regular-sized grid (`RichnessGrid`).
 3. Estimate the range for each species using a convex hull. Write the range maps to the working directory as ESRI-shape files (`writeOGR`, `plot`, `CalcRange`).
 4. Visualize species richness per grid cell based on the range polygons (`RangeRichness`).
-5. Visulaize species richenss in an equal area raster (`raster`, `spTransform`, `coordinates`).
+5. Visualize species richness in an equal area raster (`raster`, `spTransform`, `coordinates`).
 6. Write the result rasters to a file on your disk
 
 # Possible questions for your project
@@ -94,8 +94,8 @@ plot(gri)
 ```
 
 
-#3. Convex hull ranges per species
-As the simplest model of species distribution we can use convex hull to fill the gaps. This will only work for species which range is smaller than 180 degrees longitude.
+## 3. Convex hull ranges per species
+Species occurrence records can be sparse for many groups, which is a problem to estimate species richness and for the bioregionalization. As the simplest model of species distribution we can use convex hull to fill the gaps. This will only work for species which range is smaller than 180 degrees longitude.
 
 ```{r}
 # Calculate ranges
@@ -119,9 +119,8 @@ r_ri <- RangeRichness(ranges, res = 0.5)
 plot(r_ri)
 ```
 
-## 5. Visualise species richenss in an equal area raster
-
-So far we have displayed species richness in a lat/lon projected raster. This is OK to get a feeling for the data, but strictly speeaking wrong, since the actuala rea of a 1x1 degree cell varies with latitude. So, it is better to use an eaqual area pojection, such as the Lamberts projection.
+## 5. Visualise species richness in an equal area raster
+So far we have displayed species richness in a lat/lon projected raster. This is OK to get a feeling for the data, but strictly speaking wrong, since the actuals area of a 1x1 degree cell varies with latitude. So, it is better to use an equal area projection, such as the Lamberts projection.
 ```{r}
 # Define projections
 wgs1984 <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
@@ -158,7 +157,7 @@ plot(eq_rri)
 ```
 
 
-6. Write to disk
+## 6. Write to disk
 ```{r}
 writeRaster(eq_rri, filename = "inst/equal_area_range_richness", 
             format = "ascii", overwrite = TRUE)

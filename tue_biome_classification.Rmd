@@ -14,22 +14,22 @@ knitr::opts_chunk$set(fig.width=12, fig.height=8, eval = FALSE,
 
 
 # Background
-The vast majority of species occurrence information available, via 'big data' aggregators as GBIF are georeferenced point locations consisting of geographic coordinates. However, most methods for ancestral area estimation require species occurrences in a limited number of discrete geographic units. A manual classification of species based on expert knowledge or graphical-user-interface based GIS software are limited in the amount of data that can be processed and often hard to reproduce. SpeciesgeocodeR implements an easy-to-use function to classify species occurrence to discrete areas, accounting for issues in data quality. You can find detailed tutorials on the software [here](https://github.com/azizka/speciesgeocodeR/wiki) and articles disribing the method [here](https://academic.oup.com/sysbio/article/66/2/145/2670075/SpeciesGeoCoder-Fast-Categorization-of-Species) and [here](http://www.biorxiv.org/content/early/2015/11/24/032755).
+The vast majority of species occurrence information available, via 'big data' aggregators as GBIF are georeferenced point locations consisting of geographic coordinates. However, most methods for ancestral area estimation require species occurrences in a limited number of discrete geographic units. A manual classification of species based on expert knowledge or graphical-user-interface based GIS software are limited in the amount of data that can be processed and often hard to reproduce. SpeciesgeocodeR implements an easy-to-use function to classify species occurrence to discrete areas, accounting for issues in data quality. You can find detailed tutorials on the software [here](https://github.com/azizka/speciesgeocodeR/wiki) and articles disrobing the method [here](https://academic.oup.com/sysbio/article/66/2/145/2670075/SpeciesGeoCoder-Fast-Categorization-of-Species) and [here](http://www.biorxiv.org/content/early/2015/11/24/032755).
 
 
 # Objectives
 After this exercise you will be able to assign species occurrences to predefined areas in an automated way, taking into account caveats on data quality.
 
 # Exercise
-1. Load the cleanned occurrence file and classify each species as occurring or not occurring in the 14 WWF bioregions. (`read_csv`, `SpGeoCod`, `WwfLoad`)
+1. Load the cleaned occurrence file and classify each species as occurring or not occurring in the 14 WWF bioregions. (`read_csv`, `SpGeoCod`, `WwfLoad`)
 2. Write the statistical and graphical summary to the working directory and check out the results. Which species and which occurrence records could not be classified? (`SpGeoCod`)
-3. Write the area classification the working directory in a format suitable for downstream analyses with (a) BioGeoBEARS, (b) BayArea and (c) in nexus format. (`WriteOut`)
+3. Write the area classification the working directory in a format suitable for downstream analyses with BioGeoBEARS. (`WriteOut`)
 4. Control the occurrence threshold option of the SpGeoOut function. Which effect do you observe, which fraction seems plausible? (`SpGeoCod`)
 
 # Possible questions for your project
 * Which biome is most diverse for your group?
 * How many species occur in multiple biomes?
-* Which biomes are most comonlly shared by species?
+* Which biomes are most commonly shared by species?
 * Which fraction of records can not be classified to any biome?
 * Which ecoregion is most important?
 
@@ -72,14 +72,9 @@ WriteOut(class, type = "stats")
 
 ## 3. Format for downstream analyses
 ```{r}
-# a) BioGeoBEARS
+# BioGeoBEARS
 WriteOut(class, type = "BioGeoBEARS")
 
-# b) Bayarea
-WriteOut(class, type = "BayArea")
-
-# c) Nexus
-WriteOut(class, type = "nexus")
 ```
 
 ## 4. Occurrence threshold

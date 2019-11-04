@@ -1,4 +1,5 @@
 ---
+title: "Obtaining environmental data"
 output: html_document
 ---
 
@@ -9,7 +10,6 @@ knitr::opts_chunk$set(fig.width=12, fig.height=8, eval = FALSE,
                       results = 'hold')
 ```
 
-
 # Background
 Linking species occurrences and evolution to environmental variables and quantifying species "niche" and its evolution is essential for many biogeographic questions. We will use the temperature range of species to reconstruct the evolution of temperature mean and variance using BITE tomorrow.
 
@@ -17,7 +17,7 @@ Linking species occurrences and evolution to environmental variables and quantif
 After this exercise, you will be able to extract environmental data from for geographic coordinates. 
 
 # Exercise
-1. Download global environmental data from  the [CHELSA](http://chelsa-climate.org/) project or [wordlclim 2](https://worldclim.org/version2).
+1. Download global environmental data from  the [CHELSA](http://chelsa-climate.org/) project or [worldclim 2](https://worldclim.org/version2).
 2. Load the data into R and extract the mean annual temperature for your locations (`raster`, `read_csv`, `extract`)
 
 # Tutorial
@@ -47,7 +47,6 @@ ext <- raster::extract(env, pts) %>%
 out <- bind_cols(occ, ext)
 
 ```
-
 
 ## Write to disk
 ```{r}

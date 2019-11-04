@@ -8,7 +8,7 @@ output: html_document
 During the course, we will used R and Rstudio to run analyses. Please install the following packages already now, to be as efficient as possible during the exercises. Please open Rstudio and run the following command to install the necessary dependencies. You can just copy the code from the following chunk.
 
 ```{r, eval = FALSE}
-install.packages(
+install.packages(c(
   "ape",
   "devtools",
   "scales",
@@ -35,7 +35,7 @@ install.packages(
   "RColorBrewer",
   "colorspace",
   "viridis",
-  "jpeg"
+  "jpeg")
 )
 
 library(devtools)

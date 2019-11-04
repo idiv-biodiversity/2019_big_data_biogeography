@@ -1,4 +1,5 @@
 ---
+title: "Extracting clade from a phylogeny"
 output: html_document
 ---
 
@@ -19,9 +20,9 @@ For the course we will not use the entire phylogenies, for the exercises on Wedn
 # Exercise
 1. Load your own phylogeny or one of the example phylogenies from the example_Data folder in the github repository into R. (`read.tree`)
 
-2 Generate a lineage through time plot from this phylogeny. (`ltt.plot`)
+2. Generate a lineage through time plot from this phylogeny. (`ltt.plot`)
 
-3 Select a clade your are particularly interested in to work on and extract it from the phylogeny, by identifying two species whose most recent common ancestor corresponds to the MRCA of your clade of interest. (http://www.onezoom.org/life/, `getMRCA`, `extract.clade`)
+3. Select a clade your are particularly interested in to work on and extract it from the phylogeny, by identifying two species whose most recent common ancestor corresponds to the MRCA of your clade of interest. (http://www.onezoom.org/life/, `getMRCA`, `extract.clade`)
 
 # Library setup
 ```{r}

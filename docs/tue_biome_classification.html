@@ -312,34 +312,37 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="tue_download_GBIF_data.html">Obtaining geographic occurrence records from GBIF</a>
+      <a href="tue_download_GBIF_data.html">1. Obtaining geographic occurrence records from GBIF</a>
     </li>
     <li>
-      <a href="tue_cleaning_geographic_data.html">Cleaning geographic data</a>
+      <a href="tue_cleaning_geographic_data.html">2. Cleaning geographic data</a>
     </li>
     <li>
-      <a href="tue_accesibility_bias.html">Exploring sampling bias</a>
+      <a href="tue_accesibility_bias.html">3. Exploring sampling bias</a>
     </li>
     <li>
-      <a href="tue_species_richness.html">Species richness maps</a>
+      <a href="tue_species_richness.html">4. Species ranges &amp; richness maps</a>
     </li>
     <li>
-      <a href="tue_taxon_specific_bioregionalization.html">Taxon-specific bioregionalization</a>
+      <a href="tue_taxon_specific_bioregionalization.html">5. Taxon-specific bioregionalization</a>
     </li>
     <li>
-      <a href="tue_biome_classification.html">Species to biome classification</a>
+      <a href="tue_biome_classification.html">6. Species to biome classification</a>
     </li>
     <li>
-      <a href="tue_obtaining_environmental_data.html">Obtaining environmental data</a>
+      <a href="tue_obtaining_environmental_data.html">7. Obtaining environmental data</a>
     </li>
     <li>
-      <a href="tue_automated_conservation_assessment.html">Automated conservation assessment and IUCN assessments</a>
+      <a href="tue_extracting_clades.html">8. Extracting clades from a phylogeny</a>
     </li>
     <li>
-      <a href="tue_obtaining_data_from_paleoDB.html">Obtaining fossil data from PaleoDB</a>
+      <a href="tue_automated_conservation_assessment.html">Optional - Automated conservation assessment and IUCN assessments</a>
     </li>
     <li>
-      <a href="tue_fossil_cleaning.html">Cleaning fossil data</a>
+      <a href="tue_obtaining_data_from_paleoDB.html">Optional - Obtaining fossil data from PaleoDB</a>
+    </li>
+    <li>
+      <a href="tue_fossil_cleaning.html">Optional - Cleaning fossil data</a>
     </li>
   </ul>
 </li>
@@ -421,7 +424,7 @@ $(document).ready(function () {
 
 <div id="background" class="section level1">
 <h1>Background</h1>
-<p>The vast majority of species occurrence information available, via ‘big data’ aggregators as GBIF are georeferenced point locations consisting of geographic coordinates. However, most methods for ancestral area estimation require species occurrences in a limited number of discrete geographic units. A manual classification of species based on expert knowledge or graphical-user-interface based GIS software are limited in the amount of data that can be processed and often hard to reproduce. SpeciesgeocodeR implements an easy-to-use function to classify species occurrence to discrete areas, accounting for issues in data quality. You can find detailed tutorials on the software <a href="https://github.com/azizka/speciesgeocodeR/wiki">here</a> and articles disribing the method <a href="https://academic.oup.com/sysbio/article/66/2/145/2670075/SpeciesGeoCoder-Fast-Categorization-of-Species">here</a> and <a href="http://www.biorxiv.org/content/early/2015/11/24/032755">here</a>.</p>
+<p>The vast majority of species occurrence information available, via ‘big data’ aggregators as GBIF are georeferenced point locations consisting of geographic coordinates. However, most methods for ancestral area estimation require species occurrences in a limited number of discrete geographic units. A manual classification of species based on expert knowledge or graphical-user-interface based GIS software are limited in the amount of data that can be processed and often hard to reproduce. SpeciesgeocodeR implements an easy-to-use function to classify species occurrence to discrete areas, accounting for issues in data quality. You can find detailed tutorials on the software <a href="https://github.com/azizka/speciesgeocodeR/wiki">here</a> and articles disrobing the method <a href="https://academic.oup.com/sysbio/article/66/2/145/2670075/SpeciesGeoCoder-Fast-Categorization-of-Species">here</a> and <a href="http://www.biorxiv.org/content/early/2015/11/24/032755">here</a>.</p>
 </div>
 <div id="objectives" class="section level1">
 <h1>Objectives</h1>
@@ -430,9 +433,9 @@ $(document).ready(function () {
 <div id="exercise" class="section level1">
 <h1>Exercise</h1>
 <ol style="list-style-type: decimal">
-<li>Load the cleanned occurrence file and classify each species as occurring or not occurring in the 14 WWF bioregions. (<code>read_csv</code>, <code>SpGeoCod</code>, <code>WwfLoad</code>)</li>
+<li>Load the cleaned occurrence file and classify each species as occurring or not occurring in the 14 WWF bioregions. (<code>read_csv</code>, <code>SpGeoCod</code>, <code>WwfLoad</code>)</li>
 <li>Write the statistical and graphical summary to the working directory and check out the results. Which species and which occurrence records could not be classified? (<code>SpGeoCod</code>)</li>
-<li>Write the area classification the working directory in a format suitable for downstream analyses with (a) BioGeoBEARS, (b) BayArea and (c) in nexus format. (<code>WriteOut</code>)</li>
+<li>Write the area classification the working directory in a format suitable for downstream analyses with BioGeoBEARS. (<code>WriteOut</code>)</li>
 <li>Control the occurrence threshold option of the SpGeoOut function. Which effect do you observe, which fraction seems plausible? (<code>SpGeoCod</code>)</li>
 </ol>
 </div>
@@ -441,7 +444,7 @@ $(document).ready(function () {
 <ul>
 <li>Which biome is most diverse for your group?</li>
 <li>How many species occur in multiple biomes?</li>
-<li>Which biomes are most comonlly shared by species?</li>
+<li>Which biomes are most commonly shared by species?</li>
 <li>Which fraction of records can not be classified to any biome?</li>
 <li>Which ecoregion is most important?</li>
 </ul>
@@ -481,14 +484,9 @@ WriteOut(class, type = &quot;stats&quot;)
 </code></pre>
 <div id="format-for-downstream-analyses" class="section level2">
 <h2>3. Format for downstream analyses</h2>
-<pre class="r"><code># a) BioGeoBEARS
+<pre class="r"><code># BioGeoBEARS
 WriteOut(class, type = &quot;BioGeoBEARS&quot;)
-
-# b) Bayarea
-WriteOut(class, type = &quot;BayArea&quot;)
-
-# c) Nexus
-WriteOut(class, type = &quot;nexus&quot;)</code></pre>
+</code></pre>
 </div>
 <div id="occurrence-threshold" class="section level2">
 <h2>4. Occurrence threshold</h2>

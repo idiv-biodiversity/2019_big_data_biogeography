@@ -27,7 +27,8 @@ Helpful functions for answering each question are given in the brackets. In case
 1. Load the distribution data. (`read.csv`)
 2. Run sampbias with the default settings. (`SamplingBias`)
 3. Look at the run summary and visualize the results. How informative are the results? (`par, plot`)
-4. Explore ?SamplingBias and try to change the relevant arguments to improve the results. Summarize and visualize again.
+4. Explore `?SamplingBias` and try to change the relevant arguments to improve the results. Summarize and visualize again.
+5. Explore the relation of socio-economic factors in your group of interest. (https://bio-dem.surge.sh/)
 
 
 ## Possible questions for your research project

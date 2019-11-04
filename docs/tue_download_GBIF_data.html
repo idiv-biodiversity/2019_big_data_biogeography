@@ -312,34 +312,37 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="tue_download_GBIF_data.html">Obtaining geographic occurrence records from GBIF</a>
+      <a href="tue_download_GBIF_data.html">1. Obtaining geographic occurrence records from GBIF</a>
     </li>
     <li>
-      <a href="tue_cleaning_geographic_data.html">Cleaning geographic data</a>
+      <a href="tue_cleaning_geographic_data.html">2. Cleaning geographic data</a>
     </li>
     <li>
-      <a href="tue_accesibility_bias.html">Exploring sampling bias</a>
+      <a href="tue_accesibility_bias.html">3. Exploring sampling bias</a>
     </li>
     <li>
-      <a href="tue_species_richness.html">Species richness maps</a>
+      <a href="tue_species_richness.html">4. Species ranges &amp; richness maps</a>
     </li>
     <li>
-      <a href="tue_taxon_specific_bioregionalization.html">Taxon-specific bioregionalization</a>
+      <a href="tue_taxon_specific_bioregionalization.html">5. Taxon-specific bioregionalization</a>
     </li>
     <li>
-      <a href="tue_biome_classification.html">Species to biome classification</a>
+      <a href="tue_biome_classification.html">6. Species to biome classification</a>
     </li>
     <li>
-      <a href="tue_obtaining_environmental_data.html">Obtaining environmental data</a>
+      <a href="tue_obtaining_environmental_data.html">7. Obtaining environmental data</a>
     </li>
     <li>
-      <a href="tue_automated_conservation_assessment.html">Automated conservation assessment and IUCN assessments</a>
+      <a href="tue_extracting_clades.html">8. Extracting clades from a phylogeny</a>
     </li>
     <li>
-      <a href="tue_obtaining_data_from_paleoDB.html">Obtaining fossil data from PaleoDB</a>
+      <a href="tue_automated_conservation_assessment.html">Optional - Automated conservation assessment and IUCN assessments</a>
     </li>
     <li>
-      <a href="tue_fossil_cleaning.html">Cleaning fossil data</a>
+      <a href="tue_obtaining_data_from_paleoDB.html">Optional - Obtaining fossil data from PaleoDB</a>
+    </li>
+    <li>
+      <a href="tue_fossil_cleaning.html">Optional - Cleaning fossil data</a>
     </li>
   </ul>
 </li>
@@ -471,19 +474,18 @@ lapply(tax_key$key, &quot;occ_count&quot;)
 
 # Here the firsrt one is relevant, check for your group!
 tax_key &lt;- tax_key$key[1]</code></pre>
-<pre class="r"><code>occ_count(tax_key, country = &quot;BR&quot;)</code></pre>
+<pre class="r"><code>occ_count(tax_key, country = &quot;DE&quot;)</code></pre>
 <p>There are more than five million records available from Brazil. This is too much for this exercise and also <code>occ_Search</code> is limited to 200000 records. Hence we will further limit the geographic extent. To do this you can use the Well-known-text format (WKT) to specify an area. Here we use a very simple rectangle, feel free to experiment. The download may take some minutes.</p>
-<!-- 4. Download all data for your group from Brazil, or if the group is very large from part of that area. -->
-<!-- You can now download the records for Brazil. Since we want to work with coordinates, we will only download those records that do have coordinates. -->
-<!-- ```{r} -->
-<!-- dat  <- occ_search(taxonKey = tax_key, return = "data",  -->
-<!--                    country = "BR", hasCoordinate = T, limit = 10000)  -->
-<!-- ``` -->
-<!-- That leaves us with 2493 records. If you are satisfied for your group you can go to the next step and save the data to the working directory. The limit for record searching using rgbif is 250,000 records, if your group has more records you may limit the geographic area to the north east of Brazil. To do this you can use the Well-known-text format (WKT) to specify an area. Here we use a very simple rectangle, feel free to experiment -->
+<ol start="4" style="list-style-type: decimal">
+<li>Download all data for your group from Brazil, or if the group is very large from part of that area. You can now download the records for Brazil. Since we want to work with coordinates, we will only download those records that do have coordinates.</li>
+</ol>
+<pre class="r"><code>dat &lt;- occ_search(taxonKey = tax_key, return = &quot;data&quot;, country = &quot;DE&quot;, hasCoordinate = T, 
+    limit = 1000)</code></pre>
+<p>That leaves us with records. If you are satisfied for your group you can go to the next step and save the data to the working directory. The limit for record searching using rgbif is 250,000 records, if your group has more records you may limit the geographic area to the north east of Brazil. To do this you can use the Well-known-text format (WKT) to specify an area. Here we use a very simple rectangle, feel free to experiment</p>
 <pre class="r"><code>study_a &lt;- &quot;POLYGON((-35 -4.5, -38.5 -4.5, -38.5 -7, -35 -7, -35 -4.5))&quot;
 
 dat_ne &lt;- occ_search(taxonKey = tax_key, return = &quot;data&quot;, hasCoordinate = T, 
-    geometry = study_a, limit = 50000)
+    geometry = study_a, limit = 1000)
 </code></pre>
 <p>If you have a .kml or.shp file for which you want to download records you can import this into R using the <code>readOGR</code> function of the <code>rgdal</code> library and convert it into WKT format using <code>writeWKT</code> from the <code>rgeos</code> package.</p>
 <pre class="r"><code>amz &lt;- readOGR(&quot;inst/Amazonia.kml&quot;)
@@ -504,40 +506,15 @@ tax_key &lt;- unlist(lapply(tax_key, &quot;[[&quot;, &quot;key&quot;))
 unlist(lapply(tax_key, &quot;occ_count&quot;))
 
 dat_ne &lt;- occ_search(taxonKey = tax_key, return = &quot;data&quot;, hasCoordinate = T, 
-    limit = 50000, country = &quot;BR&quot;)
+    limit = 1000, country = &quot;DE&quot;)
 dat_ne &lt;- lapply(dat_ne, &quot;as.data.frame&quot;)
 
-dat_ne &lt;- bind_rows(dat_ne)
-## [1] 14636     0    11  4218</code></pre>
+dat_ne &lt;- bind_rows(dat_ne)</code></pre>
 <ol start="5" style="list-style-type: decimal">
 <li>Save the downloaded data as .csv to the working directory. You can save the results as text file to the working directory. To identify your working directory use <code>getwd()</code>.</li>
 </ol>
 <pre class="r"><code>write_csv(dat_ne, path = &quot;inst/gbif_occurrences.csv&quot;)</code></pre>
 <p>If you want to use records from GBIF for publication, please make sure you cite them properly, using a DOI, you can get a DOI by using <code>occ_download</code>.</p>
-<!-- ## 3. Download Bombacoideae records on subfamily rank -->
-<!-- Unfortunately, downloading by subfamily is not recommendable due to taxonomic issues and because not all records are classified accordingly. Using the species keys from `name_lookup(q = Bombacoideae)` does not yield any records.  We'll therefor use a list of species, to download the records. We'll first get the GBIF taxonKey for all species in the list using the `name _suggest` function. You can either define the list directly in R, or if you want search for many species, you load a list from a text file. As an example, you can use the 'bombacoids_specs_list.txt' file. We are only interested in the actual data (no the meta-data), therefore `return = 'data'` and only those records that have coordinates (`hasCoordinate = T`). -->
-<!-- ```{r} -->
-<!-- #You can either create the species list in R, or if it is long list, download it from -->
-<!-- # splist <- c("Adansonia digitata", "Ceiba pentandra") #for few speceis define in R like this -->
-<!-- splist <- read_delim("Example_data/bombacoids_specs_list.txt", delim = "\t")%>% -->
-<!-- unlist(use.names = F) -->
-<!-- #get taxon keys -->
-<!-- keys <- lapply(as.list(splist), function(x) name_suggest(x, rank = "species"))%>% -->
-<!--   bind_rows()%>% -->
-<!--   filter(canonicalName %in% splist)%>% -->
-<!--   dplyr::select(key)%>% -->
-<!--   unlist(use.names = F) -->
-<!-- #obtain records -->
-<!-- bomb.occ <- occ_search(taxonKey = keys, limit=50000, return = 'data', hasCoordinate = T) # remember to change the limit -->
-<!-- ``` -->
-<!-- 4. Save the downloaded data to the working directory. -->
-<!-- The code above gives a list of the same length as the number of keys supplied (three in this case, as _Ceiba pentandra_ has two keys) consisting of data.frames with the occurrence records and large number of additional columns. WE will get rid of unnecessary information in the next exercise. For now we only want to get the data in a single data.frame and write it to the working directory -->
-<!-- ```{r} -->
-<!-- #sort out species without records -->
-<!-- bomb.out <- bomb.occ[sapply(bomb.occ, "length", USE.NAMES = F) != 1]%>% -->
-<!--   bind_rows() -->
-<!-- write_csv(x = bomb.out, path = "bombacoideae_occurrences_gbif.csv") -->
-<!-- ``` -->
 </div>
 </div>
 

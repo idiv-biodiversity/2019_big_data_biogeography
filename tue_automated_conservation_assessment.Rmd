@@ -1,5 +1,5 @@
 ---
-title: "Range size and conservation assessment"
+title: "AUtomated conservation assessment"
 output: 
   html_document:
     theme: readable
@@ -23,9 +23,7 @@ After this exercise you will be abler to
 1. Calculate the area of the EOO for all species in your group (`CalcRangeSize`)
 2. Do a preliminary conservation assessment of your group based on Criterion B using the ConR package. You can find a detailed tutorial [here](https://cran.r-project.org/web/packages/ConR/vignettes/my-vignette.html). (`IUCN.eval`)
 3. Look at the conservation assessments available for your group from the IUCN. How well does the automated assessment reflect the full IUCN assessments
-4. Of those species that have been classifed as threatened by IUCN, how many have been done so based on criterion B?
-5. Explore the [Bio-Dem app](http://bio-dem.surge.sh/) to explore the effect of political factos on data collections in your group. 
-
+4. Of those species that have been classified as threatened by IUCN, how many have been done so based on criterion B?
 
 # Possible questions for your project
 * What is the maximum range size for a species in your group
@@ -58,7 +56,7 @@ dat <- read_csv("inst/occurrence_records_clean.csv")%>%
 rs <- CalcRangeSize(dat)
 ```
 
-A geospheric convex hull is a first approximation for a species range. However, some simple refinement might be desirable, for instance to limit the range only to biome where a given species ahs been recorded.
+A geospheric convex hull is a first approximation for a species range. However, some simple refinement might be desirable, for instance to limit the range only to biome where a given species has been recorded.
 
 ```{r}
 # Limited to biomes with records
@@ -72,7 +70,7 @@ range <- data.frame(rs, rs_biome)
 ```
 
 ## 2. Automated conservation assessment 
-You can use the ConR package for a preliminary conservation assessment orientated on the IUCN Red list Criterion B. THis is based on the EOO we have encountered above and additionally the Area of OCcupancy and the number of subpopulations.
+You can use the ConR package for a preliminary conservation assessment orientated on the IUCN Red list Criterion B. T His is based on the EOO we have encountered above and additionally the Area of Occupancy and the number of subpopulations.
 
 ```{r, eval=FALSE}
 # Format input data
@@ -89,7 +87,7 @@ ev
 
 
 ## 3. Obtaining IUCN conservation status
-To obtain the the IUCN status of species using the r package [rredlist](https://cran.r-project.org/web/packages/rredlist/index.html), you need a token for the Relist API.
+To obtain the the IUCN status of species using the r package [rredlist](https://cran.r-project.org/web/packages/rredlist/index.html), you need a token for the Redlist API.
 
 ```{r, echo = FALSE}
 iucn.key <- "01524b67f4972521acd1ded2d8b3858e7fedc7da5fd75b8bb2c5456ea18b01ba"
@@ -160,7 +158,7 @@ write_csv(test, "inst?conservation_assessment.csv")
 ```
 
 
-## 5. Explore the Bio-Dem app to explore the effect of political factos on data collections in your group. 
+## 5. Explore the Bio-Dem app to explore the effect of political factors on data collections in your group. 
 http://bio-dem.surge.sh/
 
 

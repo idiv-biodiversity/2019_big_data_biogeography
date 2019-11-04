@@ -72,26 +72,26 @@ tax_key <- tax_key$key[1]
 ```
 
 ```{r}
-occ_count(tax_key, country = "BR")
+occ_count(tax_key, country = "DE")
 ```
 
 There are more than five million records available from Brazil. This is too much for this exercise and also `occ_Search` is limited to 200000 records. Hence we will further limit the geographic extent. To do this you can use the Well-known-text format (WKT) to specify an area. Here we use a very simple rectangle, feel free to experiment. The download may take some minutes.
 
 
-<!-- 4. Download all data for your group from Brazil, or if the group is very large from part of that area. -->
-<!-- You can now download the records for Brazil. Since we want to work with coordinates, we will only download those records that do have coordinates. -->
-<!-- ```{r} -->
-<!-- dat  <- occ_search(taxonKey = tax_key, return = "data",  -->
-<!--                    country = "BR", hasCoordinate = T, limit = 10000)  -->
-<!-- ``` -->
+4. Download all data for your group from Brazil, or if the group is very large from part of that area.
+You can now download the records for Brazil. Since we want to work with coordinates, we will only download those records that do have coordinates.
+```{r}
+dat  <- occ_search(taxonKey = tax_key, return = "data",
+                   country = "DE", hasCoordinate = T, limit = 1000)
+```
 
-<!-- That leaves us with `r nrow(dat)` records. If you are satisfied for your group you can go to the next step and save the data to the working directory. The limit for record searching using rgbif is 250,000 records, if your group has more records you may limit the geographic area to the north east of Brazil. To do this you can use the Well-known-text format (WKT) to specify an area. Here we use a very simple rectangle, feel free to experiment -->
+That leaves us with records. If you are satisfied for your group you can go to the next step and save the data to the working directory. The limit for record searching using rgbif is 250,000 records, if your group has more records you may limit the geographic area to the north east of Brazil. To do this you can use the Well-known-text format (WKT) to specify an area. Here we use a very simple rectangle, feel free to experiment
 
 ```{r, eval=FALSE}
 study_a <- "POLYGON((-35 -4.5, -38.5 -4.5, -38.5 -7, -35 -7, -35 -4.5))"
 
 dat_ne  <- occ_search(taxonKey = tax_key, return = "data", hasCoordinate = T,
-                   geometry = study_a, limit = 50000) 
+                   geometry = study_a, limit = 1000) 
 
 ```
 
@@ -110,7 +110,7 @@ ex <- rgeos::writeWKT(ex)
 
 Alternatively, you can download data for a list of taxa.
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 gen_list <- c("Ceiba", "Eriotheca")
 
 tax_key <- lapply(gen_list, function(k){name_suggest(q = k, rank = "Genus")})
@@ -119,7 +119,7 @@ tax_key <- unlist(lapply(tax_key, "[[", "key"))
 unlist(lapply(tax_key, "occ_count"))
 
 dat_ne  <- occ_search(taxonKey = tax_key, return = "data", hasCoordinate = T,
-                   limit = 50000, country = "BR") 
+                   limit = 1000, country = "DE") 
 dat_ne <- lapply(dat_ne, "as.data.frame")
 
 dat_ne <- bind_rows(dat_ne)
@@ -134,38 +134,3 @@ write_csv(dat_ne, path = "inst/gbif_occurrences.csv")
 ```
 
 If you want to use records from GBIF for publication, please make sure you cite them properly, using a DOI, you can get a DOI by using `occ_download`.
-
-
-<!-- ## 3. Download Bombacoideae records on subfamily rank -->
-<!-- Unfortunately, downloading by subfamily is not recommendable due to taxonomic issues and because not all records are classified accordingly. Using the species keys from `name_lookup(q = Bombacoideae)` does not yield any records.  We'll therefor use a list of species, to download the records. We'll first get the GBIF taxonKey for all species in the list using the `name _suggest` function. You can either define the list directly in R, or if you want search for many species, you load a list from a text file. As an example, you can use the 'bombacoids_specs_list.txt' file. We are only interested in the actual data (no the meta-data), therefore `return = 'data'` and only those records that have coordinates (`hasCoordinate = T`). -->
-
-<!-- ```{r} -->
-<!-- #You can either create the species list in R, or if it is long list, download it from -->
-
-<!-- # splist <- c("Adansonia digitata", "Ceiba pentandra") #for few speceis define in R like this -->
-
-<!-- splist <- read_delim("Example_data/bombacoids_specs_list.txt", delim = "\t")%>% -->
-<!-- unlist(use.names = F) -->
-
-<!-- #get taxon keys -->
-<!-- keys <- lapply(as.list(splist), function(x) name_suggest(x, rank = "species"))%>% -->
-<!--   bind_rows()%>% -->
-<!--   filter(canonicalName %in% splist)%>% -->
-<!--   dplyr::select(key)%>% -->
-<!--   unlist(use.names = F) -->
-
-<!-- #obtain records -->
-<!-- bomb.occ <- occ_search(taxonKey = keys, limit=50000, return = 'data', hasCoordinate = T) # remember to change the limit -->
-<!-- ``` -->
-
-<!-- 4. Save the downloaded data to the working directory. -->
-<!-- The code above gives a list of the same length as the number of keys supplied (three in this case, as _Ceiba pentandra_ has two keys) consisting of data.frames with the occurrence records and large number of additional columns. WE will get rid of unnecessary information in the next exercise. For now we only want to get the data in a single data.frame and write it to the working directory -->
-
-<!-- ```{r} -->
-<!-- #sort out species without records -->
-<!-- bomb.out <- bomb.occ[sapply(bomb.occ, "length", USE.NAMES = F) != 1]%>% -->
-<!--   bind_rows() -->
-
-<!-- write_csv(x = bomb.out, path = "bombacoideae_occurrences_gbif.csv") -->
-<!-- ``` -->
-
