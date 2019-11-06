@@ -46,7 +46,7 @@ library(sampbias)
 
 # Tutorial
 
-## 1. Load the example distribution data from your data or the mammals on Borneo example ("borneo_mammals.csv")
+## 1. Load the example distribution data from your data
 ```{r, message = F, warning = F}
 occ <- read_csv("inst/occurrence_records_clean.csv")%>%
   mutate(decimallongitude = decimalLongitude)%>%

@@ -30,7 +30,7 @@ navbar:
     - text: 4. Species ranges & richness maps
       href: tue_species_richness.html
     - text: 5. Taxon-specific bioregionalization
-      href: tue_taxon_specific_bioregionalization.html
+      href: tue_taxon_specific_bioregions.html
     - text: 6. Species to biome classification
       href: tue_biome_classification.html
     - text: 7. Obtaining environmental data
@@ -46,7 +46,7 @@ navbar:
   - text: Wednesday
     menu:
     - text: 1. Preparing the input for phylogenetic analyses
-      href: wed_data_preparation.hmtl    
+      href: wed_data_preparation.html  
     - text: 2. Reconstructing ancestral areas (DEC)
       href: wed_ancestral_areas_DEC.html
     - text: 3. Estimating the number of shifts (DEC BSM)
