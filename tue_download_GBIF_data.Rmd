@@ -26,7 +26,7 @@ We will use the rgbif package to obtain occurrence records from GBIF. You can fi
 4. Download all records for flowering plants from Rio Grande do Norte (more or less). Make sure to keep an eye on the `limit` argument. (`occ_search`)
 5. Save the downloaded data as .txt or .csv to the working directory. (`write_csv`, `write_delim`)
 
-## Setup
+## Library setup
 In this exercise we will use the rgbif library for communication with GBIF and the tidyverse library for data management.
 
 ```{r setup, include=FALSE}
@@ -45,7 +45,7 @@ GBIF hosts a large number of records and downloading all records might take some
 ```{r occ_count}
 #Search occurrence records
 dat <- occ_search(scientificName = "Wittmackia patentissima", 
-                   return =  "data", limit = 10000)
+                   return =  "data", limit = 1000)
 ```
 
 ## 2. Explore the downloaded data
@@ -82,7 +82,7 @@ There are more than five million records available from Brazil. This is too much
 You can now download the records for Brazil. Since we want to work with coordinates, we will only download those records that do have coordinates.
 ```{r}
 dat  <- occ_search(taxonKey = tax_key, return = "data",
-                   country = "DE", hasCoordinate = T, limit = 1000)
+                   country = "BR", hasCoordinate = T, limit = 1000)
 ```
 
 That leaves us with records. If you are satisfied for your group you can go to the next step and save the data to the working directory. The limit for record searching using rgbif is 250,000 records, if your group has more records you may limit the geographic area to the north east of Brazil. To do this you can use the Well-known-text format (WKT) to specify an area. Here we use a very simple rectangle, feel free to experiment
@@ -119,7 +119,7 @@ tax_key <- unlist(lapply(tax_key, "[[", "key"))
 unlist(lapply(tax_key, "occ_count"))
 
 dat_ne  <- occ_search(taxonKey = tax_key, return = "data", hasCoordinate = T,
-                   limit = 1000, country = "DE") 
+                   limit = 1000, country = "BR") 
 dat_ne <- lapply(dat_ne, "as.data.frame")
 
 dat_ne <- bind_rows(dat_ne)

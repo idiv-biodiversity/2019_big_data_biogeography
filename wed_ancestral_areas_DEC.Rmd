@@ -9,12 +9,7 @@ knitr::opts_chunk$set(fig.width=12, fig.height=8, eval = FALSE,
                       results = 'hold')
 ```
 
-
-# Background
-
-# Objective
-
-# Exercise
+In this exercise you will run the DIspersal-Extinction-Cladogenesis model using the BioGeoBEARS R package.
 
 # Library setup
 
@@ -41,4 +36,120 @@ library(viridis)
 # Tutorial
 This script is mostly absed on the example script by the developer of BioGeoBEARS, available at http://phylo.wikidot.com/biogeobears.
 
-## Load and identify the geography and the tree fiel
+## Prepare the tree file
+If your tree is in nexus format, you need to convert it to newick format, otherwise you can jus specify the file apth
+```{r}
+#specify the tree file
+trfn <- "example_data/bombacoideae_phylogeny.newick"
+```
+
+## Define the grography file
+```{r}
+geogfn <- "example_data/bombacoideae_biome_classification.txt"
+
+# Look at your geographic range data:
+tipranges = getranges_from_LagrangePHYLIP(lgdata_fn=geogfn)
+```
+
+## Set up the DEC model
+
+```{r}
+BioGeoBEARS_run_object = define_BioGeoBEARS_run()
+
+# set the macimum number of areas. If you ahve many areas, you can set the amximum number of areas a species can occur in simultaneously. One possibility is to set this to the number of areas of the most widespread recent species.
+max_range_size = 5 
+numstates_from_numareas(numareas=5, maxareas=5, include_null_range=TRUE)
+
+# Set some operators for the default DEC model
+
+BioGeoBEARS_run_object$trfn = trfn
+BioGeoBEARS_run_object$geogfn = geogfn
+BioGeoBEARS_run_object$max_range_size = max_range_size
+BioGeoBEARS_run_object$min_branchlength = 0.000001    
+BioGeoBEARS_run_object$include_null_range = TRUE  
+BioGeoBEARS_run_object$speedup = TRUE          #
+BioGeoBEARS_run_object$use_optimx = 'GenSA'     # if FALSE, use optim() instead of optimx()
+BioGeoBEARS_run_object$num_cores_to_use = 4
+BioGeoBEARS_run_object$force_sparse = FALSE    
+BioGeoBEARS_run_object = readfiles_BioGeoBEARS_run(BioGeoBEARS_run_object)
+BioGeoBEARS_run_object$return_condlikes_table = TRUE
+BioGeoBEARS_run_object$calc_TTL_loglike_from_condlikes_table = TRUE
+BioGeoBEARS_run_object$calc_ancprobs = TRUE    # get ancestral states from optim run
+runslow = TRUE
+```
+
+## Define the output path
+```{r}
+resfn = "example_data/bombacoideae_DEC_results.Rdata"
+```
+
+## Check if the the input is alright
+```{r}
+check_BioGeoBEARS_run(BioGeoBEARS_run_object)
+```
+
+## Run the DEC model
+```{r}
+resDEC = bears_optim_run(BioGeoBEARS_run_object)
+```
+
+## Save outputs to disk
+```{r}
+# Save the result file
+save(resDEC, file=resfn)
+
+# Save the node states for visualization
+resDEC$ML_marginal_prob_each_state_at_branch_top_AT_node
+trtable = prt(tr, printflag=FALSE)
+areas = getareas_from_tipranges_object(tipranges)
+states_list_0based = rcpp_areas_list_to_states_list(areas=areas, maxareas=max_range_size, include_null_range=TRUE)
+
+# Make the list of ranges
+ranges_list = NULL
+for (i in 1:length(states_list_0based))
+{    
+  if ( (length(states_list_0based[[i]]) == 1) && (is.na(states_list_0based[[i]])) )
+  {
+    tmprange = "_"
+  } else {
+    tmprange = paste(areas[states_list_0based[[i]]+1], collapse="")
+  }
+  ranges_list = c(ranges_list, tmprange)
+}
+
+range_probabilities = as.data.frame(resDEC$ML_marginal_prob_each_state_at_branch_top_AT_node)
+row.names(range_probabilities) = trtable$node
+names(range_probabilities) = ranges_list
+
+# Write the table to a tab-delimited text file (for Excel etc.)
+write.table(range_probabilities, file="example_data/bombacoideae_DEC_node_probabilities.txt",
+            row.names = F, quote=FALSE, sep="\t")
+```
+
+## Visualization
+```{r}
+
+analysis_titletxt ="BioGeoBEARS DEC"
+
+# Setup
+results_object = resDEC
+scriptdir = np(system.file("extdata/a_scripts", package="BioGeoBEARS"))
+
+# A plot of ancestral states
+res2 = plot_BioGeoBEARS_results(results_object, analysis_titletxt, 
+                                addl_params=list("j"), plotwhat="text", 
+                                label.offset=2, tipcex=0.7, statecex=0.6, 
+                                splitcex=0.6, titlecex=0.8, plotsplits=F, 
+                                cornercoords_loc=scriptdir, include_null_range=TRUE, 
+                                tr=tr, tipranges=tipranges, plotlegend = T)
+
+# showing pie charts for each node with the probabilities
+plot_BioGeoBEARS_results(results_object, analysis_titletxt, 
+                         addl_params=list("j"), plotwhat="pie", 
+                         label.offset=2, tipcex=0.7, statecex=0.7, 
+                         splitcex=0.6, titlecex=0.8, plotsplits=F, 
+                         cornercoords_loc=scriptdir, include_null_range=TRUE, 
+                         tr=tr, tipranges=tipranges)
+```
+
+Done!

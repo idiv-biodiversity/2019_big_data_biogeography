@@ -354,22 +354,16 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="wed_ancestral_areas_DEC.html">Reconstructing ancestral areas (DEC)</a>
+      <a href="wed_data_preparation.hmtl">1. Preparing the input for phylogenetic analyses</a>
     </li>
     <li>
-      <a href="wed_time_stratified_DEC.html">Reconstructing ancestral biomes (time-stratified DEC)</a>
+      <a href="wed_ancestral_areas_DEC.html">2. Reconstructing ancestral areas (DEC)</a>
     </li>
     <li>
-      <a href="wed_DEC_bsm.html">Estimating the number of shifts (DEC BSM)</a>
+      <a href="wed_DEC_bsm.html">3. Estimating the number of shifts (DEC BSM)</a>
     </li>
     <li>
-      <a href="wed_record_based_biome_classification.html">Record-based biome classification</a>
-    </li>
-    <li>
-      <a href="wed_diversification_rates_geosse.html">Diversification rate estimation (GeoSSE)</a>
-    </li>
-    <li>
-      <a href="wed_bite.html">Ancestral ranges as continuous traits</a>
+      <a href="wed_diversification_rates_geosse.html">4. Diversification rate estimation (GeoSSE)</a>
     </li>
   </ul>
 </li>
@@ -381,7 +375,10 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="thu_fossilBM.html">Bayesian inference of trait evolution under a “fossilized” Brownian motion (FBM)</a>
+      <a href="wed_bite.html">1. Ancestral ranges as continuous traits</a>
+    </li>
+    <li>
+      <a href="thu_fossilBM.html">2. Bayesian inference of trait evolution under a “fossilized” Brownian motion (FBM)</a>
     </li>
   </ul>
 </li>
@@ -421,17 +418,144 @@ $(document).ready(function () {
 </div>
 
 
-<div id="background" class="section level1">
-<h1>Background</h1>
+<p>In this exercise, you will use the results of the ancestral state recosntruction, to do a biogeographic stochastic mapping, and count the number of shifts throught time.</p>
+<div id="library-setup" class="section level1">
+<h1>Library setup</h1>
+<pre class="r"><code>library(tidyverse)
+library(ape)
+library(geiger)
+library(optimx)  # You need to have some version of optimx available
+library(FD)  # for FD::maxent() (make sure this is up-to-date)
+library(snow)  # (if you want to use multicore functionality; some systems/R versions prefer library(parallel), try either)
+library(parallel)
+library(devtools)
+library(rexpokit)
+library(cladoRcpp)
+library(BioGeoBEARS)
+library(ggtree)
+library(stringr)
+library(RColorBrewer)
+library(colorspace)
+library(jpeg)
+library(viridis)</code></pre>
 </div>
-<div id="objective" class="section level1">
-<h1>Objective</h1>
+<div id="loading-the-results-of-the-dec-ancestral-area-reconstruction" class="section level1">
+<h1>Loading the results of the DEC ancestral area reconstruction</h1>
+<pre class="r"><code>load(&quot;example_data/bombacoideae_DEC_results.Rdata&quot;)
+model_name = &quot;DEC&quot;
+results_object = res = resDEC
+scriptdir = np(system.file(&quot;extdata/a_scripts&quot;, package = &quot;BioGeoBEARS&quot;))
+
+clado_events_tables = NULL
+ana_events_tables = NULL
+lnum = 0
+
+BSM_inputs_fn = &quot;BSM_inputs_file.Rdata&quot;
+runInputsSlow = TRUE
+if (runInputsSlow) {
+    stochastic_mapping_inputs_list = get_inputs_for_stochastic_mapping(res = res)
+    save(stochastic_mapping_inputs_list, file = BSM_inputs_fn)
+} else {
+    # Loads to &#39;stochastic_mapping_inputs_list&#39;
+    load(BSM_inputs_fn)
+}  # END if (runInputsSlow)</code></pre>
 </div>
-<div id="exercise" class="section level1">
-<h1>Exercise</h1>
+<div id="run-the-biogeographic-stochastic-mapping" class="section level1">
+<h1>Run the biogeographic stochastic mapping</h1>
+<pre class="r"><code>set.seed(seed=as.numeric(Sys.time()))
+
+runBSMslow = TRUE
+
+BSM_output = runBSM(res,
+                    stochastic_mapping_inputs_list = stochastic_mapping_inputs_list, 
+                    maxnum_maps_to_try=2000, 
+                    nummaps_goal=10, # INcrease the number of replicates if possible
+                    maxtries_per_branch=40000,
+                    save_after_every_try=TRUE, 
+                    savedir=getwd(), 
+                    seedval=12345,
+                    wait_before_save=0.01)
+
+RES_clado_events_tables = BSM_output$RES_clado_events_tables
+RES_ana_events_tables = BSM_output$RES_ana_events_tables</code></pre>
 </div>
-<div id="tutorial" class="section level1">
-<h1>Tutorial</h1>
+<div id="save-the-results-to-disk" class="section level1">
+<h1>Save the results to disk</h1>
+<pre class="r"><code># Extract BSM output
+clado_events_tables = BSM_output$RES_clado_events_tables
+ana_events_tables = BSM_output$RES_ana_events_tables
+save(clado_events_tables, file = &quot;example_data/bombacoideae_BSM_clado_events_table_mcc_detbiom.rda&quot;)
+save(ana_events_tables, file = &quot;example_data/bombacoideae_BSMana_events_table_mcc_detbiom.rda&quot;)</code></pre>
+<div id="get-the-number-of-shifts-through-time" class="section level2">
+<h2>Get the number of shifts through time</h2>
+<p>You may want to adapt the maximum age here!</p>
+<pre class="r"><code>angen &lt;- lapply(ana_events_tables, function(k) {
+    out &lt;- k %&gt;% dplyr::select(abs_event_time, event_type, event_txt, dispersal_to) %&gt;% 
+        mutate(bin = cut(abs_event_time, breaks = seq(24, 0, by = -2), labels = rev(seq(23, 
+            1, by = -2)))) %&gt;% mutate(from = str_split_fixed(event_txt, n = 2, 
+        pattern = &quot;-&gt;&quot;)[, 1]) %&gt;% mutate(sdb_efb = ifelse(!grepl(&quot;W&quot;, from) &amp; 
+        grepl(&quot;W&quot;, dispersal_to), 1, 0)) %&gt;% mutate(efb_sdb = ifelse(from == 
+        &quot;W&quot; &amp; (grepl(&quot;D&quot;, dispersal_to) | grepl(&quot;S&quot;, dispersal_to)), 1, 0))
+    return(out)
+})
+
+# cladogenetic events do not include dispersal to new biomes
+cladgen &lt;- lapply(clado_events_tables, function(k) {
+    out &lt;- k %&gt;% dplyr::select(time_bp, clado_event_type, clado_event_txt, clado_dispersal_to) %&gt;% 
+        filter(!is.na(clado_event_type) &amp; clado_event_type != &quot;&quot;)
+    return(out)
+})</code></pre>
+</div>
+</div>
+<div id="count-the-number-of-shifts-per-time-bin" class="section level1">
+<h1>Count the number of shifts per time bin</h1>
+<p>Again you may need to adapt the maximum age and the number of areas.</p>
+<pre class="r"><code>disps &lt;- lapply(angen, function(k) {
+    out &lt;- k %&gt;% filter(event_type == &quot;d&quot;) %&gt;% group_by(bin, dispersal_to) %&gt;% 
+        summarize(abs_count = n()) %&gt;% ungroup() %&gt;% mutate(bin = parse_number(as.character(bin)))
+    
+    fram &lt;- expand_grid(bin = rev(seq(23, 1, by = -2)), dispersal_to = c(&quot;A&quot;, 
+        &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;))
+    out &lt;- left_join(fram, out, by = c(&quot;dispersal_to&quot;, &quot;bin&quot;)) %&gt;% replace_na(list(abs_count = 0))
+})
+
+disps &lt;- bind_rows(disps, .id = &quot;SM&quot;) %&gt;% group_by(bin, dispersal_to) %&gt;% summarize(lower = quantile(abs_count, 
+    probs = 0.025), mean = mean(abs_count), upper = quantile(abs_count, probs = 0.975))</code></pre>
+</div>
+<div id="get-the-total-branch-length-per-time-bin" class="section level1">
+<h1>Get the total branch length per time bin</h1>
+<pre class="r"><code>agegap = 2
+branchtimes &lt;- branching.times(tr)
+maxmilcatogories &lt;- ceiling(max(branchtimes)/agegap)
+milgaps_mod &lt;- matrix(ncol = 2, nrow = maxmilcatogories, 0)
+colnames(milgaps_mod) &lt;- c(&quot;time&quot;, &quot;tot_brl&quot;)
+milgaps_mod[, 1] &lt;- 1:maxmilcatogories * agegap
+
+## Sum times per bin
+v &lt;- branchtimes
+for (i in 1:length(milgaps_mod[, 2])) {
+    s &lt;- milgaps_mod[i, 1]  # time start
+    e &lt;- milgaps_mod[i, 1] - agegap  # time end
+    l1 &lt;- length(v[v &gt; s]) * agegap + min(length(v[v &gt; s]), 1) * agegap
+    l2 &lt;- sum(v[v &gt; e &amp; v &lt; s] - e)
+    
+    if (l1 == 0) 
+        {
+            l2 = l2 * 2
+        }  # root
+    
+    milgaps_mod[i, 2] &lt;- l1 + l2
+}
+
+brls &lt;- data.frame(milgaps_mod) %&gt;% mutate(time = time - 1)</code></pre>
+</div>
+<div id="normalize-the-number-of-shifts-by-the-total-amount-of-branch-length-per-time-bin" class="section level1">
+<h1>Normalize the number of shifts by the total amount of branch length per time bin</h1>
+<pre class="r"><code>disps &lt;- left_join(disps, brls, by = c(bin = &quot;time&quot;)) %&gt;% mutate(lower = lower/tot_brl) %&gt;% 
+    mutate(mean = mean/tot_brl) %&gt;% mutate(upper = upper/tot_brl)</code></pre>
+<pre class="r"><code>ggplot() + geom_point(data = disps, aes(x = bin, y = mean, color = dispersal_to)) + 
+    geom_line(data = disps, aes(x = bin, y = mean, color = dispersal_to)) + 
+    theme_bw()</code></pre>
 </div>
 
 

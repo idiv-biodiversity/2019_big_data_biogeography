@@ -354,22 +354,16 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="wed_ancestral_areas_DEC.html">Reconstructing ancestral areas (DEC)</a>
+      <a href="wed_data_preparation.hmtl">1. Preparing the input for phylogenetic analyses</a>
     </li>
     <li>
-      <a href="wed_time_stratified_DEC.html">Reconstructing ancestral biomes (time-stratified DEC)</a>
+      <a href="wed_ancestral_areas_DEC.html">2. Reconstructing ancestral areas (DEC)</a>
     </li>
     <li>
-      <a href="wed_DEC_bsm.html">Estimating the number of shifts (DEC BSM)</a>
+      <a href="wed_DEC_bsm.html">3. Estimating the number of shifts (DEC BSM)</a>
     </li>
     <li>
-      <a href="wed_record_based_biome_classification.html">Record-based biome classification</a>
-    </li>
-    <li>
-      <a href="wed_diversification_rates_geosse.html">Diversification rate estimation (GeoSSE)</a>
-    </li>
-    <li>
-      <a href="wed_bite.html">Ancestral ranges as continuous traits</a>
+      <a href="wed_diversification_rates_geosse.html">4. Diversification rate estimation (GeoSSE)</a>
     </li>
   </ul>
 </li>
@@ -381,7 +375,10 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="thu_fossilBM.html">Bayesian inference of trait evolution under a “fossilized” Brownian motion (FBM)</a>
+      <a href="wed_bite.html">1. Ancestral ranges as continuous traits</a>
+    </li>
+    <li>
+      <a href="thu_fossilBM.html">2. Bayesian inference of trait evolution under a “fossilized” Brownian motion (FBM)</a>
     </li>
   </ul>
 </li>
@@ -421,15 +418,7 @@ $(document).ready(function () {
 </div>
 
 
-<div id="background" class="section level1">
-<h1>Background</h1>
-</div>
-<div id="objective" class="section level1">
-<h1>Objective</h1>
-</div>
-<div id="exercise" class="section level1">
-<h1>Exercise</h1>
-</div>
+<p>In this exercise you will run the DIspersal-Extinction-Cladogenesis model using the BioGeoBEARS R package.</p>
 <div id="library-setup" class="section level1">
 <h1>Library setup</h1>
 <pre class="r"><code>library(tidyverse)
@@ -453,8 +442,111 @@ library(viridis)</code></pre>
 <div id="tutorial" class="section level1">
 <h1>Tutorial</h1>
 <p>This script is mostly absed on the example script by the developer of BioGeoBEARS, available at <a href="http://phylo.wikidot.com/biogeobears" class="uri">http://phylo.wikidot.com/biogeobears</a>.</p>
-<div id="load-and-identify-the-geography-and-the-tree-fiel" class="section level2">
-<h2>Load and identify the geography and the tree fiel</h2>
+<div id="prepare-the-tree-file" class="section level2">
+<h2>Prepare the tree file</h2>
+<p>If your tree is in nexus format, you need to convert it to newick format, otherwise you can jus specify the file apth</p>
+<pre class="r"><code># specify the tree file
+trfn &lt;- &quot;example_data/bombacoideae_phylogeny.newick&quot;</code></pre>
+</div>
+<div id="define-the-grography-file" class="section level2">
+<h2>Define the grography file</h2>
+<pre class="r"><code>geogfn &lt;- &quot;example_data/bombacoideae_biome_classification.txt&quot;
+
+# Look at your geographic range data:
+tipranges = getranges_from_LagrangePHYLIP(lgdata_fn = geogfn)</code></pre>
+</div>
+<div id="set-up-the-dec-model" class="section level2">
+<h2>Set up the DEC model</h2>
+<pre class="r"><code>BioGeoBEARS_run_object = define_BioGeoBEARS_run()
+
+# set the macimum number of areas. If you ahve many areas, you can set the
+# amximum number of areas a species can occur in simultaneously. One
+# possibility is to set this to the number of areas of the most widespread
+# recent species.
+max_range_size = 5
+numstates_from_numareas(numareas = 5, maxareas = 5, include_null_range = TRUE)
+
+# Set some operators for the default DEC model
+
+BioGeoBEARS_run_object$trfn = trfn
+BioGeoBEARS_run_object$geogfn = geogfn
+BioGeoBEARS_run_object$max_range_size = max_range_size
+BioGeoBEARS_run_object$min_branchlength = 1e-06
+BioGeoBEARS_run_object$include_null_range = TRUE
+BioGeoBEARS_run_object$speedup = TRUE  #
+BioGeoBEARS_run_object$use_optimx = &quot;GenSA&quot;  # if FALSE, use optim() instead of optimx()
+BioGeoBEARS_run_object$num_cores_to_use = 4
+BioGeoBEARS_run_object$force_sparse = FALSE
+BioGeoBEARS_run_object = readfiles_BioGeoBEARS_run(BioGeoBEARS_run_object)
+BioGeoBEARS_run_object$return_condlikes_table = TRUE
+BioGeoBEARS_run_object$calc_TTL_loglike_from_condlikes_table = TRUE
+BioGeoBEARS_run_object$calc_ancprobs = TRUE  # get ancestral states from optim run
+runslow = TRUE</code></pre>
+</div>
+<div id="define-the-output-path" class="section level2">
+<h2>Define the output path</h2>
+<pre class="r"><code>resfn = &quot;example_data/bombacoideae_DEC_results.Rdata&quot;</code></pre>
+</div>
+<div id="check-if-the-the-input-is-alright" class="section level2">
+<h2>Check if the the input is alright</h2>
+<pre class="r"><code>check_BioGeoBEARS_run(BioGeoBEARS_run_object)</code></pre>
+</div>
+<div id="run-the-dec-model" class="section level2">
+<h2>Run the DEC model</h2>
+<pre class="r"><code>resDEC = bears_optim_run(BioGeoBEARS_run_object)</code></pre>
+</div>
+<div id="save-outputs-to-disk" class="section level2">
+<h2>Save outputs to disk</h2>
+<pre class="r"><code># Save the result file
+save(resDEC, file = resfn)
+
+# Save the node states for visualization
+resDEC$ML_marginal_prob_each_state_at_branch_top_AT_node
+trtable = prt(tr, printflag = FALSE)
+areas = getareas_from_tipranges_object(tipranges)
+states_list_0based = rcpp_areas_list_to_states_list(areas = areas, maxareas = max_range_size, 
+    include_null_range = TRUE)
+
+# Make the list of ranges
+ranges_list = NULL
+for (i in 1:length(states_list_0based)) {
+    if ((length(states_list_0based[[i]]) == 1) &amp;&amp; (is.na(states_list_0based[[i]]))) {
+        tmprange = &quot;_&quot;
+    } else {
+        tmprange = paste(areas[states_list_0based[[i]] + 1], collapse = &quot;&quot;)
+    }
+    ranges_list = c(ranges_list, tmprange)
+}
+
+range_probabilities = as.data.frame(resDEC$ML_marginal_prob_each_state_at_branch_top_AT_node)
+row.names(range_probabilities) = trtable$node
+names(range_probabilities) = ranges_list
+
+# Write the table to a tab-delimited text file (for Excel etc.)
+write.table(range_probabilities, file = &quot;example_data/bombacoideae_DEC_node_probabilities.txt&quot;, 
+    row.names = F, quote = FALSE, sep = &quot;\t&quot;)</code></pre>
+</div>
+<div id="visualization" class="section level2">
+<h2>Visualization</h2>
+<pre class="r"><code>
+analysis_titletxt = &quot;BioGeoBEARS DEC&quot;
+
+# Setup
+results_object = resDEC
+scriptdir = np(system.file(&quot;extdata/a_scripts&quot;, package = &quot;BioGeoBEARS&quot;))
+
+# A plot of ancestral states
+res2 = plot_BioGeoBEARS_results(results_object, analysis_titletxt, addl_params = list(&quot;j&quot;), 
+    plotwhat = &quot;text&quot;, label.offset = 2, tipcex = 0.7, statecex = 0.6, splitcex = 0.6, 
+    titlecex = 0.8, plotsplits = F, cornercoords_loc = scriptdir, include_null_range = TRUE, 
+    tr = tr, tipranges = tipranges, plotlegend = T)
+
+# showing pie charts for each node with the probabilities
+plot_BioGeoBEARS_results(results_object, analysis_titletxt, addl_params = list(&quot;j&quot;), 
+    plotwhat = &quot;pie&quot;, label.offset = 2, tipcex = 0.7, statecex = 0.7, splitcex = 0.6, 
+    titlecex = 0.8, plotsplits = F, cornercoords_loc = scriptdir, include_null_range = TRUE, 
+    tr = tr, tipranges = tipranges)</code></pre>
+<p>Done!</p>
 </div>
 </div>
 

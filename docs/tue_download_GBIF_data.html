@@ -354,22 +354,16 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="wed_ancestral_areas_DEC.html">Reconstructing ancestral areas (DEC)</a>
+      <a href="wed_data_preparation.hmtl">1. Preparing the input for phylogenetic analyses</a>
     </li>
     <li>
-      <a href="wed_time_stratified_DEC.html">Reconstructing ancestral biomes (time-stratified DEC)</a>
+      <a href="wed_ancestral_areas_DEC.html">2. Reconstructing ancestral areas (DEC)</a>
     </li>
     <li>
-      <a href="wed_DEC_bsm.html">Estimating the number of shifts (DEC BSM)</a>
+      <a href="wed_DEC_bsm.html">3. Estimating the number of shifts (DEC BSM)</a>
     </li>
     <li>
-      <a href="wed_record_based_biome_classification.html">Record-based biome classification</a>
-    </li>
-    <li>
-      <a href="wed_diversification_rates_geosse.html">Diversification rate estimation (GeoSSE)</a>
-    </li>
-    <li>
-      <a href="wed_bite.html">Ancestral ranges as continuous traits</a>
+      <a href="wed_diversification_rates_geosse.html">4. Diversification rate estimation (GeoSSE)</a>
     </li>
   </ul>
 </li>
@@ -381,7 +375,10 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="thu_fossilBM.html">Bayesian inference of trait evolution under a “fossilized” Brownian motion (FBM)</a>
+      <a href="wed_bite.html">1. Ancestral ranges as continuous traits</a>
+    </li>
+    <li>
+      <a href="thu_fossilBM.html">2. Bayesian inference of trait evolution under a “fossilized” Brownian motion (FBM)</a>
     </li>
   </ul>
 </li>
@@ -441,8 +438,8 @@ $(document).ready(function () {
 <li>Save the downloaded data as .txt or .csv to the working directory. (<code>write_csv</code>, <code>write_delim</code>)</li>
 </ol>
 </div>
-<div id="setup" class="section level2">
-<h2>Setup</h2>
+<div id="library-setup" class="section level2">
+<h2>Library setup</h2>
 <p>In this exercise we will use the rgbif library for communication with GBIF and the tidyverse library for data management.</p>
 </div>
 <div id="tutorial" class="section level1">
@@ -453,7 +450,7 @@ $(document).ready(function () {
 <p>GBIF hosts a large number of records and downloading all records might take some time (also the download limit using <code>occ_search</code> is 250,000), so it is worth checking first how many records are available. We do this using the <code>return</code> argument of the <code>occ_search</code> function, which will only return meta-data on the record. Chose a species from your project taxon, for demonstration will download records for the Malvaceae family. We’ll first download data for a single, wide-spread species, <em>Ceiba pentandra</em>:</p>
 <pre class="r"><code># Search occurrence records
 dat &lt;- occ_search(scientificName = &quot;Wittmackia patentissima&quot;, return = &quot;data&quot;, 
-    limit = 10000)</code></pre>
+    limit = 1000)</code></pre>
 </div>
 <div id="explore-the-downloaded-data" class="section level2">
 <h2>2. Explore the downloaded data</h2>
@@ -479,7 +476,7 @@ tax_key &lt;- tax_key$key[1]</code></pre>
 <ol start="4" style="list-style-type: decimal">
 <li>Download all data for your group from Brazil, or if the group is very large from part of that area. You can now download the records for Brazil. Since we want to work with coordinates, we will only download those records that do have coordinates.</li>
 </ol>
-<pre class="r"><code>dat &lt;- occ_search(taxonKey = tax_key, return = &quot;data&quot;, country = &quot;DE&quot;, hasCoordinate = T, 
+<pre class="r"><code>dat &lt;- occ_search(taxonKey = tax_key, return = &quot;data&quot;, country = &quot;BR&quot;, hasCoordinate = T, 
     limit = 1000)</code></pre>
 <p>That leaves us with records. If you are satisfied for your group you can go to the next step and save the data to the working directory. The limit for record searching using rgbif is 250,000 records, if your group has more records you may limit the geographic area to the north east of Brazil. To do this you can use the Well-known-text format (WKT) to specify an area. Here we use a very simple rectangle, feel free to experiment</p>
 <pre class="r"><code>study_a &lt;- &quot;POLYGON((-35 -4.5, -38.5 -4.5, -38.5 -7, -35 -7, -35 -4.5))&quot;
@@ -506,7 +503,7 @@ tax_key &lt;- unlist(lapply(tax_key, &quot;[[&quot;, &quot;key&quot;))
 unlist(lapply(tax_key, &quot;occ_count&quot;))
 
 dat_ne &lt;- occ_search(taxonKey = tax_key, return = &quot;data&quot;, hasCoordinate = T, 
-    limit = 1000, country = &quot;DE&quot;)
+    limit = 1000, country = &quot;BR&quot;)
 dat_ne &lt;- lapply(dat_ne, &quot;as.data.frame&quot;)
 
 dat_ne &lt;- bind_rows(dat_ne)</code></pre>

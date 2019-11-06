@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Preparing input data</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Big Data Biogeography</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">Course schedule</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Monday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="mo_setup.html">Setup</a>
+    </li>
+    <li>
+      <a href="mo_explore_gbif.html">Explore GBIF</a>
+    </li>
+    <li>
+      <a href="mo_explore_paleobioDB.html">Explore the Paleobiology database</a>
+    </li>
+    <li>
+      <a href="mo_explore_iucn.html">explore the IUCN database</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Tuesday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="tue_download_GBIF_data.html">1. Obtaining geographic occurrence records from GBIF</a>
+    </li>
+    <li>
+      <a href="tue_cleaning_geographic_data.html">2. Cleaning geographic data</a>
+    </li>
+    <li>
+      <a href="tue_accesibility_bias.html">3. Exploring sampling bias</a>
+    </li>
+    <li>
+      <a href="tue_species_richness.html">4. Species ranges &amp; richness maps</a>
+    </li>
+    <li>
+      <a href="tue_taxon_specific_bioregionalization.html">5. Taxon-specific bioregionalization</a>
+    </li>
+    <li>
+      <a href="tue_biome_classification.html">6. Species to biome classification</a>
+    </li>
+    <li>
+      <a href="tue_obtaining_environmental_data.html">7. Obtaining environmental data</a>
+    </li>
+    <li>
+      <a href="tue_extracting_clades.html">8. Extracting clades from a phylogeny</a>
+    </li>
+    <li>
+      <a href="tue_automated_conservation_assessment.html">Optional - Automated conservation assessment and IUCN assessments</a>
+    </li>
+    <li>
+      <a href="tue_obtaining_data_from_paleoDB.html">Optional - Obtaining fossil data from PaleoDB</a>
+    </li>
+    <li>
+      <a href="tue_fossil_cleaning.html">Optional - Cleaning fossil data</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Wednesday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="wed_data_preparation.hmtl">1. Preparing the input for phylogenetic analyses</a>
+    </li>
+    <li>
+      <a href="wed_ancestral_areas_DEC.html">2. Reconstructing ancestral areas (DEC)</a>
+    </li>
+    <li>
+      <a href="wed_DEC_bsm.html">3. Estimating the number of shifts (DEC BSM)</a>
+    </li>
+    <li>
+      <a href="wed_diversification_rates_geosse.html">4. Diversification rate estimation (GeoSSE)</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Thursday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="wed_bite.html">1. Ancestral ranges as continuous traits</a>
+    </li>
+    <li>
+      <a href="thu_fossilBM.html">2. Bayesian inference of trait evolution under a “fossilized” Brownian motion (FBM)</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Friday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="fr_species_richness_maps.html">Species richness maps</a>
+    </li>
+    <li>
+      <a href="fr_plotting_DEC.html">Ancestral area reconstruction from DEC</a>
+    </li>
+    <li>
+      <a href="fr_diversification_rates.html">Visualizing diversification rate estimates</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/idiv-biodiversity/2019_big_data_biogeography">GitHub</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Preparing input data</h1>
+
+</div>
+
+
+<div id="objectives" class="section level1">
+<h1>Objectives</h1>
+<p>In this exercise, you will use the cleaned occurrence data and the taxon-specific bioregionalization (if you have it) to prepare the input files you need for the ancestral area reconstruction on the phylogeny.</p>
+</div>
+<div id="exercises" class="section level1">
+<h1>Exercises</h1>
+<ol style="list-style-type: decimal">
+<li><p>Use a species list of your group of interest to extract a medium-sized phylogeny from the provided large-scale phylogenies. If you already have a phylogeny for your group of interest, convert it to newick format.</p></li>
+<li><p>Use the cleaned occurrences together with the taxon specific bioregionalization to get a species to area classifcation in the right format to use for the DEC analysis. If you do not have suitable bioregions, use biome classifications instead.</p></li>
+<li><p>Extract temperature ranges for all species in the phylogeny using the occurrence records.</p></li>
+</ol>
+</div>
+<div id="tutorial" class="section level1">
+<h1>Tutorial</h1>
+<div id="library-setup" class="section level2">
+<h2>Library Setup</h2>
+<pre class="r"><code>library(ape)
+library(geiger)
+library(tidyverse)
+library(raster)
+library(speciesgeocodeR)
+library(rgdal)</code></pre>
+</div>
+<div id="extract-clades-from-a-large-scale-phylogeny" class="section level2">
+<h2>1. Extract clades from a large-scale phylogeny</h2>
+<p>In the last years large scale phylogenies for certain taxonomic groups have become available, for instance for amphibians, birds, mammals, squamates, and flowering plants. These phylogenies have challenges, but can provide helpful information for many research questions.</p>
+<pre class="r"><code># Load the species list
+splist &lt;- read_csv(&quot;example_data/bombacoideae_specieslist.csv&quot;)
+rownames(splist) &lt;- splist$species
+
+# Load the large-scale phylogeny
+tree &lt;- read.tree(&quot;example_data/VascularPlants.tre&quot;)
+
+# Check if the spelling of the names is identical
+head(splist$species)
+head(tree$tip.label)
+
+# extract species that are in the species list
+clade &lt;- treedata(tree, splist)$phy
+
+# save in newick format for DEC
+write.tree(clade, &quot;example_data/bombacoideae_phylogeny.newick&quot;)
+
+# As .tre file for GeoSSE
+write.tree(clade, &quot;example_data/bombacoideae_phylogeny.tre&quot;)</code></pre>
+<p>If you do not have a species list, or your list is incomplete for your group of interest (for example, because you extracted it from the GBIF data) you can also pick two species whose most recent common ancestor matches with the MRCA of your clade of interest. As an example, we will extract all Canidae from the mammal phylogeny. First we will need to find the MRCA of the group. To do so, you need to identify two genera, whose MRCA coincides with the MRCA of all Canidae, for instance <em>Vulpes</em> (foxes) and <em>Lupus</em> (wolves). You can use <a href="http://www.onezoom.org/life/" class="uri">http://www.onezoom.org/life/</a> to identify suitable genera to extract your clade of interest. Alternatively you can also provide a list of all species to keep in the tree.</p>
+<pre class="r"><code># read the large-scale phylogeny
+mammals_tree &lt;- read.tree(&quot;example_data/mammals.tre&quot;)
+# Check properties (attributes) of the tree object
+str(mammals_tree)
+
+# Extract clade of interest Create an object containing at tip labels
+species_list &lt;- mammals_tree$tip.label
+
+# find where Canis and Vulpes are in the species list
+dogs &lt;- grep(&quot;Canis&quot;, species_list)
+foxes &lt;- grep(&quot;Vulpes&quot;, species_list)
+
+# find the node corresponding to the MRCA of all canids
+MRCA_Canidae &lt;- getMRCA(mammals_tree, c(dogs, foxes))
+
+# extract Canidae clade
+canidae_tree &lt;- extract.clade(mammals_tree, MRCA_Canidae)
+
+plot(canidae_tree)
+
+# add time axis
+axisPhylo()
+
+# plot with smaller font size
+plot(canidae_tree, cex = 0.5)
+axisPhylo()
+
+write.tree(canidae_tree, &quot;inst/canidae_phylogeny.newick&quot;)</code></pre>
+</div>
+<div id="classify-species-into-areas" class="section level2">
+<h2>2. Classify species into areas</h2>
+<div id="taxon-specific-bioregions" class="section level3">
+<h3>Taxon-specific bioregions</h3>
+<pre class="r"><code># Load cleaned occurences
+occ &lt;- read_csv(&quot;example_data/bombacoideae_occurrences_cleaned.csv&quot;) %&gt;% as.data.frame()
+
+# remove species not in the phylogeny
+tr &lt;- read.tree(&quot;example_data/bombacoideae_phylogeny.newick&quot;)
+occ &lt;- occ %&gt;% filter(species %in% tr$tip.label)
+
+# load bioregions
+area &lt;- readOGR(dsn = &quot;example_data&quot;, layer = &quot;bombacoideae_bioregions&quot;)
+
+# Classify species
+class &lt;- SpGeoCod(x = occ, y = area, areanames = &quot;bioregio&quot;)
+
+# convert to presence-absence
+class &lt;- class$spec_table %&gt;% as.data.frame() %&gt;% dplyr::select(-not_classified)
+
+# Make sure each species has at least one area
+
+# adapt to the BioGeoBEARS format
+class[class &gt; 0] &lt;- 1
+class$comb &lt;- apply(class, 1, function(x) paste(x, collapse = &quot;&quot;))
+
+class &lt;- dplyr::select(class, comb)
+# write to disk Here you need to adapt the header, the first number is the
+# number of tips in your phylogeny, the second number is the number of
+# bioregions, and then in brackets a one latter code for each area
+
+sink(&quot;example_data/bombacoideae_area_classification.txt&quot;)
+cat(&quot;38 10 (A B C D E F G H I J)\n&quot;)
+write.table(as.data.frame(class), row.names = TRUE, col.names = FALSE, quote = FALSE)
+sink(NULL)</code></pre>
+</div>
+<div id="biomes" class="section level3">
+<h3>Biomes</h3>
+<p>The vast majority of species occurrence information available, via ‘big data’ aggregators as GBIF are georeferenced point locations consisting of geographic coordinates. However, most methods for ancestral area estimation require species occurrences in a limited number of discrete geographic units. A manual classification of species based on expert knowledge or graphical-user-interface based GIS software are limited in the amount of data that can be processed and often hard to reproduce. SpeciesgeocodeR implements an easy-to-use function to classify species occurrence to discrete areas, accounting for issues in data quality. You can find detailed tutorials on the software <a href="https://github.com/azizka/speciesgeocodeR/wiki">here</a> and articles disrobing the method <a href="https://academic.oup.com/sysbio/article/66/2/145/2670075/SpeciesGeoCoder-Fast-Categorization-of-Species">here</a> and <a href="http://www.biorxiv.org/content/early/2015/11/24/032755">here</a>.</p>
+<pre class="r"><code># Load cleaned occurences
+occ &lt;- read_csv(&quot;example_data/bombacoideae_occurrences_cleaned.csv&quot;)
+
+# remove species not in the phylogeny
+tr &lt;- read.tree(&quot;example_data/bombacoideae_phylogeny.newick&quot;)
+occ &lt;- occ %&gt;% filter(species %in% tr$tip.label) %&gt;% as.data.frame()
+
+# Load biomes
+biom &lt;- WWFload(x = &quot;inst&quot;)
+names(biom)
+
+# Classify species
+class &lt;- SpGeoCod(x = occ, y = biom, areanames = &quot;BIOME&quot;)
+
+# convert to presence-absence
+class &lt;- class$spec_table %&gt;% # here you can exclude some areas by their name, for isntance marginal areas
+dplyr::select(-not_classified, -`3`, -`4`, -`5`, -`9`, -`10`, -`98`) %&gt;% as.data.frame()
+
+# adapt to the BioGeoBEARS format
+class[class &gt; 0] &lt;- 1
+
+write.csv(class, &quot;example_data/bombacoideae_biome_classification_details.csv&quot;)
+
+class$comb &lt;- apply(class, 1, function(x) paste(x, collapse = &quot;&quot;))
+
+class &lt;- dplyr::select(class, comb)
+# write to disk Here you need to adapt the header, the first number is the
+# number of tips in your phylogeny, the second number is the number of
+# bioregions, and then in brackets a one latter code for each area
+
+sink(&quot;example_data/bombacoideae_biome_classification.txt&quot;)
+cat(&quot;38 5 (A B C D E)\n&quot;)
+write.table(as.data.frame(class), row.names = TRUE, col.names = FALSE, quote = FALSE)
+sink(NULL)
+</code></pre>
+</div>
+</div>
+<div id="extract-environemntal-data" class="section level2">
+<h2>3. Extract environemntal data</h2>
+</div>
+</div>
+<div id="background" class="section level1">
+<h1>Background</h1>
+<p>Linking species occurrences and evolution to environmental variables and quantifying species “niche” and its evolution is essential for many biogeographic questions. We will use the temperature range of species to reconstruct the evolution of temperature mean and variance using BITE tomorrow.</p>
+<pre class="r"><code># Load cleaned occurences
+occ &lt;- read_csv(&quot;example_data/bombacoideae_occurrences_cleaned.csv&quot;)
+
+# Load environmental data
+env &lt;- raster(&quot;example_data/wc2.0_bio_5m_01.tif&quot;)
+
+# Generate a spatial object with the coordinates
+pts &lt;- occ %&gt;% dplyr::select(decimallongitude, decimallatitude) %&gt;% as.matrix()
+
+# Extract the environmental values
+ext &lt;- raster::extract(env, pts) %&gt;% enframe(name = NULL, value = &quot;MAT&quot;) %&gt;% 
+    mutate(MAT = round(MAT, 2))
+
+# Bind coordinates and environmental variables
+out &lt;- bind_cols(dplyr::select(occ, species), ext)
+
+# Write to disk
+write.table(out, &quot;example_data/bombacoideae_environment.txt&quot;, sep = &quot; &quot;, quote = FALSE)</code></pre>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

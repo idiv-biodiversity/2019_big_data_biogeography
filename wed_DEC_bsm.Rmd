@@ -2,10 +2,181 @@
 output: html_document
 ---
 
-# Background
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, eval = FALSE,
+                      echo=TRUE, warning=FALSE, message=FALSE,
+                      tidy = TRUE, collapse = TRUE,
+                      results = 'hold')
+```
 
-# Objective
+In this exercise, you will use the results of the ancestral state recosntruction, to do a biogeographic stochastic mapping, and count the number of shifts throught time.
 
-# Exercise
+# Library setup
+```{r}
+library(tidyverse)
+library(ape)
+library(geiger)
+library(optimx)         # You need to have some version of optimx available
+library(FD)       # for FD::maxent() (make sure this is up-to-date)
+library(snow)     # (if you want to use multicore functionality; some systems/R versions prefer library(parallel), try either)
+library(parallel)
+library(devtools)
+library(rexpokit)
+library(cladoRcpp)
+library(BioGeoBEARS)
+library(ggtree)
+library(stringr)
+library(RColorBrewer)
+library(colorspace)
+library(jpeg)
+library(viridis)
+```
 
-# Tutorial
+
+
+# Loading the results of the DEC ancestral area reconstruction
+
+```{r}
+load("example_data/bombacoideae_DEC_results.Rdata")
+model_name = "DEC"
+results_object = res = resDEC
+scriptdir = np(system.file("extdata/a_scripts", package="BioGeoBEARS"))
+
+clado_events_tables = NULL
+ana_events_tables = NULL
+lnum = 0
+
+BSM_inputs_fn = "BSM_inputs_file.Rdata"
+runInputsSlow = TRUE
+if (runInputsSlow)
+{
+  stochastic_mapping_inputs_list = get_inputs_for_stochastic_mapping(res=res)
+  save(stochastic_mapping_inputs_list, file=BSM_inputs_fn)
+} else {
+  # Loads to "stochastic_mapping_inputs_list"
+  load(BSM_inputs_fn)
+} # END if (runInputsSlow)
+```
+
+# Run the biogeographic stochastic mapping
+
+```{r}
+set.seed(seed=as.numeric(Sys.time()))
+
+runBSMslow = TRUE
+
+BSM_output = runBSM(res,
+                    stochastic_mapping_inputs_list = stochastic_mapping_inputs_list, 
+                    maxnum_maps_to_try=2000, 
+                    nummaps_goal=10, # INcrease the number of replicates if possible
+                    maxtries_per_branch=40000,
+                    save_after_every_try=TRUE, 
+                    savedir=getwd(), 
+                    seedval=12345,
+                    wait_before_save=0.01)
+
+RES_clado_events_tables = BSM_output$RES_clado_events_tables
+RES_ana_events_tables = BSM_output$RES_ana_events_tables
+```
+
+# Save the results to disk
+```{r}
+# Extract BSM output
+clado_events_tables = BSM_output$RES_clado_events_tables
+ana_events_tables = BSM_output$RES_ana_events_tables
+save(clado_events_tables, file = "example_data/bombacoideae_BSM_clado_events_table_mcc_detbiom.rda")
+save(ana_events_tables, file ="example_data/bombacoideae_BSMana_events_table_mcc_detbiom.rda")
+```
+
+## Get the number of shifts through time
+You may want to adapt the maximum age here!
+```{r}
+angen <- lapply(ana_events_tables, function(k){
+  out <- k %>% 
+  dplyr::select(abs_event_time, event_type, event_txt, dispersal_to) %>% 
+  mutate(bin = cut(abs_event_time, 
+                   breaks = seq(24, 0, by = -2), 
+                   labels = rev(seq(23, 1, by = -2))))%>% 
+    mutate(from = str_split_fixed(event_txt, n = 2, pattern = "->")[,1 ]) %>% 
+    mutate(sdb_efb = ifelse(!grepl("W", from) & grepl("W", dispersal_to), 1, 0)) %>% 
+    mutate(efb_sdb = ifelse(from == "W" & (grepl("D", dispersal_to) | grepl("S", dispersal_to)), 1, 0))
+  return(out)
+  })
+
+# cladogenetic events do not include dispersal to new biomes
+cladgen <- lapply(clado_events_tables, function(k){
+  out <-  k %>% 
+  dplyr::select(time_bp, clado_event_type, clado_event_txt, clado_dispersal_to) %>% 
+  filter(!is.na(clado_event_type) & clado_event_type != "")
+  return(out)
+})
+```
+
+# Count the number of shifts per time bin
+Again you may need to adapt the maximum age and the number of areas.
+```{r}
+disps <- lapply(angen, function(k){
+  out <-  k %>% 
+    filter(event_type == "d") %>%
+    group_by(bin, dispersal_to) %>% 
+    summarize(abs_count = n()) %>% 
+    ungroup() %>% 
+    mutate(bin = parse_number(as.character(bin)))
+  
+  fram <- expand_grid( bin = rev(seq(23, 1, by = -2)), 
+                       dispersal_to = c("A", "B", "C", "D", "E"))
+  out <- left_join(fram, out, by = c("dispersal_to", "bin")) %>% 
+    replace_na(list(abs_count = 0))
+})
+
+disps <- bind_rows(disps,.id = "SM") %>% 
+  group_by(bin, dispersal_to) %>% 
+  summarize(lower = quantile(abs_count, probs = 0.025),
+            mean = mean(abs_count),
+            upper = quantile(abs_count, probs = 0.975))
+```
+
+# Get the total branch length per time bin
+```{r}
+agegap = 2
+branchtimes <-  branching.times(tr)
+maxmilcatogories <-  ceiling(max(branchtimes) / agegap)
+milgaps_mod <- matrix(ncol = 2, nrow = maxmilcatogories, 0)
+colnames(milgaps_mod) <- c("time","tot_brl")
+milgaps_mod[,1] <- 1:maxmilcatogories*agegap
+
+## Sum times per bin
+v <- branchtimes
+for(i in 1:length(milgaps_mod[, 2])){
+  s <- milgaps_mod[i, 1]        # time start
+  e <- milgaps_mod[i, 1] - agegap # time end
+  l1 <- length(v[v > s]) * agegap + min(length(v[v > s]), 1) * agegap
+  l2 <- sum(v[v > e & v<s] -e)
+  
+  if (l1 == 0){
+    l2 = l2*2
+  } # root
+  
+  milgaps_mod[i,2] <- l1 + l2
+}
+
+brls <- data.frame(milgaps_mod) %>% 
+  mutate(time = time - 1)
+```
+
+# Normalize the number of shifts by the total amount of branch length per time bin
+```{r}
+disps <- left_join(disps, brls, by = c("bin" = "time")) %>% 
+  mutate(lower = lower / tot_brl) %>% 
+  mutate(mean = mean / tot_brl) %>% 
+  mutate(upper = upper / tot_brl)
+```
+
+```{r}
+ggplot()+
+  geom_point(data = disps, aes(x = bin, y = mean, color = dispersal_to))+
+  geom_line(data = disps, aes(x = bin, y = mean, color = dispersal_to))+
+  theme_bw()
+```
+
+

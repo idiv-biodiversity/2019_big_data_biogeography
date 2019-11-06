@@ -29,38 +29,31 @@ output: html_document
 
 - Hands-on: "Recent biogeography" (Species richness, taxon-specific bioregionalization, extracting environmental data)
 
-- Optional lecture on a topic chose by the participants (Bayesian methods or Diversification rate analyses)
-
-
 ## Day 3 "Historical biogeography - reconstructing ancestral ranges"
+
+- Hands-on "Data preparation"
 
 - Lecture "Historical biogeography – methods to model the evolution of geographic ranges through time"
 
 - Hands-on "Reconstructing ancestral ranges" (`DEC`, `BioGeoBEARS`, `Biogeographic stochastic mapping`, `GeoSSE`)
 
+## Day 4 "Fossil Biogeography"
+
 - Lecture "Trait evolution"
 
 - Hands on "Reconstructing ancestral ranges as continuous trait" (`BITE`)
 
-
-## Day 4 "Fossil Biogeography"
-
-- Lecture "Fossil biogeography"
-
-- Hands-on Fossil biogeography (`fossilBM`)
-
 - Guest lecture by [Sara Varela](https://scholar.google.de/citations?hl=de&user=8dckI70AAAAJ) on Species distribution in paleobiogeography
 
-- Lecture "The DES model - A new approach to estimate area connectivity and diversification rates" (`DES`)
-
-- Time for project work
+- Hands on "Reconstructing ancestral ranges as continuous trait" (`BITE`)
 
 
 ## Day 5 "Putting it all together"
+- Lecture "Fossil biogeography"
 
-- Hands-on "Visualizing biogeographic results in R"
+- Optional: Hands-on "Visualizing biogeographic results in R"
 
-- Work on student project and presentation
+- Time for project work
 
 - Student presentations
 

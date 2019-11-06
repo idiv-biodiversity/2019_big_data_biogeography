@@ -74,7 +74,7 @@ It is easy to add data, for instance if you ahve records from field collections 
 
 ```{r, eval = FALSE}
 #read the field data
-field <- read_csv("PAth to your data")%>%
+field <- read_csv("PAth_to_your_data")%>%
   filter(lat > -7)
 
 field <- field%>%

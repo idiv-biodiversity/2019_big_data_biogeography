@@ -20,6 +20,7 @@ install.packages(c(
   "countrycode",
   "paleobioDB",
   "rgdal",
+  "rgbif",
   "ConR",
   "rredlist",
   "jsonlite",

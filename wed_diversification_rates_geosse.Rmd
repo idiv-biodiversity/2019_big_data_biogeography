@@ -2,10 +2,128 @@
 output: html_document
 ---
 
-# Background
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, eval = FALSE,
+                      echo=TRUE, warning=FALSE, message=FALSE,
+                      tidy = TRUE, collapse = TRUE,
+                      results = 'hold')
+```
 
-# Objective
 
-# Exercise
+# Joint Bayesian estimation of speciation, dispersal and extinction rates: the GeoSSE model
 
-# Tutorial
+The GeoSSE model jointly infers area-specific speciation rates, dispersal rates and local extinction rates [(Goldberg et al. 2011)](https://academic.oup.com/sysbio/article/60/4/451/1611105). The `mcmc-SSE` program implements a Bayesian algorithm to infer these rates. 
+
+The analysis requires a tree file, a table with the geographic ranges (species with no geographic data or not present in the tree will be automatically removed).
+
+
+# Load dependent libraries: 
+```{r}
+library("diversitree")  
+library("picante")
+```
+
+# Load mcmc-SSE library:  
+```{r}
+source("my_path/mcmc-SSE-lib.R")
+```
+
+# Prep data
+Since the GoeSSE model only allows for 2 areas the input data might need to be modified by merging some of the areas.
+
+Define which areas should be merged
+
+```{r}
+data_SPGC <- read.csv("example_data/bombacoideae_biome_classification_details.csv", row.names = 1)
+columns_areaA = c(1, 3)
+columns_areaB = c(2, 4, 5)
+
+geosse_areas <- comb_areas(data_SPGC, columns_areaA, columns_areaB)
+write.table(geosse_areas, file="example_data/traitGeoSSE.txt", sep="\t", row.names=F, quote=F)
+```
+
+# Setup an analysis
+Set working directory:  
+```{r}
+setwd("my_path/example_files/")
+```
+
+Define tree file (NEXUS format, can contain multiple trees)  
+```{r}
+tree_file  = "example_data/bromelioieae_consensus.tre"
+```
+
+Define geographic range file (tab-separated text file). Geographic ranges are defined as 0 (present in area A), 1 (present in area B), 2 (present in area AB)  
+```{r}
+range_file = "example_data/traitGeoSSE.txt"
+```
+
+State-specific taxon sampling (A, B, AB)  
+```{r}
+sampling_fractions = c(0.7,0.8,1)
+```
+
+Define output file name
+```{r}
+mcmc.log = "bromeliad_geosse.log"
+```
+
+Run the analysis
+```{r}
+run_mcmc_SSE(tree_file, trait_file, model, outfile = mcmc.log, iterations = 10000, sampling_fractions = c(0.7,0.8,1))
+```
+
+# Process and plot output
+Read output file
+```{r}
+post = read.table(mcmc.log, header=T)
+```
+
+Plot trace of sampled likelihoods
+```{r}
+plot(post$likelihood, type="l")
+```
+
+Plot speciation, dispersal, and extinction rates per area:  
+
+```{r}
+par(mfrow=c(1,3))
+boxplot(post[,c("sA","sB","sAB")], col = "blue", main = "speciation rates")
+boxplot(post[,c("dA","dB" )], col = "gray", main = "dispersal rates")
+boxplot(post[,c("xA","xB" )], col = "red",main = "extinction rates")
+```
+
+Are dispersals rates significantly different?  
+
+```{r}
+delta_dispersal = post$dA - post$dB
+hist(delta_dispersal)
+```
+
+Calculate posterior probability of dAB > dBA:
+```{r}
+length(delta_dispersal[delta_dispersal>0]) / length(delta_dispersal)
+```
+
+Are extinction rates significantly different?
+
+```{r}
+delta_extinction = post$xA - post$xB
+hist(delta_extinction)
+```
+
+Calculate the posterior probability of xA > xB:
+
+```{r}
+length(delta_extinction[delta_extinction>0]) / length(delta_extinction)
+```
+
+
+# Run on multiple trees
+If provided with a tree file that includes multiple trees the MCMC can run sequentially on different trees to account for phylogenetic uncertainty. The `burnin` defines how many initial MCMC iterations should be discarded (i.e. not saved in the log file) for each tree.
+
+```{r}
+tree_file  = "bromelioieae_100.trees"  
+run_mcmc_SSE(tree_file, trait_file, model, outfile = "bromeliad_geosse100.log", iterations = 10000, nTREES=5, burnin=100)
+```
+
