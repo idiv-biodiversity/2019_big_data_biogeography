@@ -40,6 +40,7 @@ If your tree is in nexus format, you need to convert it to newick format, otherw
 ```{r}
 #specify the tree file
 trfn <- "example_data/bombacoideae_phylogeny.newick"
+tr <- read.tree(trfn)
 ```
 
 ## Define the grography file
