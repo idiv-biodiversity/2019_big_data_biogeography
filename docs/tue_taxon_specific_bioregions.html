@@ -434,8 +434,7 @@ $(document).ready(function () {
 <li>Locate the clean point occurrence .txt file and the .shp range file on your computer and navigate your browser to <a href="http://bioregions.mapequation.org/" class="uri">http://bioregions.mapequation.org/</a>.</li>
 <li>Use Infomap bioregions to create bioregions for the cleaned point occurrences following the tutorial on the website</li>
 <li>Use Infomap bioregions to create bioregions for range shape file following the tutorial on the website. What is the difference between the two bioregionalizations, and which one is more useful?</li>
-<li>Upload a phylogenetic tree for your group and use the phylogenetic reconstruction implemented in Infomap bioregions to reconstruct the evolutionary history of your clade.</li>
-<li>Generate a area range file for the ancestral range reconstruction</li>
+<li>Download the GeoJson file from Infomap bioregions and convert it into a shape file.</li>
 </ol>
 </div>
 <div id="possible-questions-for-your-project" class="section level2">
@@ -450,80 +449,24 @@ $(document).ready(function () {
 <div id="library-setup" class="section level1">
 <h1>Library setup</h1>
 <pre class="r"><code>library(rgdal)
-library(ggplot2)</code></pre>
+library(geojsonio)
+library(sf)
+library(tidyverse)</code></pre>
 </div>
 <div id="tutorial" class="section level1">
 <h1>Tutorial</h1>
-<div id="adapting-bioregionalization" class="section level2">
-<h2>Adapting bioregionalization</h2>
-<p>After you obtained a reaonable regionalization from Infomaps bioregions, you may need to modify it in some cases, for example to merge very small bioregions with their neighbours or to reduce the total number of bioregions. If you think that your bioregionalization is sufficient as is, you can skip this step.</p>
-<pre class="r"><code># load results from infomap and visualize
-bior &lt;- readOGR(&quot;inst&quot;, layer = &quot;bombacoids_ranges_ingroup_0712&quot;)
-bior.plo &lt;- raster::aggregate(bior, by = &quot;bioregio&quot;)
-bior.plo &lt;- fortify(bior.plo)
-idif &lt;- data.frame(coordinates(bior), id = rownames(bior@data))
+<div id="convert-a-geojson-file-into-a-shape-file" class="section level2">
+<h2>Convert a GeoJson file into a shape file</h2>
+<pre class="r"><code>inp &lt;- geojsonio::geojson_read(&quot;example_data/bombacoids_ranges_ingroup_0712_bioregions.geojson&quot;, 
+    what = &quot;sp&quot;)
 
-ggplot() + # mapWorld+
-geom_polygon(data = bior.plo, aes(x = long, y = lat, group = group, fill = id)) + 
-    geom_text(data = idif, aes(x = X1, y = X2, label = id), size = 2)
+dat &lt;- st_as_sf(inp)
 
-# Merge marginal bioregions with next larger bioregion
-#+1 because th ids start with 0, instead of one
-bior.mod &lt;- bior
-bior.mod@data$bioregio[c(244, 246, 250, 251) + 1] &lt;- 5
-bior.mod@data$bioregio[190 + 1] &lt;- 1
-bior.mod@data$bioregio[192 + 1] &lt;- 4
-# bior.mod@data$bioregio[c(323, 324, 325, 326) +1 ] &lt;- 6
-bior.mod@data$bioregio[c(320, 321, 322) + 1] &lt;- 10
+# plot the rbioregions
+ggplot() + geom_sf(data = dat, aes(fill = as.factor(bioregion)))
 
-# plot again to see if the changes worked
-bior.plo &lt;- raster::aggregate(bior.mod, by = &quot;bioregio&quot;)
-bior.plo &lt;- fortify(bior.plo)
-idif &lt;- data.frame(coordinates(bior), id = rownames(bior@data))
-
-ggplot() + # mapWorld+
-geom_polygon(data = bior.plo, aes(x = long, y = lat, group = group, fill = id)) + 
-    geom_text(data = idif, aes(x = X1, y = X2, label = id), size = 2)
-
-writeOGR(bior.mod, dsn = &quot;inst&quot;, layer = &quot;modified_bioregions&quot;, driver = &quot;ESRI Shapefile&quot;)
-</code></pre>
-</div>
-<div id="classifying-species-to-bioregion-absed-on-occurrences" class="section level2">
-<h2>Classifying species to bioregion absed on occurrences</h2>
-<p>If you adapted the bioregions you will need to reclassify the species. You can use the following code to do so, you will, however, have to adapt it to your bioregions.</p>
-<pre class="r"><code>bior &lt;- readOGR(&quot;inst&quot;, layer = &quot;modified_bioregions&quot;)
-bior.class &lt;- aggregate(bior, by = &quot;bioregio&quot;)
-
-# load the occurrence points
-occs &lt;- read_csv(&quot;inst/occurrence_records_clean.csv&quot;)
-
-#overlay
-overl &lt;- over(SpatialPoints(occs[,c(&quot;decimalLongitude&quot;, &quot;decimalLatitude&quot;)], proj4string = CRS(proj4string(bior.mod))), bior.class)
-overl &lt;- data.frame(occs, overl$bioregio)%&gt;%
-  dplyr::select(species, bioregion = overl.bioregio)%&gt;%
-  group_by(species, bioregion)%&gt;%
-  summarize(record.number = n())
-
-out2 &lt;- occs%&gt;%
-  group_by(species)%&gt;%
-  summarize(num = n())
-
-plot(bior.class)
-text(x = coordinates(bior.class)[,1], 
-     y = coordinates(bior.class)[,2],
-     labels = bior.class@data$bioregio)
-
-out &lt;- inner_join(overl, out2, by = &quot;species&quot;)%&gt;%
-  mutate(rec.frac = record.number / num)%&gt;%
-  filter(!is.na(bioregion))%&gt;% # retain only entries with at least 5% of the records
-  mutate(bioid = bioregion)%&gt;%
-  dplyr::select(species, bioregion, rec.frac)%&gt;%
-  spread(bioregion, rec.frac)%&gt;% # here you need to change the bioregion names according to your data
-  dplyr::select_(species = &quot;1&quot;, NSA = &quot;2&quot;,
-          CAR = &quot;3&quot;, CSA = &quot;4&quot;, AFR = &quot;5&quot;, 
-          ESA = &quot;6&quot;, ASI = &quot;7&quot;, NAM = &quot;8&quot;, MAD = &quot;9&quot;)
-
-write_csv(out, &quot;inst/occurrence_fraction_per_bioregion&quot;)</code></pre>
+st_write(obj = dat, dsn = &quot;example_data&quot;, layer = &quot;bombacoideae_infomap_shapefile&quot;, 
+    driver = &quot;ESRI Shapefile&quot;, delete_layer = TRUE, delete_dsn = TRUE)</code></pre>
 </div>
 </div>
 
