@@ -16,7 +16,7 @@ In this exercise, you will use the cleaned occurrence data and the taxon-specifi
 # Exercises
 1. Use a species list of your group of interest to extract a medium-sized phylogeny from the provided large-scale phylogenies. If you already have a phylogeny for your group of interest, convert it to newick format.
 
-2. Use the cleaned occurrences together with the taxon specific bioregionalization to get a species to area classifcation in the right format to use for the DEC analysis. If you do not have suitable bioregions, use biome classifications instead.
+2. Use the cleaned occurrences together with the taxon specific bioregionalization to get a species to area classification in the right format to use for the DEC analysis. If you do not have suitable bioregions, use biome classifications instead.
 
 3. Extract temperature ranges for all species in the phylogeny using the occurrence records.
 
@@ -176,8 +176,7 @@ sink(NULL)
 
 ```
 
-## 3. Extract environemntal data
-# Background
+## 3. Extract environmental data
 Linking species occurrences and evolution to environmental variables and quantifying species "niche" and its evolution is essential for many biogeographic questions. We will use the temperature range of species to reconstruct the evolution of temperature mean and variance using BITE tomorrow.
 
 ```{r}

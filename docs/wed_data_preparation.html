@@ -427,7 +427,7 @@ $(document).ready(function () {
 <h1>Exercises</h1>
 <ol style="list-style-type: decimal">
 <li><p>Use a species list of your group of interest to extract a medium-sized phylogeny from the provided large-scale phylogenies. If you already have a phylogeny for your group of interest, convert it to newick format.</p></li>
-<li><p>Use the cleaned occurrences together with the taxon specific bioregionalization to get a species to area classifcation in the right format to use for the DEC analysis. If you do not have suitable bioregions, use biome classifications instead.</p></li>
+<li><p>Use the cleaned occurrences together with the taxon specific bioregionalization to get a species to area classification in the right format to use for the DEC analysis. If you do not have suitable bioregions, use biome classifications instead.</p></li>
 <li><p>Extract temperature ranges for all species in the phylogeny using the occurrence records.</p></li>
 </ol>
 </div>
@@ -570,12 +570,8 @@ sink(NULL)
 </code></pre>
 </div>
 </div>
-<div id="extract-environemntal-data" class="section level2">
-<h2>3. Extract environemntal data</h2>
-</div>
-</div>
-<div id="background" class="section level1">
-<h1>Background</h1>
+<div id="extract-environmental-data" class="section level2">
+<h2>3. Extract environmental data</h2>
 <p>Linking species occurrences and evolution to environmental variables and quantifying species “niche” and its evolution is essential for many biogeographic questions. We will use the temperature range of species to reconstruct the evolution of temperature mean and variance using BITE tomorrow.</p>
 <pre class="r"><code># Load cleaned occurences
 occ &lt;- read_csv(&quot;example_data/bombacoideae_occurrences_cleaned.csv&quot;)
@@ -595,6 +591,7 @@ out &lt;- bind_cols(dplyr::select(occ, species), ext)
 
 # Write to disk
 write.table(out, &quot;example_data/bombacoideae_environment.txt&quot;, sep = &quot; &quot;, quote = FALSE)</code></pre>
+</div>
 </div>
 
 
