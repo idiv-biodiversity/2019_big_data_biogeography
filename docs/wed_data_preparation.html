@@ -452,7 +452,8 @@ rownames(splist) &lt;- splist$species
 # Load the large-scale phylogeny
 tree &lt;- read.tree(&quot;example_data/VascularPlants.tre&quot;)
 
-# Check if the spelling of the names is identical
+# Check if the spelling of the names is identical, e.g. if the epitheton is
+# preceeded by a space or an underscore
 head(splist$species)
 head(tree$tip.label)
 

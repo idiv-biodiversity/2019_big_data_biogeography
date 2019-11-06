@@ -43,7 +43,7 @@ rownames(splist) <- splist$species
 # Load the large-scale phylogeny
 tree <- read.tree("example_data/VascularPlants.tre")
 
-# Check if the spelling of the names is identical
+# Check if the spelling of the names is identical, e.g. if the epitheton is preceeded by a space or an underscore
 head(splist$species)
 head(tree$tip.label)
 
