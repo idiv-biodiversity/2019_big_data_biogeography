@@ -506,10 +506,10 @@ tr &lt;- read.tree(&quot;example_data/bombacoideae_phylogeny.newick&quot;)
 occ &lt;- occ %&gt;% filter(species %in% tr$tip.label)
 
 # load bioregions
-area &lt;- readOGR(dsn = &quot;example_data&quot;, layer = &quot;bombacoideae_bioregions&quot;)
+area &lt;- readOGR(dsn = &quot;example_data&quot;, layer = &quot;bombacoideae_infomap_shapefile&quot;)
 
 # Classify species
-class &lt;- SpGeoCod(x = occ, y = area, areanames = &quot;bioregio&quot;)
+class &lt;- SpGeoCod(x = occ, y = area, areanames = &quot;bioregn&quot;)
 
 # convert to presence-absence
 class &lt;- class$spec_table %&gt;% as.data.frame() %&gt;% dplyr::select(-not_classified)
@@ -526,7 +526,7 @@ class &lt;- dplyr::select(class, comb)
 # bioregions, and then in brackets a one latter code for each area
 
 sink(&quot;example_data/bombacoideae_area_classification.txt&quot;)
-cat(&quot;38 10 (A B C D E F G H I J)\n&quot;)
+cat(&quot;38 8 (A B C D E F G H )\n&quot;)
 write.table(as.data.frame(class), row.names = TRUE, col.names = FALSE, quote = FALSE)
 sink(NULL)</code></pre>
 </div>

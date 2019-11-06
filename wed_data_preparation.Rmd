@@ -106,10 +106,10 @@ occ <- occ %>%
   filter(species %in% tr$tip.label)
 
 # load bioregions
-area <- readOGR(dsn = "example_data", layer = "bombacoideae_bioregions")
+area <- readOGR(dsn = "example_data", layer = "bombacoideae_infomap_shapefile")
 
 # Classify species
-class <- SpGeoCod(x = occ, y = area, areanames = "bioregio")
+class <- SpGeoCod(x = occ, y = area, areanames = "bioregn")
 
 # convert to presence-absence
 class <- class$spec_table %>% 
@@ -127,7 +127,7 @@ class <- dplyr::select(class, comb)
 # Here you need to adapt the header, the first number is the number of tips in your phylogeny, the second number is the number of bioregions, and then in brackets a one latter code for each area
 
 sink("example_data/bombacoideae_area_classification.txt")
-cat("38 10 (A B C D E F G H I J)\n")
+cat("38 8 (A B C D E F G H )\n")
 write.table(as.data.frame(class), row.names = TRUE, col.names = FALSE, quote = FALSE)
 sink(NULL)
 ```
