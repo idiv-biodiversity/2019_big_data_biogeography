@@ -57,16 +57,12 @@ navbar:
     menu:
     - text: 1. Ancestral ranges as continuous traits
       href: wed_bite.html
-    - text: 2. Bayesian inference of trait evolution under a “fossilized” Brownian motion (FBM)
-      href: thu_fossilBM.html
+
   - text: Friday
     menu:
-    - text: Species richness maps
-      href: fr_species_richness_maps.html
-    - text: Ancestral area reconstruction from DEC
-      href: fr_plotting_DEC.html
-    - text: Visualizing diversification rate estimates
-      href: fr_diversification_rates.html
+    - text: 1. Visualizing results
+      href: fr_visualizing_results.html
+
   right:
   - text: GitHub
     href: https://github.com/idiv-biodiversity/2019_big_data_biogeography

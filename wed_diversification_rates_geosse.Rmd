@@ -54,6 +54,8 @@ Define tree file (NEXUS format, can contain multiple trees)
 tree_file  = "example_data/bromelioieae_consensus.tre"
 ```
 
+
+
 Define geographic range file (tab-separated text file). Geographic ranges are defined as 0 (present in area A), 1 (present in area B), 2 (present in area AB)  
 ```{r}
 range_file = "example_data/traitGeoSSE.txt"
