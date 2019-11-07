@@ -56,7 +56,7 @@ navbar:
   - text: Thursday
     menu:
     - text: 1. Ancestral ranges as continuous traits
-      href: wed_bite.html
+      href: 2019_bigdata_biogeography_lectures/BITE_script.html
 
   - text: Friday
     menu:
