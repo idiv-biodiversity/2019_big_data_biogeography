@@ -429,7 +429,8 @@ $(document).ready(function () {
 library(&quot;picante&quot;)</code></pre>
 </div>
 <div id="load-mcmc-sse-library" class="section level1">
-<h1>Load mcmc-SSE library:</h1>
+<h1>Load mcmc-SSE library</h1>
+<p>You will find the mcmc-SSE-lib file in the “example_file” dropbox folder.</p>
 <pre class="r"><code>source(&quot;my_path/mcmc-SSE-lib.R&quot;)</code></pre>
 </div>
 <div id="prep-data" class="section level1">
@@ -458,8 +459,8 @@ write.table(geosse_areas, file = &quot;example_data/traitGeoSSE.txt&quot;, sep =
 <p>Define output file name</p>
 <pre class="r"><code>mcmc.log = &quot;bromeliad_geosse.log&quot;</code></pre>
 <p>Run the analysis</p>
-<pre class="r"><code>run_mcmc_SSE(tree_file, trait_file, model, outfile = mcmc.log, iterations = 10000, 
-    sampling_fractions = c(0.7, 0.8, 1))</code></pre>
+<pre class="r"><code>run_mcmc_SSE(tree_file, range_file, model, outfile = mcmc.log, iterations = 10000, 
+    rho = sampling_fractions)</code></pre>
 </div>
 <div id="process-and-plot-output" class="section level1">
 <h1>Process and plot output</h1>

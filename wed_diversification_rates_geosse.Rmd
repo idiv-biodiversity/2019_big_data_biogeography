@@ -23,7 +23,8 @@ library("diversitree")
 library("picante")
 ```
 
-# Load mcmc-SSE library:  
+# Load mcmc-SSE library
+You will find the mcmc-SSE-lib file in the "example_file" dropbox folder.
 ```{r}
 source("my_path/mcmc-SSE-lib.R")
 ```
@@ -70,7 +71,7 @@ mcmc.log = "bromeliad_geosse.log"
 
 Run the analysis
 ```{r}
-run_mcmc_SSE(tree_file, trait_file, model, outfile = mcmc.log, iterations = 10000, rho = sampling_fractions)
+run_mcmc_SSE(tree_file, range_file, model, outfile = mcmc.log, iterations = 10000, rho = sampling_fractions)
 ```
 
 # Process and plot output
