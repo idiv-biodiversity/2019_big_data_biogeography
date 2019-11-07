@@ -10,9 +10,254 @@ knitr::opts_chunk$set(fig.width=12, fig.height=8, eval = FALSE,
 
 
 # Background
+Clear and appealing vizualization is essential to communicate scientific results. One of the main advantages of R is that it makes it easy to visualize data. In the last years, especially the grmmar of graphics framework has produced many different visualization methods.
 
 # Objective
+This exercise will provide you with scripts tpo plot speces richness maps and ancestral area reconstructions from BioGeoBEARS.
 
 # Exercise
 
+
+# Libraries
+
+```{r}
+library(ape)
+library(ggtree)
+library(tidyverse)
+library(geiger)
+library(stringr)
+library(RColorBrewer)
+library(colorspace)
+library(jpeg)
+library(viridis)
+```
+
 # Tutorial
+
+## Plotting species richness maps
+
+## PLotting results from INfomap bioregions
+
+```{r}
+#recode the bioregions names
+bior.plot$id <- recode_factor(bior.plot$id,  
+       "1 0" = "Northern South America",
+       "2 0" = "Caribbean",
+       "3 0" = "Central South America",
+       "4 0" = "Africa",
+       "5 0" = "Eastern South America",
+       "6 0" = "Australasia",
+       "7 0" = "North America",
+       "8 0" = "Madagascar"
+       )
+
+bior.plot$id <- factor(bior.plot$id ,levels(bior.plot$id )[c(7, 2, 1, 3, 5, 4, 8, 6)])
+
+proj4string(landmass) <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
+landmass <- spTransform(landmass, w3)
+mapWorld <- fortify(landmass)
+
+cols <- brewer.pal(n = 8, name = "Set1")#[-9]
+
+#to lump SA
+#cols[c(3:5)] <- cols[3]
+
+
+ggplot()+
+  #mapWorld+
+  geom_polygon(data = mapWorld, aes(x = long, y = lat, group = group), fill = "grey80")+
+  geom_polygon(data = bior.plot, aes(x = long, y = lat, group = group, fill = id))+
+  scale_fill_manual(values = cols)+
+  #coord_map("cylequalarea", parameters = 30, xlim=c(-180, 180))+
+  theme_bw()+
+  coord_fixed()+
+  #coord_map("cylequalarea", parameters = 30, xlim=c(-180, 180))
+  theme(
+    legend.position = c(0,0),
+    legend.title = element_blank(),
+    legend.justification = c(-0.3,-0.3),
+    legend.text = element_text(size = 16),
+    axis.ticks = element_blank(),
+    axis.text = element_blank(),
+    axis.title = element_blank(),
+    panel.grid = element_blank()
+  )
+
+```
+
+# Plotting ancestral area reconstruction
+
+## Load the data
+```{r}
+# The range probabilities
+range_probabilities <-  read.table("example_data/bombacoideae_DEC_node_probabilities.txt", header = TRUE)
+
+# The phylogenetic tree
+tr <- read.tree("example_data/bombacoideae_phylogeny.tre")
+
+# The tip classification used for the DEC model 
+traits <-  read.table("example_data/bombacoideae_biome_classification.txt", header = TRUE, skip = 1)
+
+# A map of the biomes
+map <- readJPEG("example_data/Fig1b_bioregionalization_reduced.jpg")
+```
+
+## Set the paramaeters for the plotting
+```{r}
+n_states <- 5
+
+state_names <- c("A", "B", "C", "D", "E")
+```
+
+
+```{r}
+#node states
+states <- range_probabilities%>%
+  select(-c(1))%>%
+  mutate(node = parse_number(rownames(.)))
+
+
+
+#only keep the  most likely states and fuse others to "others"
+plo.states <- list()
+for(i in 1:nrow(states)){
+  sub <- data.frame(t(slice(states, i)))
+  ord <- rev(order(sub[,1]))
+  out <- data.frame(t(sub[ord,][1:2]))
+  names(out) <- rownames(sub)[ord][1:2]
+  plo.states[[i]] <- round(out,3)
+}
+
+plo.states <- bind_rows(plo.states)
+plo.states[is.na(plo.states)] <- 0
+plo.states$OTHERS <- 1-rowSums(plo.states[,-1])
+plo.states <- plo.states[-c(1:Ntip(tr)),-1]
+plo.states <- plo.states[, colSums(plo.states) > 0]
+areas <- names(plo.states)
+names(plo.states) <- seq(1:ncol(plo.states))
+# write.csv(plo.states, "output/node.states.csv")
+# plo.states <- read_csv("output/node.states.csv")
+
+#tip states
+tip.states <- traits
+names(tip.states) <- c("id", "a")
+tips <- data.frame(row.names= tip.states$id,
+                   str_split_fixed(string = tip.states$a, n = n_states, pattern = ""))
+names(tips) <- state_names
+
+brc <- c(viridis(n = n_states), rainbow(n = (ncol(states) - n_states)))
+
+for(i in 1:n_states){
+  tips[,i] <- as.numeric(tips[,i])
+  tips[tips[,i] != 1, i] <- "grey90"
+  tips[tips[,i] == 1, i] <- brc[i]
+}
+rownames(tips) <-tip.states$id
+
+# #new tip labels
+# tl <- read.csv("input/FINAL_Bombacoids_traits_input_1707.csv")[, c("id", "species")]
+# rownames(tl) <- tl$id
+# tl <- tl[tr$tip.label,]
+# 
+# tr$tip.label <- gsub("_", " ", as.character(tl$species))
+# 
+# tlp <- tl[tip.states$id,]
+# rownames(tips) <- gsub("_", " ", as.character(tlp$species))
+
+
+#pick nodes for pie label size
+#from revells blog
+getDescendants<-function(tree,node,curr=NULL){
+  if(is.null(curr)) curr<-vector()
+  daughters<-tree$edge[which(tree$edge[,1]==node),2]
+  curr<-c(curr,daughters)
+  w<-which(daughters>=length(tree$tip))
+  if(length(w)>0) for(i in 1:length(w))
+    curr<-getDescendants(tree,daughters[w[i]],curr)
+  return(curr)
+}
+
+#geological epochs
+epo.lim <- data.frame(x = c(-2.58, -5.33, -23.03, -33.09, -56, -66))
+
+epo.lab <- data.frame(x = c(-2.58/2, -2.58 - (5.33-2.58) / 2 ,
+                            -5.33 - (23.03 - 5.33) / 2 , 
+                            -23.03 - (33.09 - 23.03) / 2 , 
+                            -33.09 - (56 - 33.09) / 2,
+                            -56 - (66 - 56) / 2,
+                            -66 - (max(node.depth.edgelength(tr) - 66) / 2)),
+                      lab = c("Q.", "Pl.", "Miocene", "Oligocene", "Eocene", "Paleocene", "Late Cretaceous"))
+
+epo.lab <- epo.lab[1:5,]
+
+epo.lim <- epo.lim + max(node.depth.edgelength(tr))
+epo.lab$x <- epo.lab$x + max(node.depth.edgelength(tr))
+
+#check the nodes of which the descendants should be small instead of large
+plot(tr, cex = 0.5)
+nodelabels()
+
+sno <- c(getDescendants(tr, 189), getDescendants(tr, 167), getDescendants(tr,127), getDescendants(tr, 114),
+         getDescendants(tr, 118), 107, 111, 112, 163, 164)
+sno <- sno[!sno %in% 1:Ntip(tr)]
+
+
+lno <- as.numeric(rownames(plo.states)[!as.numeric(rownames(plo.states)) %in% sno])
+lno <- lno[!lno %in% 1:Ntip(tr)]
+#lno <- lno[!lno %in% c(114,116, 117, 115, getDescendants(tr, 117))]#exclude the root and outgroup
+
+#mix node colors
+names(brc)[c(1:n_states)] <- state_names
+node.col <- brc[areas]
+names(node.col) <- areas
+
+rains <- brc[-c(1:n_states)]
+node.col[is.na(node.col)] <- rains
+node.col["OTHERS"] <- "grey50"
+
+#colours for the legend
+leg <- node.col[order(nchar(names(node.col)))]
+
+names(leg) <- c(names(states)[-length(names(states))], "OTHERS")
+
+#base plotting
+plot(tr, label.offset = 9.5, x.lim = 116, cex = 0.6, y.lim = 107)
+segments(x0 = epo.lim$x, y0 = -8, x1 = epo.lim$x, y1 = 105, col = "grey50")
+text(x = epo.lab$x, y = -1.5, labels = epo.lab$lab, cex = 0.6)
+#tip labels
+tiplabels(pch = 22, bg = tips[tr$tip.label,1], adj = 3.5, col = tips[tr$tip.label,1], cex = 0.8)
+tiplabels(pch = 22, bg = tips[tr$tip.label,1], adj = 4.5, col = tips[tr$tip.label,1], cex = 0.8)
+tiplabels(pch = 22, bg = tips[tr$tip.label,2], adj = 5.5, col = tips[tr$tip.label,2], cex = 0.8)
+tiplabels(pch = 22, bg = tips[tr$tip.label,2], adj = 6.5, col = tips[tr$tip.label,2], cex = 0.8)
+tiplabels(pch = 22, bg = tips[tr$tip.label,3], adj = 7.5, col = tips[tr$tip.label,3], cex = 0.8)
+tiplabels(pch = 22, bg = tips[tr$tip.label,3], adj = 8.5, col = tips[tr$tip.label,3], cex = 0.8)
+tiplabels(pch = 22, bg = tips[tr$tip.label,4], adj = 9.5, col = tips[tr$tip.label,4], cex = 0.8)
+tiplabels(pch = 22, bg = tips[tr$tip.label,4], adj = 10.5, col = tips[tr$tip.label,4], cex = 0.8)
+
+# tip label heading
+text(labels = c("MBF", "DBF", "SAV"),
+     x = seq(60, 64, by = 2), y = 104, cex = 0.5, srt = 90, adj = 0)
+par(fg = "transparent")
+
+# node label pie-charts
+nodelabels(pie= as.matrix(plo.states[as.numeric(rownames(plo.states)) %in% lno,]),
+           node = lno, piecol=node.col, cex = 1)
+#for whatever reason this works, but vectorized nodelabels does not
+for(i in 1:length(sno)){
+  print(i)
+  nodelabels(pie= as.matrix(plo.states[as.numeric(rownames(plo.states)) %in% sno[i],]),
+             node = sno[i], piecol=node.col, cex = 0.5)
+}
+
+par(fg = "black")
+axisPhylo(1)
+rasterImage(map,
+            xleft = -5,
+            ybottom = 95,
+            xright = 45 ,
+            ytop = 90 + 50 * (615/1027) * (8 / 11))
+
+legend(x = -5, y = 100, ncol = 1, legend = names(leg),
+       fill = leg, cex = 0.9, bty = "n")
+
+```

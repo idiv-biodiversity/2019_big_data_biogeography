@@ -40,7 +40,7 @@ columns_areaA = c(1, 3)
 columns_areaB = c(2, 4, 5)
 
 geosse_areas <- comb_areas(data_SPGC, columns_areaA, columns_areaB)
-write.table(geosse_areas, file="example_data/traitGeoSSE.txt", sep="\t", row.names=F, quote=F)
+write.table(geosse_areas, file="example_data/traitGeoSSE_owndataconverted.txt", sep="\t", row.names=F, quote=F)
 ```
 
 # Setup an analysis
