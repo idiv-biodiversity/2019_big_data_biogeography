@@ -36,7 +36,10 @@ install.packages(c(
   "RColorBrewer",
   "colorspace",
   "viridis",
-  "jpeg")
+  "jpeg",
+  "coda", 
+  "sm", 
+  "vioplot")
 )
 
 library(devtools)
