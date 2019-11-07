@@ -459,7 +459,7 @@ write.table(geosse_areas, file = &quot;example_data/traitGeoSSE.txt&quot;, sep =
 <p>Define output file name</p>
 <pre class="r"><code>mcmc.log = &quot;bromeliad_geosse.log&quot;</code></pre>
 <p>Run the analysis</p>
-<pre class="r"><code>run_mcmc_SSE(tree_file, range_file, model, outfile = mcmc.log, iterations = 10000, 
+<pre class="r"><code>run_mcmc_SSE(tree_file, range_file, model = &quot;geosse&quot;, outfile = mcmc.log, iterations = 10000, 
     rho = sampling_fractions)</code></pre>
 </div>
 <div id="process-and-plot-output" class="section level1">

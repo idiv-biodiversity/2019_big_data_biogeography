@@ -71,7 +71,12 @@ mcmc.log = "bromeliad_geosse.log"
 
 Run the analysis
 ```{r}
-run_mcmc_SSE(tree_file, range_file, model, outfile = mcmc.log, iterations = 10000, rho = sampling_fractions)
+run_mcmc_SSE(tree_file, 
+             range_file, 
+             model = "geosse",
+             outfile = mcmc.log,
+             iterations = 10000, 
+             rho = sampling_fractions)
 ```
 
 # Process and plot output
