@@ -1,0 +1,202 @@
+# Bayesian Integrative models of Trait Evolution (BITE)
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, eval = FALSE,
+                      echo=TRUE, warning=FALSE, message=FALSE,
+                      tidy = TRUE, collapse = TRUE,
+                      results = 'hold')
+```
+
+
+The BITE package implements the JIVE model and other Bayesian models aimed at understanding traits evolution. 
+
+The JIVE model implements a joint estimation of the evolution of intra- and inter-specific variance for continuous traits in a phylogenetic framework. JIVE is described in Kostikova et al. [(2016)](https://academic.oup.com/sysbio/article/65/3/417/2468958) and is being further developed by [T. Gaboriau](https://github.com/theogab).
+
+Install BITE package:
+
+```{r}
+library(devtools)
+install_github("theogab/bite")
+```
+
+BITE requires the following libraries:
+`ape, phytools, coda, sm, vioplot` 
+
+Load the library and set the working directory, where the output files will be saved:
+
+```{r}
+library(bite)
+setwd("my_path")
+```
+
+A JIVE analysis requires:
+1) a phylogenetic tree (ultrametric)
+2) a table listing all occurrences with species name and individual trait value
+3) [optional] a discrete trait that can be on the tree to define evolutionary regimes
+
+Load example files, a phylogeny and a table with multiple measurements for each species:
+
+```{r}
+data(Anolis_tree)
+data(Anolis_traits) 
+```
+
+## Setting up a model
+JIVE can use different models for the evolution of species mean and intra-specific trait variance.
+The data and the models are stored in an object that is then used to run the analysis. For example:
+
+```{r}
+jive_obj <- make_jive(Anolis_tree, Anolis_traits,  model.mean="BM", model.var="OU")
+```
+
+specifies a Brownian model of evolution (BM) for the mean and an Ornstein-Uhlenbeck model (OU) for the variance. The white noise model (WN) is also available.
+
+You can plot the input data using:
+`plot_jive(jive_obj)`
+
+## Launch analysis
+The command `mcmc_bite` launches the Bayesian analysis of trait evolution. The output of the analysis is saved to a test file (file name provided with the flag `log.file`).
+
+```{r}
+mcmc_bite( jive_obj, log.file= "output_mBM_vOU.log", ngen = 10000, sampling.freq = 100)
+```
+
+The parameters `ngen` and `sampling.freq` define the number of MCMC iterations and the sampling frequency, respectively. Note that 10,000 iterations are likely to be too few for the algorithm to find a reliable solution.
+
+## Plot output
+Import the results in R
+
+```{r}
+logfile <- "output_mBM_vOU.log"
+res <- read.csv(logfile, header = T, sep="\t")
+```
+
+Plot the rate of evolution of species means (BM model):
+
+```{r}
+plot_mcmc_bite(res, var= "mean.bm.sig.")
+```
+
+Plot the parameters of evolution of species variance (OU model).
+Rate parameter:
+
+```{r}
+plot_mcmc_bite(res, var= "var.ou.sig.")
+```
+
+Optimal log variance:
+
+```{r}
+plot_mcmc_bite(res, var= "var.ou.the.")
+```
+
+Stationary variance (sv = alpha / 2*sig):
+
+```{r}
+plot_mcmc_bite(res, var= "var.ou.sv.")
+```
+
+
+
+---
+
+# Model testing using JIVE
+We can test different models of evolution for trait means and variances and compute their statistical support using marginal likelihoods. 
+
+### Model 1
+Define the JIVE model and output file:
+
+```{r}
+jive_obj <- make_jive(Anolis_tree, Anolis_traits,  model.mean="BM", model.var="OU") 
+logfile <- "output_mBM_vOU_TI.log"
+```
+
+When running the analysis the command `ncat` defines the number of discrete categories for integrating the marginal likelihood:
+
+```{r}
+mcmc_bite( jive_obj, log.file= logfile, sampling.freq = 1000, ngen = 100000, ncat = 10, burnin = 1000) 
+```
+
+The flag `burnin = 100` specifies that the first 1000 iterations should be discarded as burnin. 
+
+Read output and compute marginal likelihood:
+
+```{r}
+res <- read.csv(logfile, header = T, sep="\t")
+mlik_mBM_vOU <- marginal_lik(res)
+mlik_mBM_vOU
+```
+
+### Model 2
+Define a new model with BM evolution for both mean and variance:
+
+```{r}
+jive_obj <- make_jive(Anolis_tree, Anolis_traits,  model.mean="BM", model.var="BM") 
+logfile <- "output_mBM_vBM_TI.log"
+mcmc_bite( jive_obj, log.file= logfile, sampling.freq = 1000, 
+	print.freq = 1000, ngen = 100000, ncat = 10)
+```
+	
+Load results and compute marginal likelihood:
+
+```{r}
+res <- read.csv(logfile, header = T, sep="\t")
+mlik_mBM_vBM <- marginal_lik(res,burnin=10)
+mlik_mBM_vBM
+```
+
+Which model is best supported?
+
+
+---
+
+# Trait-dependent JIVE models
+The JIVE model can be adapted to infer different model parameters in different parts of the tree following the evolution of a discrete trait. For example, Kostikova et al. used such a model to test whether the variance in ecological niche varied between [(2016)](https://academic.oup.com/sysbio/article/65/3/417/2468958) annual and perennial plant lineages.
+
+Load the _Anolis_ data and read the table with a discrete trait assigned to each species, and turn it into a named vector
+
+```{r}
+data(Anolis_tree)
+data(Anolis_traits)
+tr <- read.table("Anolis_discrete_trait.txt",row.names=1,h=T)
+trait <- unlist(tr)
+names(trait) <- row.names(tr)
+```
+
+Load the library `phytools` and generate a stochastic map of the trait
+
+```{r}
+library(phytools)
+mapped_tree=make.simmap(Anolis_tree, trait)
+plotSimmap(mapped_tree)
+```
+
+Define a JIVE model using BM for trait mean with independent rates of evolution for each state of the discrete trait. For trait variance we use an OU model with independent optima for each state of the discrete trait.
+
+```{r}
+my.jive <- make_jive(mapped_tree, Anolis_traits, model.mean=c("BM", "sigma"), model.var=c("OU", "theta")) 
+
+```
+
+Are OU optima significantly different?
+
+```{r}
+delta_optima = post$var.ou.the.0 - post$var.ou.the.1
+hist(delta_extinction)
+```
+
+Calculate the posterior probability of optimum.0 > optimum.1
+
+```{r}
+length(delta_extinction[delta_extinction>0]) / length(delta_extinction)
+```
+
+
+
+
+
+
+
+
+
+

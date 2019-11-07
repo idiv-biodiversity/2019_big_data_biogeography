@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>thu_BITE_script.utf8.md</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Big Data Biogeography</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">Course schedule</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Monday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="mo_setup.html">Setup</a>
+    </li>
+    <li>
+      <a href="mo_explore_gbif.html">Explore GBIF</a>
+    </li>
+    <li>
+      <a href="mo_explore_paleobioDB.html">Explore the Paleobiology database</a>
+    </li>
+    <li>
+      <a href="mo_explore_iucn.html">explore the IUCN database</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Tuesday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="tue_download_GBIF_data.html">1. Obtaining geographic occurrence records from GBIF</a>
+    </li>
+    <li>
+      <a href="tue_cleaning_geographic_data.html">2. Cleaning geographic data</a>
+    </li>
+    <li>
+      <a href="tue_accesibility_bias.html">3. Exploring sampling bias</a>
+    </li>
+    <li>
+      <a href="tue_species_richness.html">4. Species ranges &amp; richness maps</a>
+    </li>
+    <li>
+      <a href="tue_taxon_specific_bioregions.html">5. Taxon-specific bioregionalization</a>
+    </li>
+    <li>
+      <a href="tue_biome_classification.html">6. Species to biome classification</a>
+    </li>
+    <li>
+      <a href="tue_obtaining_environmental_data.html">7. Obtaining environmental data</a>
+    </li>
+    <li>
+      <a href="tue_extracting_clades.html">8. Extracting clades from a phylogeny</a>
+    </li>
+    <li>
+      <a href="tue_automated_conservation_assessment.html">Optional - Automated conservation assessment and IUCN assessments</a>
+    </li>
+    <li>
+      <a href="tue_obtaining_data_from_paleoDB.html">Optional - Obtaining fossil data from PaleoDB</a>
+    </li>
+    <li>
+      <a href="tue_fossil_cleaning.html">Optional - Cleaning fossil data</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Wednesday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="wed_data_preparation.html">1. Preparing the input for phylogenetic analyses</a>
+    </li>
+    <li>
+      <a href="wed_ancestral_areas_DEC.html">2. Reconstructing ancestral areas (DEC)</a>
+    </li>
+    <li>
+      <a href="wed_DEC_bsm.html">3. Estimating the number of shifts (DEC BSM)</a>
+    </li>
+    <li>
+      <a href="wed_diversification_rates_geosse.html">4. Diversification rate estimation (GeoSSE)</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Thursday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="thu_BITE_script.html">1. Ancestral ranges as continuous traits</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Friday
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="fr_visualizing_results.html">1. Visualizing results</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/idiv-biodiversity/2019_big_data_biogeography">GitHub</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+
+</div>
+
+
+<div id="bayesian-integrative-models-of-trait-evolution-bite" class="section level1">
+<h1>Bayesian Integrative models of Trait Evolution (BITE)</h1>
+<p>The BITE package implements the JIVE model and other Bayesian models aimed at understanding traits evolution.</p>
+<p>The JIVE model implements a joint estimation of the evolution of intra- and inter-specific variance for continuous traits in a phylogenetic framework. JIVE is described in Kostikova et al. <a href="https://academic.oup.com/sysbio/article/65/3/417/2468958">(2016)</a> and is being further developed by <a href="https://github.com/theogab">T. Gaboriau</a>.</p>
+<p>Install BITE package:</p>
+<pre class="r"><code>library(devtools)
+install_github(&quot;theogab/bite&quot;)</code></pre>
+<p>BITE requires the following libraries: <code>ape, phytools, coda, sm, vioplot</code></p>
+<p>Load the library and set the working directory, where the output files will be saved:</p>
+<pre class="r"><code>library(bite)
+setwd(&quot;my_path&quot;)</code></pre>
+<p>A JIVE analysis requires: 1) a phylogenetic tree (ultrametric) 2) a table listing all occurrences with species name and individual trait value 3) [optional] a discrete trait that can be on the tree to define evolutionary regimes</p>
+<p>Load example files, a phylogeny and a table with multiple measurements for each species:</p>
+<pre class="r"><code>data(Anolis_tree)
+data(Anolis_traits)</code></pre>
+<div id="setting-up-a-model" class="section level2">
+<h2>Setting up a model</h2>
+<p>JIVE can use different models for the evolution of species mean and intra-specific trait variance. The data and the models are stored in an object that is then used to run the analysis. For example:</p>
+<pre class="r"><code>jive_obj &lt;- make_jive(Anolis_tree, Anolis_traits, model.mean = &quot;BM&quot;, model.var = &quot;OU&quot;)</code></pre>
+<p>specifies a Brownian model of evolution (BM) for the mean and an Ornstein-Uhlenbeck model (OU) for the variance. The white noise model (WN) is also available.</p>
+<p>You can plot the input data using: <code>plot_jive(jive_obj)</code></p>
+</div>
+<div id="launch-analysis" class="section level2">
+<h2>Launch analysis</h2>
+<p>The command <code>mcmc_bite</code> launches the Bayesian analysis of trait evolution. The output of the analysis is saved to a test file (file name provided with the flag <code>log.file</code>).</p>
+<pre class="r"><code>mcmc_bite(jive_obj, log.file = &quot;output_mBM_vOU.log&quot;, ngen = 10000, sampling.freq = 100)</code></pre>
+<p>The parameters <code>ngen</code> and <code>sampling.freq</code> define the number of MCMC iterations and the sampling frequency, respectively. Note that 10,000 iterations are likely to be too few for the algorithm to find a reliable solution.</p>
+</div>
+<div id="plot-output" class="section level2">
+<h2>Plot output</h2>
+<p>Import the results in R</p>
+<pre class="r"><code>logfile &lt;- &quot;output_mBM_vOU.log&quot;
+res &lt;- read.csv(logfile, header = T, sep = &quot;\t&quot;)</code></pre>
+<p>Plot the rate of evolution of species means (BM model):</p>
+<pre class="r"><code>plot_mcmc_bite(res, var = &quot;mean.bm.sig.&quot;)</code></pre>
+<p>Plot the parameters of evolution of species variance (OU model). Rate parameter:</p>
+<pre class="r"><code>plot_mcmc_bite(res, var = &quot;var.ou.sig.&quot;)</code></pre>
+<p>Optimal log variance:</p>
+<pre class="r"><code>plot_mcmc_bite(res, var = &quot;var.ou.the.&quot;)</code></pre>
+<p>Stationary variance (sv = alpha / 2*sig):</p>
+<pre class="r"><code>plot_mcmc_bite(res, var = &quot;var.ou.sv.&quot;)</code></pre>
+<hr />
+</div>
+</div>
+<div id="model-testing-using-jive" class="section level1">
+<h1>Model testing using JIVE</h1>
+<p>We can test different models of evolution for trait means and variances and compute their statistical support using marginal likelihoods.</p>
+<div id="model-1" class="section level3">
+<h3>Model 1</h3>
+<p>Define the JIVE model and output file:</p>
+<pre class="r"><code>jive_obj &lt;- make_jive(Anolis_tree, Anolis_traits, model.mean = &quot;BM&quot;, model.var = &quot;OU&quot;)
+logfile &lt;- &quot;output_mBM_vOU_TI.log&quot;</code></pre>
+<p>When running the analysis the command <code>ncat</code> defines the number of discrete categories for integrating the marginal likelihood:</p>
+<pre class="r"><code>mcmc_bite(jive_obj, log.file = logfile, sampling.freq = 1000, ngen = 1e+05, 
+    ncat = 10, burnin = 1000)</code></pre>
+<p>The flag <code>burnin = 100</code> specifies that the first 1000 iterations should be discarded as burnin.</p>
+<p>Read output and compute marginal likelihood:</p>
+<pre class="r"><code>res &lt;- read.csv(logfile, header = T, sep = &quot;\t&quot;)
+mlik_mBM_vOU &lt;- marginal_lik(res)
+mlik_mBM_vOU</code></pre>
+</div>
+<div id="model-2" class="section level3">
+<h3>Model 2</h3>
+<p>Define a new model with BM evolution for both mean and variance:</p>
+<pre class="r"><code>jive_obj &lt;- make_jive(Anolis_tree, Anolis_traits, model.mean = &quot;BM&quot;, model.var = &quot;BM&quot;)
+logfile &lt;- &quot;output_mBM_vBM_TI.log&quot;
+mcmc_bite(jive_obj, log.file = logfile, sampling.freq = 1000, print.freq = 1000, 
+    ngen = 1e+05, ncat = 10)</code></pre>
+<p>Load results and compute marginal likelihood:</p>
+<pre class="r"><code>res &lt;- read.csv(logfile, header = T, sep = &quot;\t&quot;)
+mlik_mBM_vBM &lt;- marginal_lik(res, burnin = 10)
+mlik_mBM_vBM</code></pre>
+<p>Which model is best supported?</p>
+<hr />
+</div>
+</div>
+<div id="trait-dependent-jive-models" class="section level1">
+<h1>Trait-dependent JIVE models</h1>
+<p>The JIVE model can be adapted to infer different model parameters in different parts of the tree following the evolution of a discrete trait. For example, Kostikova et al. used such a model to test whether the variance in ecological niche varied between <a href="https://academic.oup.com/sysbio/article/65/3/417/2468958">(2016)</a> annual and perennial plant lineages.</p>
+<p>Load the <em>Anolis</em> data and read the table with a discrete trait assigned to each species, and turn it into a named vector</p>
+<pre class="r"><code>data(Anolis_tree)
+data(Anolis_traits)
+tr &lt;- read.table(&quot;Anolis_discrete_trait.txt&quot;, row.names = 1, h = T)
+trait &lt;- unlist(tr)
+names(trait) &lt;- row.names(tr)</code></pre>
+<p>Load the library <code>phytools</code> and generate a stochastic map of the trait</p>
+<pre class="r"><code>library(phytools)
+mapped_tree = make.simmap(Anolis_tree, trait)
+plotSimmap(mapped_tree)</code></pre>
+<p>Define a JIVE model using BM for trait mean with independent rates of evolution for each state of the discrete trait. For trait variance we use an OU model with independent optima for each state of the discrete trait.</p>
+<pre class="r"><code>my.jive &lt;- make_jive(mapped_tree, Anolis_traits, model.mean = c(&quot;BM&quot;, &quot;sigma&quot;), 
+    model.var = c(&quot;OU&quot;, &quot;theta&quot;))
+</code></pre>
+<p>Are OU optima significantly different?</p>
+<pre class="r"><code>delta_optima = post$var.ou.the.0 - post$var.ou.the.1
+hist(delta_extinction)</code></pre>
+<p>Calculate the posterior probability of optimum.0 &gt; optimum.1</p>
+<pre class="r"><code>length(delta_extinction[delta_extinction &gt; 0])/length(delta_extinction)</code></pre>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
