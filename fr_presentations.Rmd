@@ -1,0 +1,11 @@
+---
+output: html_document
+---
+
+Today you will present the outcomes of the weeks' work with your data to your colleagues. in the afternoon each of you will give a 7 minute short presentation. Please include the following things:
+
+1. Present results from your own taxonomic group
+
+2. Share realizations/notes/caveats on using the data/methods for your group
+
+3. A short outline on how you will use these methods in your future research

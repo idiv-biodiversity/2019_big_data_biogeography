@@ -59,8 +59,8 @@ navbar:
       href: thu_BITE_script.html
   - text: Friday
     menu:
-    - text: 1. Visualizing results
-      href: fr_visualizing_results.html
+    - text: Student presentations
+      href: fr_presentations.html
 
   right:
   - text: GitHub

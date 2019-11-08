@@ -12,7 +12,7 @@
 
 
 
-<title>fr_visualizing_results.utf8.md</title>
+<title>fr_plots.utf8.md</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -387,7 +387,7 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="fr_visualizing_results.html">1. Visualizing results</a>
+      <a href="fr_presentations.html">Student presentations</a>
     </li>
   </ul>
 </li>
@@ -411,15 +411,236 @@ $(document).ready(function () {
 
 <div id="background" class="section level1">
 <h1>Background</h1>
+<p>Clear and appealing vizualization is essential to communicate scientific results. One of the main advantages of R is that it makes it easy to visualize data. In the last years, especially the grmmar of graphics framework has produced many different visualization methods.</p>
 </div>
 <div id="objective" class="section level1">
 <h1>Objective</h1>
+<p>This exercise will provide you with scripts tpo plot speces richness maps and ancestral area reconstructions from BioGeoBEARS.</p>
 </div>
 <div id="exercise" class="section level1">
 <h1>Exercise</h1>
 </div>
+<div id="libraries" class="section level1">
+<h1>Libraries</h1>
+<pre class="r"><code>library(ape)
+library(ggtree)
+library(tidyverse)
+library(geiger)
+library(stringr)
+library(RColorBrewer)
+library(colorspace)
+library(jpeg)
+library(viridis)</code></pre>
+</div>
 <div id="tutorial" class="section level1">
 <h1>Tutorial</h1>
+<div id="plotting-species-richness-maps" class="section level2">
+<h2>Plotting species richness maps</h2>
+</div>
+<div id="plotting-results-from-infomap-bioregions" class="section level2">
+<h2>PLotting results from INfomap bioregions</h2>
+<pre class="r"><code># recode the bioregions names
+bior.plot$id &lt;- recode_factor(bior.plot$id, `1 0` = &quot;Northern South America&quot;, 
+    `2 0` = &quot;Caribbean&quot;, `3 0` = &quot;Central South America&quot;, `4 0` = &quot;Africa&quot;, 
+    `5 0` = &quot;Eastern South America&quot;, `6 0` = &quot;Australasia&quot;, `7 0` = &quot;North America&quot;, 
+    `8 0` = &quot;Madagascar&quot;)
+
+bior.plot$id &lt;- factor(bior.plot$id, levels(bior.plot$id)[c(7, 2, 1, 3, 5, 4, 
+    8, 6)])
+
+proj4string(landmass) &lt;- &quot;+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs&quot;
+landmass &lt;- spTransform(landmass, w3)
+mapWorld &lt;- fortify(landmass)
+
+cols &lt;- brewer.pal(n = 8, name = &quot;Set1&quot;)  #[-9]
+
+# to lump SA cols[c(3:5)] &lt;- cols[3]
+
+
+ggplot() + # mapWorld+
+geom_polygon(data = mapWorld, aes(x = long, y = lat, group = group), fill = &quot;grey80&quot;) + 
+    geom_polygon(data = bior.plot, aes(x = long, y = lat, group = group, fill = id)) + 
+    scale_fill_manual(values = cols) + # coord_map(&#39;cylequalarea&#39;, parameters = 30, xlim=c(-180, 180))+
+theme_bw() + coord_fixed() + # coord_map(&#39;cylequalarea&#39;, parameters = 30, xlim=c(-180, 180))
+theme(legend.position = c(0, 0), legend.title = element_blank(), legend.justification = c(-0.3, 
+    -0.3), legend.text = element_text(size = 16), axis.ticks = element_blank(), 
+    axis.text = element_blank(), axis.title = element_blank(), panel.grid = element_blank())
+</code></pre>
+</div>
+</div>
+<div id="plotting-ancestral-area-reconstruction" class="section level1">
+<h1>Plotting ancestral area reconstruction</h1>
+<div id="load-the-data" class="section level2">
+<h2>Load the data</h2>
+<pre class="r"><code># The range probabilities
+range_probabilities &lt;- read.table(&quot;example_data/bombacoideae_DEC_node_probabilities.txt&quot;, 
+    header = TRUE)
+
+# The phylogenetic tree
+tr &lt;- read.tree(&quot;example_data/bombacoideae_phylogeny.tre&quot;)
+
+# The tip classification used for the DEC model
+traits &lt;- read.table(&quot;example_data/bombacoideae_biome_classification.txt&quot;, header = TRUE, 
+    skip = 1)
+
+# A map of the biomes
+map &lt;- readJPEG(&quot;example_data/Fig1b_bioregionalization_reduced.jpg&quot;)</code></pre>
+</div>
+<div id="set-the-paramaeters-for-the-plotting" class="section level2">
+<h2>Set the paramaeters for the plotting</h2>
+<pre class="r"><code>n_states &lt;- 5
+
+state_names &lt;- c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;)</code></pre>
+<pre class="r"><code># node states
+states &lt;- range_probabilities %&gt;% select(-c(1)) %&gt;% mutate(node = parse_number(rownames(.)))
+
+
+
+# only keep the most likely states and fuse others to &#39;others&#39;
+plo.states &lt;- list()
+for (i in 1:nrow(states)) {
+    sub &lt;- data.frame(t(slice(states, i)))
+    ord &lt;- rev(order(sub[, 1]))
+    out &lt;- data.frame(t(sub[ord, ][1:2]))
+    names(out) &lt;- rownames(sub)[ord][1:2]
+    plo.states[[i]] &lt;- round(out, 3)
+}
+
+plo.states &lt;- bind_rows(plo.states)
+plo.states[is.na(plo.states)] &lt;- 0
+plo.states$OTHERS &lt;- 1 - rowSums(plo.states[, -1])
+plo.states &lt;- plo.states[-c(1:Ntip(tr)), -1]
+plo.states &lt;- plo.states[, colSums(plo.states) &gt; 0]
+areas &lt;- names(plo.states)
+names(plo.states) &lt;- seq(1:ncol(plo.states))
+# write.csv(plo.states, &#39;output/node.states.csv&#39;) plo.states &lt;-
+# read_csv(&#39;output/node.states.csv&#39;)
+
+# tip states
+tip.states &lt;- traits
+names(tip.states) &lt;- c(&quot;id&quot;, &quot;a&quot;)
+tips &lt;- data.frame(row.names = tip.states$id, str_split_fixed(string = tip.states$a, 
+    n = n_states, pattern = &quot;&quot;))
+names(tips) &lt;- state_names
+
+brc &lt;- c(viridis(n = n_states), rainbow(n = (ncol(states) - n_states)))
+
+for (i in 1:n_states) {
+    tips[, i] &lt;- as.numeric(tips[, i])
+    tips[tips[, i] != 1, i] &lt;- &quot;grey90&quot;
+    tips[tips[, i] == 1, i] &lt;- brc[i]
+}
+rownames(tips) &lt;- tip.states$id
+
+# #new tip labels tl &lt;-
+# read.csv(&#39;input/FINAL_Bombacoids_traits_input_1707.csv&#39;)[, c(&#39;id&#39;,
+# &#39;species&#39;)] rownames(tl) &lt;- tl$id tl &lt;- tl[tr$tip.label,] tr$tip.label &lt;-
+# gsub(&#39;_&#39;, &#39; &#39;, as.character(tl$species)) tlp &lt;- tl[tip.states$id,]
+# rownames(tips) &lt;- gsub(&#39;_&#39;, &#39; &#39;, as.character(tlp$species))
+
+
+# pick nodes for pie label size from revells blog
+getDescendants &lt;- function(tree, node, curr = NULL) {
+    if (is.null(curr)) 
+        curr &lt;- vector()
+    daughters &lt;- tree$edge[which(tree$edge[, 1] == node), 2]
+    curr &lt;- c(curr, daughters)
+    w &lt;- which(daughters &gt;= length(tree$tip))
+    if (length(w) &gt; 0) 
+        for (i in 1:length(w)) curr &lt;- getDescendants(tree, daughters[w[i]], 
+            curr)
+    return(curr)
+}
+
+# geological epochs
+epo.lim &lt;- data.frame(x = c(-2.58, -5.33, -23.03, -33.09, -56, -66))
+
+epo.lab &lt;- data.frame(x = c(-2.58/2, -2.58 - (5.33 - 2.58)/2, -5.33 - (23.03 - 
+    5.33)/2, -23.03 - (33.09 - 23.03)/2, -33.09 - (56 - 33.09)/2, -56 - (66 - 
+    56)/2, -66 - (max(node.depth.edgelength(tr) - 66)/2)), lab = c(&quot;Q.&quot;, &quot;Pl.&quot;, 
+    &quot;Miocene&quot;, &quot;Oligocene&quot;, &quot;Eocene&quot;, &quot;Paleocene&quot;, &quot;Late Cretaceous&quot;))
+
+epo.lab &lt;- epo.lab[1:5, ]
+
+epo.lim &lt;- epo.lim + max(node.depth.edgelength(tr))
+epo.lab$x &lt;- epo.lab$x + max(node.depth.edgelength(tr))
+
+# check the nodes of which the descendants should be small instead of large
+plot(tr, cex = 0.5)
+nodelabels()
+
+sno &lt;- c(getDescendants(tr, 189), getDescendants(tr, 167), getDescendants(tr, 
+    127), getDescendants(tr, 114), getDescendants(tr, 118), 107, 111, 112, 163, 
+    164)
+sno &lt;- sno[!sno %in% 1:Ntip(tr)]
+
+
+lno &lt;- as.numeric(rownames(plo.states)[!as.numeric(rownames(plo.states)) %in% 
+    sno])
+lno &lt;- lno[!lno %in% 1:Ntip(tr)]
+# lno &lt;- lno[!lno %in% c(114,116, 117, 115, getDescendants(tr,
+# 117))]#exclude the root and outgroup
+
+# mix node colors
+names(brc)[c(1:n_states)] &lt;- state_names
+node.col &lt;- brc[areas]
+names(node.col) &lt;- areas
+
+rains &lt;- brc[-c(1:n_states)]
+node.col[is.na(node.col)] &lt;- rains
+node.col[&quot;OTHERS&quot;] &lt;- &quot;grey50&quot;
+
+# colours for the legend
+leg &lt;- node.col[order(nchar(names(node.col)))]
+
+names(leg) &lt;- c(names(states)[-length(names(states))], &quot;OTHERS&quot;)
+
+# base plotting
+plot(tr, label.offset = 9.5, x.lim = 116, cex = 0.6, y.lim = 107)
+segments(x0 = epo.lim$x, y0 = -8, x1 = epo.lim$x, y1 = 105, col = &quot;grey50&quot;)
+text(x = epo.lab$x, y = -1.5, labels = epo.lab$lab, cex = 0.6)
+# tip labels
+tiplabels(pch = 22, bg = tips[tr$tip.label, 1], adj = 3.5, col = tips[tr$tip.label, 
+    1], cex = 0.8)
+tiplabels(pch = 22, bg = tips[tr$tip.label, 1], adj = 4.5, col = tips[tr$tip.label, 
+    1], cex = 0.8)
+tiplabels(pch = 22, bg = tips[tr$tip.label, 2], adj = 5.5, col = tips[tr$tip.label, 
+    2], cex = 0.8)
+tiplabels(pch = 22, bg = tips[tr$tip.label, 2], adj = 6.5, col = tips[tr$tip.label, 
+    2], cex = 0.8)
+tiplabels(pch = 22, bg = tips[tr$tip.label, 3], adj = 7.5, col = tips[tr$tip.label, 
+    3], cex = 0.8)
+tiplabels(pch = 22, bg = tips[tr$tip.label, 3], adj = 8.5, col = tips[tr$tip.label, 
+    3], cex = 0.8)
+tiplabels(pch = 22, bg = tips[tr$tip.label, 4], adj = 9.5, col = tips[tr$tip.label, 
+    4], cex = 0.8)
+tiplabels(pch = 22, bg = tips[tr$tip.label, 4], adj = 10.5, col = tips[tr$tip.label, 
+    4], cex = 0.8)
+
+# tip label heading
+text(labels = c(&quot;MBF&quot;, &quot;DBF&quot;, &quot;SAV&quot;), x = seq(60, 64, by = 2), y = 104, cex = 0.5, 
+    srt = 90, adj = 0)
+par(fg = &quot;transparent&quot;)
+
+# node label pie-charts
+nodelabels(pie = as.matrix(plo.states[as.numeric(rownames(plo.states)) %in% 
+    lno, ]), node = lno, piecol = node.col, cex = 1)
+# for whatever reason this works, but vectorized nodelabels does not
+for (i in 1:length(sno)) {
+    print(i)
+    nodelabels(pie = as.matrix(plo.states[as.numeric(rownames(plo.states)) %in% 
+        sno[i], ]), node = sno[i], piecol = node.col, cex = 0.5)
+}
+
+par(fg = &quot;black&quot;)
+axisPhylo(1)
+rasterImage(map, xleft = -5, ybottom = 95, xright = 45, ytop = 90 + 50 * (615/1027) * 
+    (8/11))
+
+legend(x = -5, y = 100, ncol = 1, legend = names(leg), fill = leg, cex = 0.9, 
+    bty = &quot;n&quot;)
+</code></pre>
+</div>
 </div>
 
 
