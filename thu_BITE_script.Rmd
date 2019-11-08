@@ -175,7 +175,7 @@ Define a JIVE model using BM for trait mean with independent rates of evolution 
 
 ```{r}
 my.jive <- make_jive(mapped_tree, Anolis_traits, model.mean=c("BM", "sigma"), model.var=c("OU", "theta")) 
-mcmc_jive( my.jive, log.file= "Anolis_trait_JIVE.log", sampling.freq = 100, ngen = 10000) 
+mcmc_bite( my.jive, log.file= "Anolis_trait_JIVE.log", sampling.freq = 100, ngen = 10000) 
 
 ```
 
