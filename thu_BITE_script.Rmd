@@ -184,13 +184,13 @@ Are OU optima significantly different?
 ```{r}
 post <- read.csv("Anolis_trait_JIVE.log", header = T, sep="\t")
 delta_optima = post$var.ou.the.0 - post$var.ou.the.1
-hist(delta_extinction)
+hist(delta_optima)
 ```
 
 Calculate the posterior probability of optimum.0 > optimum.1
 
 ```{r}
-length(delta_extinction[delta_extinction>0]) / length(delta_extinction)
+length(delta_optima[delta_optima>0]) / length(delta_optima)
 ```
 
 
