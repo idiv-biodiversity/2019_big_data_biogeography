@@ -333,9 +333,6 @@ $(document).ready(function () {
       <a href="tue_obtaining_environmental_data.html">7. Obtaining environmental data</a>
     </li>
     <li>
-      <a href="tue_extract_clade_from_phylogeny.html">8. Extracting clades from a phylogeny</a>
-    </li>
-    <li>
       <a href="tue_automated_conservation_assessment.html">Optional - Automated conservation assessment and IUCN assessments</a>
     </li>
     <li>
@@ -501,12 +498,15 @@ plotSimmap(mapped_tree)</code></pre>
 <p>Define a JIVE model using BM for trait mean with independent rates of evolution for each state of the discrete trait. For trait variance we use an OU model with independent optima for each state of the discrete trait.</p>
 <pre class="r"><code>my.jive &lt;- make_jive(mapped_tree, Anolis_traits, model.mean = c(&quot;BM&quot;, &quot;sigma&quot;), 
     model.var = c(&quot;OU&quot;, &quot;theta&quot;))
+mcmc_bite(my.jive, log.file = &quot;Anolis_trait_JIVE.log&quot;, sampling.freq = 100, 
+    ngen = 10000)
 </code></pre>
 <p>Are OU optima significantly different?</p>
-<pre class="r"><code>delta_optima = post$var.ou.the.0 - post$var.ou.the.1
-hist(delta_extinction)</code></pre>
+<pre class="r"><code>post &lt;- read.csv(&quot;Anolis_trait_JIVE.log&quot;, header = T, sep = &quot;\t&quot;)
+delta_optima = post$var.ou.the.0 - post$var.ou.the.1
+hist(delta_optima)</code></pre>
 <p>Calculate the posterior probability of optimum.0 &gt; optimum.1</p>
-<pre class="r"><code>length(delta_extinction[delta_extinction &gt; 0])/length(delta_extinction)</code></pre>
+<pre class="r"><code>length(delta_optima[delta_optima &gt; 0])/length(delta_optima)</code></pre>
 </div>
 
 

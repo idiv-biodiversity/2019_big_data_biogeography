@@ -333,9 +333,6 @@ $(document).ready(function () {
       <a href="tue_obtaining_environmental_data.html">7. Obtaining environmental data</a>
     </li>
     <li>
-      <a href="tue_extract_clade_from_phylogeny.html">8. Extracting clades from a phylogeny</a>
-    </li>
-    <li>
       <a href="tue_automated_conservation_assessment.html">Optional - Automated conservation assessment and IUCN assessments</a>
     </li>
     <li>
@@ -479,7 +476,7 @@ hist(delta_extinction)</code></pre>
 <h1>Run on multiple trees</h1>
 <p>If provided with a tree file that includes multiple trees the MCMC can run sequentially on different trees to account for phylogenetic uncertainty. The <code>burnin</code> defines how many initial MCMC iterations should be discarded (i.e. not saved in the log file) for each tree.</p>
 <pre class="r"><code>tree_file = &quot;bromelioieae_100.trees&quot;
-run_mcmc_SSE(tree_file, trait_file, model, outfile = &quot;bromeliad_geosse100.log&quot;, 
+run_mcmc_SSE(tree_file, trait_file, model = &quot;geosse&quot;, outfile = &quot;bromeliad_geosse100.log&quot;, 
     iterations = 10000, nTREES = 5, burnin = 100)</code></pre>
 </div>
 
