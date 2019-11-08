@@ -36,7 +36,7 @@ navbar:
     - text: 7. Obtaining environmental data
       href: tue_obtaining_environmental_data.html
     - text: 8. Extracting clades from a phylogeny
-      href: tue_extracting_clades.html
+      href: tue_extract_clade_from_phylogeny.html
     - text: Optional - Automated conservation assessment and IUCN assessments
       href: tue_automated_conservation_assessment.html
     - text: Optional - Obtaining fossil data from PaleoDB

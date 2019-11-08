@@ -89,10 +89,6 @@ ev
 ## 3. Obtaining IUCN conservation status
 To obtain the the IUCN status of species using the r package [rredlist](https://cran.r-project.org/web/packages/rredlist/index.html), you need a token for the Redlist API.
 
-```{r, echo = FALSE}
-iucn.key <- "01524b67f4972521acd1ded2d8b3858e7fedc7da5fd75b8bb2c5456ea18b01ba"
-```
-
 ```{r}
 #iucn.key <- "Your token"
 
