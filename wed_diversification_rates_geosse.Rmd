@@ -132,6 +132,6 @@ If provided with a tree file that includes multiple trees the MCMC can run seque
 
 ```{r}
 tree_file  = "bromelioieae_100.trees"  
-run_mcmc_SSE(tree_file, trait_file, model, outfile = "bromeliad_geosse100.log", iterations = 10000, nTREES=5, burnin=100)
+run_mcmc_SSE(tree_file, trait_file, model= "geosse", outfile = "bromeliad_geosse100.log", iterations = 10000, nTREES=5, burnin=100)
 ```
 
